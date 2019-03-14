@@ -1,0 +1,8 @@
+@import "../fonts/font.css";
+@import "../icons/font-awesome.min.css";
+
+#header, .logo-box p, .fzf .fzf-404
+{
+  font-family: Linelight;
+}
+
