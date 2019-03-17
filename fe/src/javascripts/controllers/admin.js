@@ -56,8 +56,9 @@ const loginEvent = async () => {
         //获取表单内容
         let _params = $('#login-form').serialize()
         //解析，发送请求
-        let _result = await admin_model.AccountLogin(qs.parse(_params))
+        let _result = await admin_model.loginAccount(qs.parse(_params))
         LoginSubmitFlag = 0
+        console.log(_result);
         switch (_result.status) {
           case 500:
             toast('操作失败，服务器出现问题', 'error');
@@ -105,11 +106,11 @@ const loginEvent = async () => {
         toast('请求未处理完，请勿频繁操作', 'error', 1500);
         break;
       default:
-        signUPSubmitFlag = 0
+        signUPSubmitFlag = 5
         //获取表单内容
         let _params = $('#sign-up-form').serialize()
         //解析，发送请求
-        let _result = await admin_model.addAccountList(qs.parse(_params))
+        let _result = await admin_model.addAccount(qs.parse(_params))
         signUPSubmitFlag = 0
         switch (_result.status) {
           case 500:
@@ -150,8 +151,8 @@ const loginEvent = async () => {
           codeFlag = true
         }, 60000)
         //获取邮箱
-        let body = {'mailbox': $('.sign-up-mailbox').val()}
-        let _result = await admin_model.addSignUpList(body)
+        let body = {'mailbox': $('.sign-up-mailbox').val(),'type': 'account'}
+        let _result = await admin_model.addSignUp(body)
         switch (_result.status) {
           case 500:
             toast('操作失败，服务器出现问题', 'error');

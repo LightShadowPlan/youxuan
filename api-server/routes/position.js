@@ -11,10 +11,16 @@ const resApplicationJson = (req, res, next) => {
 // 为/position中所有的路由都使用这个中间件
 router.use(resApplicationJson)
 
-router.post('/addSignUpList', position_controller.addSignUpList)
-router.post('/addAccountList', position_controller.addAccountList)
-router.post('/selectAccountList', position_controller.selectAccountList)
-router.post('/AccountLogin', position_controller.AccountLogin)
-
+router.post('/addMessage', position_controller.addMessage)
+router.post('/selectMessage', position_controller.selectMessage)
+router.post('/removeMessage', position_controller.removeMessage)
+router.post('/addGoods', position_controller.addGoods)
+router.post('/selectGoods', position_controller.selectGoods)
+router.post('/updateGoods', position_controller.updateGoods)
+router.post('/removeGoods', position_controller.removeGoods)
+router.post('/addTransactions', position_controller.addTransactions)
+router.post('/selectTransactions', position_controller.selectTransactions)
+router.post('/updateTransactions', position_controller.updateTransactions)
+router.post('/removeTransactions', position_controller.removeTransactions)
 
 module.exports = router; 

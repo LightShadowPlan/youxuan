@@ -1,29 +1,55 @@
+/**
+ * Created by qiangxl on 2019/3/16.
+ */
 const mongoose = require('../util/mongoose')
 const Moment = require('moment')
 const fs = require('fs')
 const Path = require('path')
 
-//注册账号数据库
-let SignUpModel = mongoose.model('signups', new mongoose.Schema({
-  mailbox: String,
-  verification: String,
-  addTime: Date
-}));
-//正式账号数据库
-let AccountModel = mongoose.model('accounts', new mongoose.Schema({
-  mailbox: String,
-  password: String,
-  headPortrait: String,
-  authority: Number,
-  news: Number,
+//消息数据库
+let MessageModel = mongoose.model('messages', new mongoose.Schema({
+  sender: String,
+  receiver: String,
+  content: String,
   addTime: Date
 }));
 
+//物品数据库
+let GoodsModel = mongoose.model('goods', new mongoose.Schema({
+  goodsName: String,
+  goodsPrice: Number,
+  goodsContent: String,
+  goodsPhoto: Array,
+  goodsState: Number,
+  goodComment: [{
+    userId: String,
+    nickname: String,
+    headPortrait: String,
+    comment: String,
+    addTime: Date
+  }],
+  goodsAuction: [{
+    purchaser: String,
+    headPortrait: String
+  }],
+  seller: String,
+  transaction: String,
+  addTime: Date
+}));
+
+// 交易信息数据库
+let TransactionsModel = mongoose.model('transactions', new mongoose.Schema({
+  seller: String,
+  purchaser: String,
+  addTime: Date
+}));
+
+
 /**
- * 添加注册用户
+ * 添加消息
  */
-const addSignUpList = async (body) => {
-  return SignUpModel({
+const addMessage = async (body) => {
+  return MessageModel({
     ...body,
     addTime: Date.now(),
   }).save(
@@ -36,10 +62,10 @@ const addSignUpList = async (body) => {
   })
 }
 /**
- * 删除注册用户
+ * 查询消息
  */
-const removeSignUpList = async (body) => {
-  return SignUpModel.deleteOne(
+const selectMessage = async (body) => {
+  return MessageModel.find(
     body
   ).then((res) => {
     return res
@@ -48,10 +74,10 @@ const removeSignUpList = async (body) => {
   })
 }
 /**
- * 查询注册用户
+ * 删除消息
  */
-const selectSignUpList = async (body) => {
-  return SignUpModel.find(
+const removeMessage = async (body) => {
+  return MessageModel.deleteOne(
     body
   ).then((res) => {
     return res
@@ -59,12 +85,13 @@ const selectSignUpList = async (body) => {
     return false
   })
 }
+
+
 /**
- * 添加正式用户
+ * 添加物品
  */
-const addAccountList = async (body) => {
-  body.authority = 0
-  return AccountModel({
+const addGoods = async (body) => {
+  return GoodsModel({
     ...body,
     addTime: Date.now(),
   }).save(
@@ -76,14 +103,95 @@ const addAccountList = async (body) => {
   })
 }
 /**
- * 查询正式用户
+ * 查询物品
  */
-const selectAccountList = async (body) => {
-  return AccountModel.find(
-    body,
+const selectGoods = async (body) => {
+  return GoodsModel.find(
+    body
+  ).then((res) => {
+    return res
+  }).catch(() => {
+    return false
+  })
+}
+/**
+ *更新物品
+ */
+const updateGoods = async (body) => {
+  return GoodsModel.updateOne(
     {
-      'password': false
-    }
+      _id: body._id
+    },
+    body
+  ).then((res) => {
+    return res
+  }).catch(() => {
+    return false
+  })
+}
+
+/**
+ * 删除物品
+ */
+const removeGoods = async (body) => {
+  return GoodsModel.deleteOne(
+    body
+  ).then((res) => {
+    return res
+  }).catch(() => {
+    return false
+  })
+}
+
+/**
+ * 添加交易
+ */
+const addTransactions = async (body) => {
+  return TransactionsModel({
+    ...body,
+    addTime: Date.now(),
+  }).save(
+
+  ).then((res) => {
+    return res.mailbox
+  }).catch(() => {
+    return false
+  })
+}
+/**
+ * 查询交易
+ */
+const selectTransactions = async (body) => {
+  return TransactionsModel.find(
+    body
+  ).then((res) => {
+    return res
+  }).catch(() => {
+    return false
+  })
+}
+/**
+ *更新交易
+ */
+const updateTransactions = async (body) => {
+  return TransactionsModel.updateOne(
+    {
+      _id: body._id
+    },
+    body
+  ).then((res) => {
+    return res
+  }).catch(() => {
+    return false
+  })
+}
+
+/**
+ * 删除交易
+ */
+const removeTransactions = async (body) => {
+  return TransactionsModel.deleteOne(
+    body
   ).then((res) => {
     return res
   }).catch(() => {
@@ -92,9 +200,15 @@ const selectAccountList = async (body) => {
 }
 
 module.exports = {
-  addSignUpList,
-  removeSignUpList,
-  selectSignUpList,
-  addAccountList,
-  selectAccountList,
+  addMessage,
+  selectMessage,
+  removeMessage,
+  addGoods,
+  selectGoods,
+  updateGoods,
+  removeGoods,
+  addTransactions,
+  selectTransactions,
+  updateTransactions,
+  removeTransactions
 }

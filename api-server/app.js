@@ -4,11 +4,10 @@ const path = require('path');
 const cookieParser = require('cookie-parser'); // 解析cookie
 const logger = require('morgan');
 
-const { version } = require('./config')
-
 // 路由工具
 const indexRouter = require('./routes/index');
 const positionRouter = require('./routes/position');
+const adminRouter = require('./routes/admin');
 
 // 应用程序
 const app = express();
@@ -27,7 +26,8 @@ app.use(cookieParser());// 解析cookie
 
 // 启用路由工具
 app.use('/', indexRouter);
-app.use('/api/'+ version +'/position', positionRouter);
+app.use('/api/position', positionRouter);
+app.use('/api/admin', adminRouter);
 
 
 

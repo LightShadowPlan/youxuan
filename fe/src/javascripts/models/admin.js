@@ -2,9 +2,9 @@
 验证服务器
  */
 //注册账号，临时存放
-const addSignUpList = (data) => {
+const addSignUp = (data) => {
   return $.ajax({
-    url: '/api/v1/position/addSignUpList',
+    url: '/api/admin/addSignUp',
     type: 'post',
     data,
     success: (results) => {
@@ -14,9 +14,9 @@ const addSignUpList = (data) => {
 }
 
 //注册内部账号
-const addAccountList = (data) => {
+const addAccount = (data) => {
   return $.ajax({
-    url: '/api/v1/position/addAccountList',
+    url: '/api/admin/addAccount',
     type: 'post',
     data,
     success: (results) => {
@@ -25,9 +25,9 @@ const addAccountList = (data) => {
   })
 }
 //查询内部账号
-const AccountLogin = (data) => {
+const loginAccount = (data) => {
   return $.ajax({
-    url: '/api/v1/position/AccountLogin',
+    url: '/api/admin/loginAccount',
     type: 'post',
     data,
     success: (results) => {
@@ -37,8 +37,8 @@ const AccountLogin = (data) => {
 }
 
 export default {
-  addSignUpList,
-  addAccountList,
-  AccountLogin
+  addSignUp,
+  addAccount,
+  loginAccount
 
 }

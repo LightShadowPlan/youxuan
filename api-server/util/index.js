@@ -20,9 +20,9 @@ const handleData = (data, res, template, callbacks = {}) => {
       //验证码错误
       case 202 : response.call(res, {template, code: 202, data: JSON.stringify(data)}); break;
       //验证码过期
-      case 203 : response.call(res, {template, code: 202, data: JSON.stringify(data)}); break;
+      case 203 : response.call(res, {template, code: 203, data: JSON.stringify(data)}); break;
       //账号或密码错误
-      case 204 : response.call(res, {template, code: 203, data: JSON.stringify(data)}); break;
+      case 204 : response.call(res, {template, code: 204, data: JSON.stringify(data)}); break;
       default: response.call(res, {template, code: 200, data: JSON.stringify(data)}); break;
     }
 
