@@ -53,12 +53,14 @@ const loginEvent = async () => {
         break;
       default:
         LoginSubmitFlag = 3
+        setTimeout(function () {
+          LoginSubmitFlag = 0
+        }, 3000)
         //获取表单内容
         let _params = $('#login-form').serialize()
         //解析，发送请求
         let _result = await admin_model.loginAccount(qs.parse(_params))
         LoginSubmitFlag = 0
-        console.log(_result);
         switch (_result.status) {
           case 500:
             toast('操作失败，服务器出现问题', 'error');
@@ -68,7 +70,7 @@ const loginEvent = async () => {
             break;
           default:
             //登录成功，存入token
-            localStorage.token = _result.data.token
+            localStorage.admin = JSON.stringify(_result.data)
             bus.emit('go', '/home')
             break;
         }
@@ -89,6 +91,8 @@ const loginEvent = async () => {
     signUPSubmitFlag ? '' : !/[a-zA-Z0-9]{8,16}/.test($('.sign-up-password').val()) ? signUPSubmitFlag = 3 : ''
     //两次密码相等验证
     signUPSubmitFlag ? '' : $('.sign-up-password').val() !== $('.r-sign-up-password').val() ? signUPSubmitFlag = 4 : ''
+    //用户协议勾选
+    signUPSubmitFlag ? '' : !$('.sign-up-agree').prop("checked") ? signUPSubmitFlag = 5 : ''
     switch (signUPSubmitFlag) {
       case 1 :
         toast('邮箱格式错误', 'error', 1500);
@@ -103,10 +107,13 @@ const loginEvent = async () => {
         toast('两次密码不相同', 'error', 1500);
         break;
       case 5 :
+        toast('用户协议未勾选', 'error', 1500);
+        break;
+      case 6 :
         toast('请求未处理完，请勿频繁操作', 'error', 1500);
         break;
       default:
-        signUPSubmitFlag = 5
+        signUPSubmitFlag = 6
         //获取表单内容
         let _params = $('#sign-up-form').serialize()
         //解析，发送请求
@@ -151,7 +158,7 @@ const loginEvent = async () => {
           codeFlag = true
         }, 60000)
         //获取邮箱
-        let body = {'mailbox': $('.sign-up-mailbox').val(),'type': 'account'}
+        let body = {'mailbox': $('.sign-up-mailbox').val(), 'type': 'account'}
         let _result = await admin_model.addSignUp(body)
         switch (_result.status) {
           case 500:

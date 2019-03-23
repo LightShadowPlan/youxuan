@@ -11,6 +11,7 @@ let MessageModel = mongoose.model('messages', new mongoose.Schema({
   sender: String,
   receiver: String,
   content: String,
+  start: String,
   addTime: Date
 }));
 

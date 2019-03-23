@@ -10,6 +10,9 @@
   > 实现对消息，物品，交易等的增删改查的接口
   >> /api/position/ + 具体接口名
 
+#### 跨域
+* 设置cors跨域，使用 cors 模块
+
 #### 工具
 * util/email.js  邮箱发送消息
   * verificationMail 函数

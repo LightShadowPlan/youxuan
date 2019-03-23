@@ -57,7 +57,11 @@ const removeSignUp = async (req, res) => {
  */
 const selectSignUp = async (req, res, callback) => {
   let _data = await admin.selectSignUp(req.body)
-  callback(_data)
+  if (callback.name !== 'next') {
+    callback(_data)
+  } else {
+    handleData(_data, res, 'position')
+  }
 }
 
 /**
@@ -85,6 +89,8 @@ const addAccount = async (req, res) => {
           if (Time < 720) {
             //先加密密码，再将账号密码存入数据库
             req.body.password = hash(req.body.password, 'hex')
+            req.body.headPortrait = 'https://lightshadow.xyz/CDN/file/images/photo.png'
+            req.body.nickname = '优选管理'
             let _data = await admin.addAccount(req.body)
             //移除注册数据库里的记录
             removeSignUp(_req, res)

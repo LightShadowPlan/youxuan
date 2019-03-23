@@ -1,0 +1,59 @@
+<div class="login-box">
+    <!--高斯模糊-->
+    <div class="filter"></div>
+    <!--注册-->
+    <div class="sign-up">
+        <form method="post"  class="form-box" id="sign-up-form">
+            <div class="logo-box">
+                <img src="https://lightshadow.xyz/CDN/file/images/logo_white.png" alt=""/>
+                <p>YOUXUAN</p>
+            </div>
+            <div class="input-box">
+                <div class="username input-list">
+                    <span class="fa fa-user"></span>
+                    <input required class="sign-up-mailbox" placeholder="请输入邮箱" name="mailbox"/>
+                </div>
+                <div class="input-list">
+                    <span class="fa fa-paper-plane"></span>
+                    <input required class="verification" placeholder="请输入验证码" name="verification"/>
+                    <input type="button" value="获取" id="get-verification-code"/>
+                </div>
+                <div class="password input-list">
+                    <span class="fa fa-unlock-alt"></span>
+                    <input class="sign-up-password" required type="password" placeholder="请输入密码 / 8-16位数字或字符" name="password"/>
+                </div>
+                <div class="password input-list">
+                    <span class="fa fa-unlock-alt"></span>
+                    <input  class="r-sign-up-password" required type="password" placeholder="请确认密码 / 8-16位数字或字符" />
+                </div>
+                <div class="agree input-list">
+                    <input class="sign-up-agree" type="checkbox" checked />
+                    <p>勾选此选项表明你已阅读并同意这份 <a href="#">用户协议</a></p>
+                </div>
+                <input class="button go-login" type="button" value="登录"/>
+                <input id="sign-up" class="button" type="submit" value="注册"/>
+            </div>
+        </form>
+    </div>
+    <!--登录-->
+    <div class="login showing">
+        <form method="post" class="form-box" id="login-form">
+            <div class="logo-box">
+                <img src="https://lightshadow.xyz/CDN/file/images/logo_white.png" alt=""/>
+                <p>YOUXUAN</p>
+            </div>
+            <div class="input-box">
+                <div class="username input-list ">
+                    <span class="fa fa-user"></span>
+                    <input class="login-mailbox" required placeholder="请输入邮箱" name="mailbox"/>
+                </div>
+                <div class="password input-list">
+                    <span class="fa  fa-unlock-alt"></span>
+                    <input class="login-password" required type="password" placeholder="请输入密码" name="password"/>
+                </div>
+                <input  class="button go-sign-up" type="button" value="注册"/>
+                <input id="login" class="button" type="submit" value="登录"/>
+            </div>
+        </form>
+    </div>
+</div>

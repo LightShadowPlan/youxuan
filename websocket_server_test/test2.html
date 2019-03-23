@@ -61,7 +61,7 @@
     var mess = document.getElementById("mess");
     var kuang = document.querySelector(".kuang")
     if(window.WebSocket){
-        var ws = new WebSocket('ws://lightshadow.xyz:8001');
+        var ws = new WebSocket('ws://localhost:8001');
 
         ws.onopen = function(e){
             console.log("连接服务器成功");

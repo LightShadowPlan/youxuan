@@ -45,5 +45,5 @@ const server2 = ws.createServer(function(conn){
     conn.on("error", function (code, reason) {
         console.log("异常关闭")
     });
-}).listen(8001);
 
+}).listen(8001);

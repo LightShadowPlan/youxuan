@@ -1,5 +1,6 @@
 const createError = require('http-errors');
 const express = require('express');
+const cors = require('cors');
 const path = require('path');
 const cookieParser = require('cookie-parser'); // 解析cookie
 const logger = require('morgan');
@@ -23,6 +24,12 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());// 解析cookie
+app.use(cors({
+    origin:['http://localhost:9000','http://localhost:9191'],
+    methods:['GET','POST'],
+    optionsSuccessStatus: 200,
+    alloweHeaders:['Conten-Type', 'Authorization']
+}));
 
 // 启用路由工具
 app.use('/', indexRouter);

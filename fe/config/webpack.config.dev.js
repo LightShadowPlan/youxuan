@@ -13,22 +13,16 @@ module.exports = {
   output: {
     filename: '[name].js', // 打包输出文件的名字
     // 输出路径，路径以配置文件为基准的
-    path: PATH.resolve(__dirname, '../dev')
+    path: PATH.resolve(__dirname, '../admin')
   },
-  devServer: { // 开发服务器 http-server（w  b ebserver） 依赖 webpack-dev-server
+  devServer: { // 开发服务器 http-server（webserver） 依赖 webpack-dev-server
     // 让服务器从这两个目录中响应资源
     // contentBase: [PATH.join(__dirname, "../dev"), PATH.join(__dirname, "../public")],
     // 指定服务器从哪里响应资源
-    contentBase: [PATH.join(__dirname, "../dev")],
+    contentBase: [PATH.join(__dirname, "../admin")],
     compress: true,
     host: 'localhost',
     port: 9000,
-    proxy: { // 代理api请求到 api server
-      '/api': {
-        target: 'http://localhost:3000',
-        changeOrigin: true
-      }
-    }
   },
   plugins: [ // 实现某些特定的功能
     // 可以打包html文件 如果实现多页面开发的话，就需要使用多个 HtmlWebpackPlugin
@@ -41,7 +35,7 @@ module.exports = {
     // 将静态资源目录复制到开发输出目录
     new CopyWebpackPlugin([{
       from: PATH.resolve(__dirname, '../static'),
-      to: PATH.resolve(__dirname, '../dev/static')
+      to: PATH.resolve(__dirname, '../admin/static')
     }])
   ],
   module: {

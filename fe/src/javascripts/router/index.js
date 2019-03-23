@@ -18,6 +18,10 @@ const _init = () => {
     // 开始匹配各个路由
     // 首页
     router.route('/home', position_controller.home)
+    // 物品
+    router.route('/goods', position_controller.goods)
+    //注册信息
+    router.route('/signup', position_controller.signup)
     // 登陆
     router.route('/login', position_controller.login)
     // 404路由
