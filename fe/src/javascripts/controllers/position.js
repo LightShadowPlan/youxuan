@@ -9,6 +9,7 @@ import login_template from '../views/login.html'
 // 404视图
 import fzf_template from '../views/404.html'
 
+import Echarts from './echarts'
 import position_model from '../models/position'
 import admin_model from '../models/admin'
 
@@ -21,27 +22,18 @@ import adminEvent from './admin'
 
 // 首页视图的控制器
 const home = async (req, res, next) => {
-  // let home_html = template.render(home_template,{
-  //     data: _res.data[0]
-  // })
-  // res.render(home_html)
   res.render(home_template)
-  bindHomeEvent()// 给添加按钮绑定事件
-}
-const bindHomeEvent = async (req, res, next) => {
-  $("body").removeClass("large")
+  bodyEvent.little()
   bodyEvent.show_admin()
+  Echarts.showData()
   toast('加载完成')
 }
+
 // 物品视图的控制器
 const goods = async (req, res, next) => {
   res.render(goods_template)
-  bindGoodsEvent()// 给添加按钮绑定事件
-}
-const bindGoodsEvent = async () => {
   bodyEvent.show_admin()
 }
-
 
 // 登陆视图的控制器
 const login = async (req, res, next) => {
@@ -52,13 +44,10 @@ const login = async (req, res, next) => {
 
 // 404视图的控制器
 const fzf = async (req, res, next) => {
-
   res.render(fzf_template)
-  bindFzfEvent()// 给添加按钮绑定事件
+  bodyEvent.large()
 }
-const bindFzfEvent = async () => {
-  $("body").addClass("large")
-}
+
 
 //
 // //图片预览

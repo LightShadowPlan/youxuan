@@ -1,19 +1,16 @@
 import {bus, toast} from '../util'
 // 首页视图
 import home_template from '../views/home.html'
-// 学习用品视图
-import study_template from '../views/study.html'
-// 生活产品视图
-import left_template from '../views/left.html'
-// 数码产品视图
-import digital_template from '../views/digital.html'
+// 闲置馆视图
+import goodsAll_template from '../views/goodsAll.html'
+// 收藏夹视图
+import favorite_template from '../views/favorite.html'
 // 我的视图
 import mine_template from '../views/mine.html'
-
-import bodyEvent  from './bodyEvent'
 // 404视图
 import fzf_template from '../views/404.html'
 
+import bodyEvent  from './bodyEvent'
 import position_model from '../models/position'
 import admin_model from '../models/admin'
 
@@ -56,31 +53,19 @@ const bindHomeEvent = async (req, res, next) => {
     },
   })
 }
-// 学习用品视图的控制器
-const study = async (req, res, next) => {
-  res.render(study_template)
-  bindStudyEvent()// 给添加按钮绑定事件
+
+// 闲置馆视图的控制器
+const goodsAll = async (req, res, next) => {
+  res.render(goodsAll_template)
   bodyEvent.url()
-}
-const bindStudyEvent = async () => {
+  bodyEvent.goodsAllSelect()
 
 }
-// 生活用品视图的控制器
-const left = async (req, res, next) => {
-  res.render(left_template)
-  bindeLeftEvent()// 给添加按钮绑定事件
-  bodyEvent.url()
-}
-const bindeLeftEvent = async () => {
 
-}
-// 数码用品视图的控制器
-const digital = async (req, res, next) => {
-  res.render(digital_template)
-  bindDigitalEvent()// 给添加按钮绑定事件
+// 收藏夹视图的控制器
+const favorite = async (req, res, next) => {
+  res.render(favorite_template)
   bodyEvent.url()
-}
-const bindDigitalEvent = async () => {
 
 }
 
@@ -127,9 +112,8 @@ const fzf = async (req, res, next) => {
 
 export default {
   home,
-  study,
-  left,
-  digital,
+  goodsAll,
   mine,
+  favorite,
   fzf,
 }

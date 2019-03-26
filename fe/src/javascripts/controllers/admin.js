@@ -1,4 +1,5 @@
 import {bus, toast} from '../util'
+import bodyEvent from './bodyEvent'
 
 // model
 import admin_model from '../models/admin'
@@ -8,7 +9,7 @@ import qs from 'querystring'
 
 const loginEvent = async () => {
   //进入登录页面，隐藏头部与侧边栏
-  $("body").addClass("large")
+  bodyEvent.large()
   //清除token
   localStorage.token = ''
   //登录页跳转注册页

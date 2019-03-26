@@ -16,12 +16,10 @@ const _init = () => {
   // 开始匹配各个路由
   // 首页
   router.route('/home', position_controller.home)
-  // 学习用品
-  router.route('/study', position_controller.study)
-  //生活产品
-  router.route('/left', position_controller.left)
-  // 数码产品
-  router.route('/digital', position_controller.digital)
+  //闲置馆
+  router.route('/goodsAll', position_controller.goodsAll)
+  //闲置馆
+  router.route('/favorite', position_controller.favorite)
   // 我的
   router.route('/mine', position_controller.mine)
   // 404路由

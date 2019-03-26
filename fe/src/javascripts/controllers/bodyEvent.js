@@ -44,6 +44,7 @@ const sidebarEvent = () => {
 }
 
 //----------------------------------------------------------------
+//侧边栏选中状态
 const show_admin = (hash) => {
   let admin = JSON.parse(localStorage.admin)
   $('.admin-photo').attr('src', admin.headPortrait)
@@ -65,9 +66,18 @@ const show_admin = (hash) => {
   active.parent().parent().find('p').addClass('active')
 }
 
+//页面状态
+const large = () => {
+  $("body").addClass("large")
+}
+const little = () => {
+  $("body").removeClass("large")
+}
 
 export default {
   headEvent,
   sidebarEvent,
   show_admin,
+  large,
+  little
 }

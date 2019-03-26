@@ -22,6 +22,7 @@ let GoodsModel = mongoose.model('goods', new mongoose.Schema({
   goodsContent: String,
   goodsPhoto: Array,
   goodsState: Number,
+  goodsType: String,
   goodComment: [{
     userId: String,
     nickname: String,
@@ -45,6 +46,48 @@ let TransactionsModel = mongoose.model('transactions', new mongoose.Schema({
   addTime: Date
 }));
 
+
+//数据统计数据库
+let DataStatisticsModel = mongoose.model('data_statistics', new mongoose.Schema({
+  pageView: [{
+    time: String,
+    number: Number
+  }],
+  user: [{
+    time: String,
+    number: Number
+  }],
+  goods: [{
+    time: String,
+    number: Number
+  }],
+  userClass: {
+    user: Number,
+    seller: Number,
+    purchaser: Number,
+    sellerPurchaser: Number
+  },
+  goodsClass: {
+    book: Number,
+    penOrTool: Number,
+    cosmetics: Number,
+    dailyNecessities: Number,
+    ball: Number,
+    bicycle: Number,
+    phone: Number,
+    electronics: Number
+  },
+  supplyDemand: [{
+    goodsClass: String,
+    supply: Number,
+    demand: Number
+  }],
+  transactions: [{
+    time: String,
+    number: Number
+  }],
+  addTime: Date
+}));
 
 /**
  * 添加消息
@@ -200,6 +243,62 @@ const removeTransactions = async (body) => {
   })
 }
 
+/**
+ * 添加数据分析
+ */
+const addDataStatistics = async (body) => {
+  return DataStatisticsModel({
+    ...body,
+    addTime: Date.now(),
+  }).save(
+
+  ).then((res) => {
+    return res.mailbox
+  }).catch(() => {
+    return false
+  })
+}
+/**
+ * 查询数据分析
+ */
+const selectDataStatistics = async (body) => {
+  return DataStatisticsModel.find(
+    body
+  ).then((res) => {
+    return res
+  }).catch(() => {
+    return false
+  })
+}
+/**
+ *更新数据分析
+ */
+const updateDataStatistics = async (body) => {
+  return DataStatisticsModel.updateOne(
+    {
+      _id: body._id
+    },
+    body
+  ).then((res) => {
+    return res
+  }).catch(() => {
+    return false
+  })
+}
+
+/**
+ * 删除数据分析
+ */
+const removeDataStatistics = async (body) => {
+  return DataStatisticsModel.deleteOne(
+    body
+  ).then((res) => {
+    return res
+  }).catch(() => {
+    return false
+  })
+}
+
 module.exports = {
   addMessage,
   selectMessage,
@@ -211,5 +310,9 @@ module.exports = {
   addTransactions,
   selectTransactions,
   updateTransactions,
-  removeTransactions
+  removeTransactions,
+  addDataStatistics,
+  selectDataStatistics,
+  updateDataStatistics,
+  removeDataStatistics
 }

@@ -8,7 +8,19 @@
     $('.nva-box a').removeClass('active')
     active.addClass('active')
   }
+  const goGoods = () => {
+
+  }
+
+  const goodsAllSelect = () => {
+    $('.search-goods-box').on('click', 'li', function() {
+        $(this).addClass('active').siblings().removeClass('active')
+    })
+  }
+
 
   export default {
-    url
+    url,
+    goGoods,
+    goodsAllSelect
   }

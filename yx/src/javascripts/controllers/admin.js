@@ -21,15 +21,15 @@ const loginEvent = async () => {
   })
 
   function go_login() {
-    $(".login").addClass("showing")
-    $(".sign-up").removeClass("showing")
-    $(".filter").removeClass("filter-o")
+    $(".login-show").addClass("show-box")
+    $(".sign-up-show").removeClass("show-box")
+    $(".default-show").removeClass("show-box")
   }
 
   function go_sign_up() {
-    $(".login").removeClass("showing")
-    $(".sign-up").addClass("showing")
-    $(".filter").addClass("filter-o")
+    $(".login-show").removeClass("show-box")
+    $(".default-show").removeClass("show-box")
+    $(".sign-up-show").addClass("show-box")
   }
 
   //登录页
@@ -188,14 +188,13 @@ const loginEvent = async () => {
 
 const navEvent = () => {
   let _index = 0
-  $('.mine-nav li').on('click', function() {
+  $('.mine-nav').on('click', 'li', function() {
     $('.mine-nav li').removeClass('show-box')
     $(this).addClass('show-box')
     _index = $(this).index()
     $('.mine-box > div').removeClass('show-box')
     $('.mine-box > div').eq(_index).addClass('show-box')
   })
-
 }
 
 export default {
