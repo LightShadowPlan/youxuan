@@ -36,6 +36,7 @@ let UserModel = mongoose.model('users', new mongoose.Schema({
   mailbox: String,
   password: String,
   nickname: String,
+  gender: String,
   headPortrait: String,
   contactWay: String,
   state: String,
@@ -52,6 +53,9 @@ let UserModel = mongoose.model('users', new mongoose.Schema({
   addTime: Date
 }));
 
+let defaultsNickname = '科院小院'
+let defaultGender = 'male'
+let defaultsPhoto = 'https://lightshadow.xyz/youxuan/index/static/images/photo.png'
 
 /**
  * 添加注册信息
@@ -101,6 +105,9 @@ const addAccount = async (body) => {
   body.authority = 0
   return AccountModel({
     ...body,
+    headPortrait: defaultsPhoto,
+    nickname: defaultsNickname,
+    gender: defaultGender,
     addTime: Date.now(),
   }).save(
 
@@ -162,6 +169,9 @@ const addUser = async (body) => {
   body.authority = 0
   return UserModel({
     ...body,
+    headPortrait: defaultsPhoto,
+    nickname: defaultsNickname,
+    gender: defaultGender,
     addTime: Date.now(),
   }).save(
 

@@ -1,34 +1,24 @@
-
 const app = require('../app');
 const debug = require('debug')('back-end:server');
 const http = require('http');
+const fs = require('fs');
+const https = require('https');
 
-// 端口
-const port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
+const privateKey = fs.readFileSync('./ssl/0_lightshadow.xyz.key', 'utf8');
 
-const server1 = http.createServer(app);
+const certificate = fs.readFileSync('./ssl/1_lightshadow.xyz_bundle.pem', 'utf8');
 
-server1.listen(port);
-server1.on('error', onError);
-server1.on('listening', onListening);
+const credentials = {key: privateKey, cert: certificate};
 
-// 处理端口
-function normalizePort(val) {
-  let port = parseInt(val, 10);
+const httpserver = http.createServer(app);
+const httpsServer = https.createServer(credentials, app);
 
-  if (isNaN(port)) {
-    // named pipe
-    return val;
-  }
+httpserver.listen(3000);
+httpserver.on('error', onError);
 
-  if (port >= 0) {
-    // port number
-    return port;
-  }
+httpsServer.listen(3443);
+httpsServer.on('error', onError);
 
-  return false;
-}
 
 function onError(error) {
   if (error.syscall !== 'listen') {
@@ -51,12 +41,4 @@ function onError(error) {
     default:
       throw error;
   }
-}
-
-function onListening() {
-  let addr = server1.address();
-  let bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
-  debug('Listening on ' + bind);
 }

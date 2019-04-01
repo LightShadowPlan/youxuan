@@ -66,15 +66,15 @@ const goodsAll = async (req, res, next) => {
 const favorite = async (req, res, next) => {
   res.render(favorite_template)
   bodyEvent.url()
-
+ bodyEvent.delectGoods()
 }
 
 // 我的视图的控制器
 const mine = async (req, res, next) => {
   res.render(mine_template)
   adminEvent.loginEvent()
-  adminEvent.navEvent()
   bodyEvent.url()
+  bodyEvent.delectGoods()
 }
 
 // 404视图的控制器

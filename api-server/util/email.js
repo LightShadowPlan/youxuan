@@ -36,7 +36,7 @@ const verificationMail = (addressee,content) => {
     from: "2103875834@qq.com", // 发送者
     to: addressee, // 接受者,可以同时发送多个,以逗号隔开
     subject: "优选商城管理系统账号注册验证", // 标题
-    text: "点击验证", // 文本
+    text: "获取验证码", // 文本
     html: `
         <style>p{height: 40px;line-height: 40px;font-size: 18px;}</style>
         <p>你好 ${addressee}</p>

@@ -10,8 +10,8 @@ import qs from 'querystring'
 const loginEvent = async () => {
   //进入登录页面，隐藏头部与侧边栏
   bodyEvent.large()
-  //清除token
-  localStorage.token = ''
+  //清除用户记录
+  localStorage.account = ''
   //登录页跳转注册页
   $(".go-sign-up").on("click", () => {
     go_sign_up()
@@ -36,7 +36,7 @@ const loginEvent = async () => {
   //登录页
   let LoginSubmitFlag = 0
   $('.login-box').on('submit', '#login-form', async function (e) {
-//阻止浏览器默认事
+//阻止浏览器默认事件
     e.preventDefault() ? e.preventDefault() : e.returnValue = false
     //邮箱格式验证
     LoginSubmitFlag ? '' : !/[a-zA-z0-9]+@[a-zA-z0-9]+\.[a-z]+/.test($('.login-mailbox').val()) ? LoginSubmitFlag = 1 : ''
@@ -70,8 +70,8 @@ const loginEvent = async () => {
             toast('账号或密码错误', 'error', 1500);
             break;
           default:
-            //登录成功，存入token
-            localStorage.admin = JSON.stringify(_result.data)
+            //登录成功，存入用户信息
+            localStorage.account = JSON.stringify(_result.data)
             bus.emit('go', '/home')
             break;
         }

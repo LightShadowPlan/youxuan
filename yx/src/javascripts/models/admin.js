@@ -13,10 +13,10 @@ const addSignUp = (data) => {
   })
 }
 
-//注册内部账号
-const addAccount = (data) => {
+//注册用户账号
+const addUser = (data) => {
   return $.ajax({
-    url: 'http://localhost:3000/api/admin/addAccount',
+    url: 'http://localhost:3000/api/admin/addUser',
     type: 'post',
     data,
     success: (results) => {
@@ -24,10 +24,10 @@ const addAccount = (data) => {
     }
   })
 }
-//查询内部账号
-const loginAccount = (data) => {
+//登录查询用户账号
+const loginUser = (data) => {
   return $.ajax({
-    url: 'http://localhost:3000/api/admin/loginAccount',
+    url: 'http://localhost:3000/api/admin/loginUser',
     type: 'post',
     data,
     success: (results) => {
@@ -38,7 +38,7 @@ const loginAccount = (data) => {
 
 export default {
   addSignUp,
-  addAccount,
-  loginAccount
+  addUser,
+  loginUser
 
 }
