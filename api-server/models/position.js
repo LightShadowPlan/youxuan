@@ -11,7 +11,7 @@ let MessageModel = mongoose.model('messages', new mongoose.Schema({
   sender: String,
   receiver: String,
   content: String,
-  start: String,
+  start: Number,
   addTime: Date
 }));
 
@@ -21,8 +21,7 @@ let GoodsModel = mongoose.model('goods', new mongoose.Schema({
   goodsPrice: Number,
   goodsContent: String,
   goodsPhoto: Array,
-  goodsState: Number,
-  goodsType: String,
+  goodsClass: String,
   goodComment: [{
     userId: String,
     nickname: String,
@@ -30,10 +29,7 @@ let GoodsModel = mongoose.model('goods', new mongoose.Schema({
     comment: String,
     addTime: Date
   }],
-  goodsAuction: [{
-    purchaser: String,
-    headPortrait: String
-  }],
+  state: Number,
   seller: String,
   transaction: String,
   addTime: Date
@@ -43,6 +39,8 @@ let GoodsModel = mongoose.model('goods', new mongoose.Schema({
 let TransactionsModel = mongoose.model('transactions', new mongoose.Schema({
   seller: String,
   purchaser: String,
+  state: Number,
+  goodsId: String,
   addTime: Date
 }));
 

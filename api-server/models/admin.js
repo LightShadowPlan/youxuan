@@ -20,15 +20,10 @@ let AccountModel = mongoose.model('accounts', new mongoose.Schema({
   nickname: String,
   headPortrait: String,
   authority: Number,
-  state: String,
+  state: Number,
   message: Array,
-  notification: [{
-    sender: String,
-    receiver: String,
-    content: String,
-    addTime: Date
-  }],
-  addTime: Date
+  addTime: Date,
+  formatTime: String
 }));
 
 // 用户账号数据库
@@ -38,19 +33,18 @@ let UserModel = mongoose.model('users', new mongoose.Schema({
   nickname: String,
   gender: String,
   headPortrait: String,
-  contactWay: String,
-  state: String,
+  contactWay: {
+    qq: String,
+    wechat: String,
+    phoneNumber: String
+  },
+  state: Number,
   message: Array,
-  notification: [{
-    sender: String,
-    receiver: String,
-    content: String,
-    addTime: Date
-  }],
   sellGoods: Array,
   purchaserGoods: Array,
   favorite: Array,
-  addTime: Date
+  addTime: Date,
+  formatTime: String
 }));
 
 let defaultsNickname = '科院小院'
@@ -103,12 +97,15 @@ const removeSignUp = async (body) => {
  */
 const addAccount = async (body) => {
   body.authority = 0
+  let _timestamp = Date.now()
+  let moment = Moment(_timestamp)
   return AccountModel({
     ...body,
     headPortrait: defaultsPhoto,
     nickname: defaultsNickname,
     gender: defaultGender,
     addTime: Date.now(),
+    formatTime: moment.format("YYYY-MM-DD  hh:mm")
   }).save(
 
   ).then((res) => {
@@ -167,12 +164,20 @@ const removeAccount = async (body) => {
  */
 const addUser = async (body) => {
   body.authority = 0
+  let _timestamp = Date.now()
+  let moment = Moment(_timestamp)
   return UserModel({
     ...body,
     headPortrait: defaultsPhoto,
     nickname: defaultsNickname,
     gender: defaultGender,
-    addTime: Date.now(),
+    contactWay: {
+      qq: '无',
+      wechat: '无',
+      phoneNumber: '无'
+    },
+    addTime: _timestamp,
+    formatTime: moment.format("YYYY-MM-DD  hh:mm")
   }).save(
 
   ).then((res) => {
@@ -201,7 +206,7 @@ const selectUser = async (body) => {
  *更新用户
  */
 const updateUser = async (body) => {
-  return AccountModel.update(
+  return UserModel.updateOne(
     {
       _id: body._id
     },
@@ -225,7 +230,6 @@ const removeUser = async (body) => {
     return false
   })
 }
-
 
 
 module.exports = {

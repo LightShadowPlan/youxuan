@@ -5,7 +5,8 @@ const url = require('url')
 const {handleData, sendMail, verificationMail, verificationCode} = require('../util')
 const admin = require('../models/admin')
 const {hash, token} = require('../util/token')
-
+const fs = require('fs')
+const Path = require('path')
 /**
  * 添加注册信息
  */
@@ -39,9 +40,9 @@ const addSignUp = async (req, res) => {
       verificationMail(req.body.mailbox, Code)
     }
   }
-  if(type === 'account') {
+  if (type === 'account') {
     await selectAccount(_req, res, selectWay)
-  } else{
+  } else {
     await selectUser(_req, res, selectWay)
   }
 }
@@ -124,7 +125,7 @@ const selectAccount = async (req, res, callback) => {
  * 更新管理人员
  */
 const updateAccount = async (req, res) => {
-  let _data = await admin.updateAccount(req.query)
+  let _data = await admin.updateAccount(req.body)
   handleData(_data, res, 'position')
 }
 
@@ -148,7 +149,7 @@ const loginAccount = async (req, res) => {
       //生成token存入要发送的数据中
       let _token = token.createToken({
         'mailbox': _data.mailbox
-      }, 3600)
+      }, 7200)
       _data.token = _token
       handleData(_data, res, 'position')
     } else {
@@ -204,7 +205,7 @@ const addUser = async (req, res) => {
  * 查询用户
  */
 const selectUser = async (req, res, callback) => {
-  let _data = await admin.selectUser(req.query)
+  let _data = await admin.selectUser(req.body)
   if (callback.name !== 'next') {
     callback(_data)
   } else {
@@ -213,11 +214,48 @@ const selectUser = async (req, res, callback) => {
 }
 
 /**
- * 更新用户
+ * 更新用户个人信息
  */
 const updateUser = async (req, res) => {
-  let _data = await admin.updateUser(req.body)
-  handleData(_data, res, 'position')
+
+  let _token = await token.checkToken(req.body.userToken)
+  delete req.body.userToken
+  if (_token) {
+    req.body._id = _token.data._id
+    //联系方式
+    req.body.contactWay = {
+      qq: req.body.qq,
+      wechat: req.body.wechat,
+      phoneNumber: req.body.phoneNumber
+    }
+    delete req.body.qq
+    delete req.body.wechat
+    delete req.body.phoneNumber
+    //判断是否更新图片
+    if (req.body.headPortrait === '') {
+      delete req.body.headPortrait
+    } else {
+      fs.unlink(Path.resolve(__dirname, '../../yx/' + req.body.old_headPortrait), (err) => {
+      })
+    }
+    delete req.body.old_headPortrait
+    //查询最新数据，并返回
+    console.log('req.body:', req.body);
+    let _data = await admin.updateUser(req.body)
+    console.log('_data:', _data);
+    if (_data.nModified > 0) {
+      await selectUser(req, res, function (data) {
+        console.log('select:', data);
+        handleData(data, res, 'position')
+      })
+    } else {
+      handleData(_data, res, 'position')
+    }
+  } else{
+    handleData(205, res, 'position')
+  }
+
+
 }
 
 /**
@@ -240,8 +278,9 @@ const loginUser = async (req, res) => {
       let _data = JSON.parse(JSON.stringify(data[0]))
       //生成token存入要发送的数据中
       let _token = token.createToken({
+        '_id': _data._id,
         'mailbox': _data.mailbox
-      }, 3600)
+      }, 7200)
       _data.token = _token
       handleData(_data, res, 'position')
     } else {

@@ -29,7 +29,7 @@ const token = {
     let obj2 = {
       data: obj,
       created: parseInt(Date.now() / 1000),//token生成的时间的，单位秒
-      exp: parseInt(timeout) || 1800//token有效期
+      exp: parseInt(timeout) || 7200//token有效期
     };
     //header + payload信息
     let header = Buffer.from(JSON.stringify(obj1), "utf8").toString("base64");

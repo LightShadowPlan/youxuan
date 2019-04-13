@@ -22,8 +22,11 @@ const _init = () => {
   router.route('/favorite', position_controller.favorite)
   // 我的
   router.route('/mine', position_controller.mine)
+  //物品详情
+  router.route('/goods', position_controller.goods)
   // 404路由
   router.route('/404', position_controller.fzf)
+
 
   //上面的没有匹配到就会跳转404路由或者首页
   router.route('*', (req, res, next) => {

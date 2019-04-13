@@ -6,15 +6,15 @@ var nodemailer = require("nodemailer");
 var transporter = nodemailer.createTransport({
   service: "QQ",
   auth: {
-    user: "2103875834@qq.com",
-    pass: "idmxrijuuzbwbbhg"
+    user: "2136506491@qq.com",
+    pass: "uukxgvxrakavfdbe"
   }
 });
 
 
 const sendMail = (addressee, content) => {
   let mailOptions = {
-    from: "2103875834@qq.com", // 发送者
+    from: "2136506491@qq.com", // 发送者
     to: addressee, // 接受者,可以同时发送多个,以逗号隔开
     subject: content.title, // 标题
     text: content.text, // 文本
@@ -33,14 +33,14 @@ const sendMail = (addressee, content) => {
 
 const verificationMail = (addressee,content) => {
   let mailOptions = {
-    from: "2103875834@qq.com", // 发送者
+    from: "2136506491@qq.com", // 发送者
     to: addressee, // 接受者,可以同时发送多个,以逗号隔开
     subject: "优选商城管理系统账号注册验证", // 标题
     text: "获取验证码", // 文本
     html: `
         <style>p{height: 40px;line-height: 40px;font-size: 18px;}</style>
         <p>你好 ${addressee}</p>
-        <p>欢迎注册优选后台，请将验证码填写到注册页面。</p> 
+        <p>欢迎加入优选商城，请将验证码填写到注册页面。</p> 
         <p>验证码：${content}</p>
     `,
   };

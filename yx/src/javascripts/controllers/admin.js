@@ -3,31 +3,20 @@ import {bus, toast} from '../util'
 // model
 import admin_model from '../models/admin'
 
+import sell_html from '../views/sell-box.html'
+import purchaser_html from '../views/purchase-box.html'
+import account_html from '../views/account-box.html'
+
 //解析路径
 import qs from 'querystring'
 
 const loginEvent = async () => {
-
-  let flag = true
-  //让父元素的高度等于最高子元素的高度
-  $('.mine-box').height($('.mine-box .show-box').height())
-  //
-  let _index = 0
-  //我的 出售/购买/我的信息 之间进行切换
-  $('.mine-nav').on('click', 'li', function () {
-    $('.mine-nav li').removeClass('show-box')
-    $(this).addClass('show-box')
-    _index = $(this).index()
-    $('.mine-box > div').removeClass('show-box')
-    $('.mine-box > div').eq(_index).addClass('show-box')
-    $('.mine-box').height($('.mine-box .show-box').height())
-  })
   if (localStorage.user) {
     go_mine_show()
-  } else{
+  } else {
     go_default()
   }
-
+  let flag = true
   //默认页/登录页/注册页
   //跳转注册页
   $(".go-sign-up").on("click", () => {
@@ -38,6 +27,7 @@ const loginEvent = async () => {
     go_login()
   })
 
+  $('.account-box').height($('.account-box .show-box').height())
 
   //跳转到登录页面
   function go_login() {
@@ -74,6 +64,15 @@ const loginEvent = async () => {
           let _result = await admin_model.loginUser(qs.parse(_params))
           LoginSubmitFlag = 0
           switch (_result.status) {
+            case 200:
+              //登录成功，存入数据，包括token
+              localStorage.userToken = _result.data.token
+              delete _result.data.token
+              localStorage.user = JSON.stringify(_result.data)
+
+              $('.login-show .input').val("")
+              go_mine_show()
+              break;
             case 500:
               toast('操作失败，服务器出现问题', 'error');
               break;
@@ -81,10 +80,7 @@ const loginEvent = async () => {
               toast('账号或密码错误', 'error', 1500);
               break;
             default:
-              //登录成功，存入token
-              localStorage.user = JSON.stringify(_result.data)
-              $('.login-show .input').val("")
-              go_mine_show()
+              toast('未知错误', 'error');
               break;
           }
           break;
@@ -97,6 +93,15 @@ const loginEvent = async () => {
   function go_sign_up() {
     $('.account-box > div').removeClass("show-box")
     $(".sign-up-show").addClass("show-box")
+
+    //输入旧的时间点（oldTime），相隔时间（times/秒），返回剩余时间
+    function checkTime(oldTime, times) {
+      let d = new Date()
+      oldTime = parseInt(oldTime.getTime() / 1000)
+      let newTime = parseInt(d.getTime() / 1000)
+      //计算距离下一次发送的时间
+      return times - (newTime - oldTime)
+    }
 
     //注册页
     let signUPSubmitFlag = 0
@@ -140,6 +145,11 @@ const loginEvent = async () => {
           let _result = await admin_model.addUser(qs.parse(_params))
           signUPSubmitFlag = 0
           switch (_result.status) {
+            case 200:
+              toast('注册成功', 'success');
+              $('.sign-up-show .input').val("")
+              go_login()
+              break;
             case 500:
               toast('操作失败，服务器出现问题', 'error');
               break;
@@ -153,9 +163,7 @@ const loginEvent = async () => {
               toast('验证码过期', 'error');
               break;
             default:
-              toast('注册成功', 'success');
-              $('.sign-up-show .input').val("")
-              go_login()
+              toast('未知错误', 'error');
               break;
           }
           break;
@@ -194,11 +202,8 @@ const loginEvent = async () => {
           }
         } else {
           //获取当前时间
-          let d = new Date()
-          let oldTime = parseInt(time1.getTime() / 1000)
-          let newTime = parseInt(d.getTime() / 1000)
           //计算距离下一次发送的时间
-          let times = 60 - (newTime - oldTime)
+          let times = checkTime(time1, 60)
           toast(`请${times}秒后在获取`, 'success', 1500)
         }
       } else {
@@ -218,40 +223,112 @@ const loginEvent = async () => {
     //显示页面
     $('.account-box > div').removeClass("show-box")
     $(".mine-show").addClass("show-box")
+
     //获取信息
-    let user = JSON.parse(localStorage.user)
-    console.log(user);
+    function show_user() {
+      //获取本地数据
+      let user = JSON.parse(localStorage.user)
+      console.log('user:', user);
+      let userToken = localStorage.userToken
+      console.log('token:', userToken);
+      //将数据导入表单
+      $('.mail-box p').html(user.mailbox)
+      user.gender === 'male' ? maleSelect() : femaleSelece()
+      $('.nickname input').val(user.nickname)
+      $('.user-token').val(userToken)
+      $('.user-old-headPortrait').val(user.headPortrait)
+      $('.contact-way input').eq(0).val(user.contactWay.qq)
+      $('.contact-way input').eq(1).val(user.contactWay.wechat)
+      $('.contact-way input').eq(2).val(user.contactWay.phoneNumber)
+      $('.photo-box img').attr({'src': '../' + user.headPortrait})
+    }
+
+    show_user()
+
     //修改信息
-    $('.user-submit[type=button]').on('click', function () {
-      $(this).html('确认更改')
-      $('.user-box .input-box').addClass('active')
-      $('.user-box .input-box input').removeAttr('disabled')
-      setTimeout(function(){
-        $(this).attr({'type': 'submit'})
-      },100)
+    let submitFlag = 0
+    $('.user-submit').on('click', function (e) {
+      //修改信息
+      if (!submitFlag) {
+        $('.user-submit').html('确认修改')
+        $('.user-box .input-box').addClass('active')
+        $('#user input').removeAttr('disabled')
+        setTimeout(function () {
+          $('.user-submit').attr({'type': 'submit'})
+        }, 100)
+        submitFlag = 1
+      }
     })
-    //确认更改信息
-    $('.user-submit[type=submit]').on('click', function () {
-      $(this).html('编辑信息')
-      $(this).attr({'type': 'button'})
-      $('.user-box .input-box').removeClass('active')
-      $('.user-box .input-box input').attr(({'disabled': ''}))
-
+    $('#user').on('submit', async function (e) {
+      e.preventDefault()
+      let _result = await admin_model.updateUser()
+      if (_result.status === 200) {
+        submitFlag = 0
+        $('.user-submit').html('编辑信息')
+        $('.user-box .input-box').removeClass('active')
+        $('#user input').attr(({'disabled': ''}))
+        setTimeout(function () {
+          $('.user-submit').attr({'type': 'button'})
+        }, 100)
+        console.log('_result:', _result);
+        if (Object.prototype.toString.call(_result.data) === '[object Array]') {
+          console.log('Array');
+          localStorage.user = JSON.stringify(_result.data[0])
+          show_user()
+        } else {
+          console.log('Object');
+        }
+        toast('保存成功')
+      } else if (_result.status === 205) {
+          toast('token失效，请重新登录', 'error')
+      } else {
+        toast('保存失败，请重新再试', 'error')
+      }
     })
 
+    lookPic($('.headPortrait-file'), $('.headPortrait'))
+
+    //图片预览
+    function lookPic(options, imgOptions) {
+      options.on('change', function () {
+        previewImage(options[0])
+      });
+
+      function previewImage(file) {
+        if (file.files && file.files[0]) {
+          let reader = new FileReader()
+          //读取为dataURL格式
+          reader.readAsDataURL(file.files[0])
+          //读取完成时
+          reader.onload = function (evt) {
+            imgOptions.attr({'src': evt.target.result})
+          }
+        }
+      }
+    }
+
+
+    //性别选择
     $('#male').on('click', function () {
-      console.log('ok');
-      $(this).addClass('active')
+      maleSelect()
+    })
+    $('#female').on('click', function () {
+      femaleSelece()
+    })
+
+    function maleSelect() {
+      $('#male').addClass('active')
       $('#male + lable').addClass('active')
       $('#female').removeClass('active')
       $('#female + lable').removeClass('active')
-    })
-    $('#female').on('click', function () {
-      $(this).addClass('active')
+    }
+
+    function femaleSelece() {
+      $('#female').addClass('active')
       $('#female + lable').addClass('active')
       $('#male').removeClass('active')
       $('#male + lable').removeClass('active')
-    })
+    }
 
     //退出登录
     $('.exit').on('click', () => {
@@ -260,10 +337,45 @@ const loginEvent = async () => {
     })
   }
 
+}
 
+const mineEvent = () => {
+  //我的 出售/购买/我的信息 之间进行切换
+  account()
+  $('.mine-nav-sell').on('click', function () {
+    sell()
+  })
+  $('.mine-nav-purchaser').on('click', function () {
+    purchaser()
+  })
+  $('.mine-nav-account').on('click', function () {
+    account()
+  })
+
+  //出售
+  function sell() {
+    $('.mine-nav li').removeClass('show-box')
+    $('.mine-nav-sell').addClass('show-box')
+    $('.mine-box').html(sell_html);
+  }
+
+  //购买
+  function purchaser() {
+    $('.mine-nav li').removeClass('show-box')
+    $('.mine-nav-purchaser').addClass('show-box')
+    $('.mine-box').html(purchaser_html);
+  }
+
+  //我的信息
+  function account() {
+    $('.mine-nav li').removeClass('show-box')
+    $('.mine-nav-account').addClass('show-box')
+    $('.mine-box').html(account_html);
+    loginEvent()
+  }
 }
 
 
 export default {
-  loginEvent
+  mineEvent
 }

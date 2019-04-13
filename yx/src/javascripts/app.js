@@ -5,5 +5,6 @@ import '../stylesheets/app.scss'
 import router from './router'
 
 
+
 // 启动路由
 router.init()

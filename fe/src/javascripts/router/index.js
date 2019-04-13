@@ -16,14 +16,26 @@ const _init = () => {
     router = new SMERouter('router-view')
 
     // 开始匹配各个路由
+    // 登录
+    router.route('/login', position_controller.login)
     // 首页
     router.route('/home', position_controller.home)
     // 物品
     router.route('/goods', position_controller.goods)
-    //注册信息
-    router.route('/signup', position_controller.signup)
-    // 登陆
-    router.route('/login', position_controller.login)
+    //交易管理
+    router.route('/transactions', position_controller.transactions)
+    //数据统计
+    router.route('/dataCount', position_controller.dataCount)
+    //权限管理
+    router.route('/superpowers', position_controller.superpowers)
+    //权限申请管理
+    router.route('/powerApply', position_controller.powerApply)
+    //管理员账号管理
+    router.route('/account', position_controller.account)
+    //用户账号管理
+    router.route('/user', position_controller.user)
+    //个人中心管理
+    router.route('/person', position_controller.person)
     // 404路由
     router.route('/404', position_controller.fzf)
 

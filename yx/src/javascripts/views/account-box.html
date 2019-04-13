@@ -1,0 +1,98 @@
+<div class="account-box">
+    <div class="default-show show-box">
+        <p class="default-title">你还没有登录哦！</p>
+        <p>
+            <span class="go-sign-up">去注册</span>
+            <span class="go-login">去登录</span>
+        </p>
+    </div>
+    <div class="login-show ">
+        <p class="default-title">登录</p>
+        <form method="post" class="form-box" id="login-form">
+            <div class="input-box">
+                <div class="username input-list ">
+                    <span class="fa fa-user"></span>
+                    <input class="input login-mailbox" required placeholder="请输入邮箱" name="mailbox"/>
+                </div>
+                <div class="password input-list">
+                    <span class="fa  fa-unlock-alt"></span>
+                    <input class="input login-password" required type="password" placeholder="请输入密码"
+                           name="password"/>
+                </div>
+                <input class="button go-sign-up" type="button" value="注册"/>
+                <input id="login" class="button" type="submit" value="登录"/>
+            </div>
+        </form>
+    </div>
+    <div class="sign-up-show">
+        <p class="default-title">注册</p>
+        <form method="post" class="form-box" id="sign-up-form">
+            <div class="input-box">
+                <div class="username input-list">
+                    <span class="fa fa-user"></span>
+                    <input required class="input sign-up-mailbox" placeholder="请输入邮箱" name="mailbox"/>
+                </div>
+                <div class="input-list">
+                    <span class="fa fa-paper-plane"></span>
+                    <input required class="input verification" placeholder="请输入验证码" name="verification"/>
+                    <input type="button" value="获取" id="get-verification-code"/>
+                </div>
+                <div class="password input-list">
+                    <span class="fa fa-unlock-alt"></span>
+                    <input class="input sign-up-password" required type="password"
+                           placeholder="请输入密码 / 8-16位数字或字符"
+                           name="password"/>
+                </div>
+                <div class="password input-list">
+                    <span class="fa fa-unlock-alt"></span>
+                    <input class="input r-sign-up-password" required type="password"
+                           placeholder="请确认密码 / 8-16位数字或字符"/>
+                </div>
+                <div class="agree input-list">
+                    <input class="sign-up-agree" type="checkbox" checked/>
+                    <p>勾选此选项表明你已阅读并同意这份 <a href="#">用户协议</a></p>
+                </div>
+                <input class="button go-login" type="button" value="登录"/>
+                <input id="sign-up" class="button" type="submit" value="注册"/>
+            </div>
+        </form>
+    </div>
+    <div class="mine-show">
+        <form method="post" id="user" enctype="multipart/form-data">
+            <div class="photo-box">
+                <input disabled class="headPortrait-file" name="headPortrait" type="file"/>
+                <img class="headPortrait" src="https://lightshadow.xyz/CDN/file/images/photo.png" alt=""/>
+            </div>
+            <div class="user-box">
+                <div class="mail-box">
+                    <span>邮箱：</span>
+                    <p>2103875834@qq.com</p>
+                </div>
+                <div class="gender input-box ">
+                    <span>性别：</span>
+                    <input disabled id="male" class="active" type="radio" name="gender" value="male" checked/>
+                    <lable for="male" class="active fa fa-mars"></lable>
+                    <input disabled id="female" class="" type="radio" name="gender" value="female"/>
+                    <lable for="female" class=" fa fa-venus"></lable>
+                </div>
+                <div class="nickname input-box ">
+                    <span>昵称：</span>
+                    <input class="nickname" disabled type="text" name="nickname" value="科院小院"/>
+                    <input class="user-token" disabled type="text" name="userToken" value=""/>
+                    <input class="user-old-headPortrait" disabled type="text" name="old_headPortrait" value=""/>
+                </div>
+                <div class="contact-way input-box ">
+                    <span>QQ：</span><input disabled type="text" name="qq" value="1982285973"/>
+                    <span c>微信：</span><input disabled type="text" name="wechat" value="xxc13575138401"/>
+                    <span>电话：</span><input disabled type="text" name="phoneNumber" value="13575138401"/>
+                </div>
+            </div>
+            <div class="handle-box">
+                <button type="button" class="exit">退出登录</button>
+                <button type="button" class="remove-user">注销</button>
+                <button type="button" class="user-submit">编辑信息</button>
+                <button type="button" class="change-password">修改密码</button>
+            </div>
+        </form>
+    </div>
+</div>

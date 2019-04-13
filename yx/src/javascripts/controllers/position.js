@@ -1,4 +1,4 @@
-import {bus, toast} from '../util'
+
 // 首页视图
 import home_template from '../views/home.html'
 // 闲置馆视图
@@ -7,15 +7,12 @@ import goodsAll_template from '../views/goodsAll.html'
 import favorite_template from '../views/favorite.html'
 // 我的视图
 import mine_template from '../views/mine.html'
+// 物品详情
+import goods_template from '../views/goods.html'
 // 404视图
 import fzf_template from '../views/404.html'
 
-import bodyEvent  from './bodyEvent'
-import position_model from '../models/position'
-import admin_model from '../models/admin'
-
-//解析路径
-import qs from 'querystring'
+import bodyEvent from './bodyEvent'
 
 //加载事件
 //登录，注册
@@ -32,26 +29,7 @@ const home = async (req, res, next) => {
   bodyEvent.url()
 }
 const bindHomeEvent = async (req, res, next) => {
-  let mySwiper = new Swiper('.swiper-container', {
-    loop: true, // 循环模式选项
-    speed: 500,
-    autoplay: {
-      delay: 5000,
-      disableOnInteraction: false,
-    },
-
-    // 如果需要分页器
-    pagination: {
-      el: '.swiper-pagination',
-      dynamicBullets: true,
-    },
-
-    // 如果需要前进后退按钮
-    navigation: {
-      nextEl: '.swiper-button-next',
-      prevEl: '.swiper-button-prev',
-    },
-  })
+  bodyEvent.swiper()
 }
 
 // 闲置馆视图的控制器
@@ -66,15 +44,22 @@ const goodsAll = async (req, res, next) => {
 const favorite = async (req, res, next) => {
   res.render(favorite_template)
   bodyEvent.url()
- bodyEvent.delectGoods()
+  bodyEvent.delectGoods()
 }
 
 // 我的视图的控制器
 const mine = async (req, res, next) => {
   res.render(mine_template)
-  adminEvent.loginEvent()
+  adminEvent.mineEvent()
   bodyEvent.url()
   bodyEvent.delectGoods()
+}
+
+// 物品详情的控制器
+const goods = async (req, res, next) => {
+  res.render(goods_template)
+  bodyEvent.goods()
+  bodyEvent.swiper()
 }
 
 // 404视图的控制器
@@ -84,36 +69,11 @@ const fzf = async (req, res, next) => {
 
 
 
-//
-// //图片预览
-// function lookPic(options){
-//     let File = function(){
-//         let file = {};
-//         file.previewImage = function(file){
-//             let div = file.parentNode.children[0];
-//             if (file.files && file.files[0])
-//             {
-//                 let img = div.children[0];
-//                 let reader = new FileReader();
-//                 reader.onload = function(evt){img.src = evt.target.result;}
-//                 reader.readAsDataURL(file.files[0]);
-//             }
-//         }
-//         return file;
-//     }();
-//     function initActions() {
-//         options.on('change', function() {
-//             File.previewImage(options[0]);
-//         });
-//     }
-//     initActions()
-// }
-
-
 export default {
   home,
   goodsAll,
   mine,
   favorite,
+  goods,
   fzf,
 }

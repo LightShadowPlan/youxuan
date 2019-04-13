@@ -31,6 +31,9 @@ app.use(cors({
     alloweHeaders:['Conten-Type', 'Authorization']
 }));
 
+// 静态资源处理
+app.use(express.static(path.join(__dirname, 'public')));
+
 // 启用路由工具
 app.use('/', indexRouter);
 app.use('/api/position', positionRouter);

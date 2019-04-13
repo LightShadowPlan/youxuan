@@ -35,10 +35,36 @@ const loginUser = (data) => {
     }
   })
 }
+//查询用户账号
+const selectUser = (data) => {
+  return $.ajax({
+    url: 'http://localhost:3000/api/admin/selectUser',
+    type: 'post',
+    data,
+    success: (results) => {
+      return results
+    }
+  })
+}
+//更新当前账号信息
+const updateUser = () => {
+  return new Promise((resolve) => {
+    $('#user').ajaxSubmit({
+      url: 'http://localhost:3000/api/admin/updateUser',
+      type: 'post',
+      success: (results) => {
+        resolve(results)
+      }
+    })
+  })
+}
+
 
 export default {
   addSignUp,
   addUser,
-  loginUser
+  loginUser,
+  updateUser,
+  selectUser
 
 }
