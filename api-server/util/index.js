@@ -25,6 +25,9 @@ const handleData = (data, res, template, callbacks = {}) => {
       case 204 : response.call(res, {template, code: 204, data: JSON.stringify(data)}); break;
       //token过期
       case 205 : response.call(res, {template, code: 205, data: JSON.stringify(data)}); break;
+      //管理员权限不够
+      case 206 : response.call(res, {template, code: 206, data: JSON.stringify(data)}); break;
+      //默认
       default: response.call(res, {template, code: 200, data: JSON.stringify(data)}); break;
     }
 

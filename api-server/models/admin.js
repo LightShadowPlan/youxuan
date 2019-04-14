@@ -49,7 +49,7 @@ let UserModel = mongoose.model('users', new mongoose.Schema({
 
 let defaultsNickname = '科院小院'
 let defaultGender = 'male'
-let defaultsPhoto = 'https://lightshadow.xyz/youxuan/index/static/images/photo.png'
+let defaultsPhoto = 'static/images/photo.png'
 
 /**
  * 添加注册信息
@@ -96,7 +96,7 @@ const removeSignUp = async (body) => {
  * 添加管理人员
  */
 const addAccount = async (body) => {
-  body.authority = 0
+  body.authority = 2
   let _timestamp = Date.now()
   let moment = Moment(_timestamp)
   return AccountModel({

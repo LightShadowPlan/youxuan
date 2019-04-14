@@ -86,6 +86,18 @@ const changeUserPassword = (data) => {
   })
 }
 
+//注销用户
+const removeUser = (data) => {
+  return $.ajax({
+    url: 'http://localhost:3000/api/admin/removeUser',
+    type: 'post',
+    data,
+    success: (results) => {
+      return results
+    }
+  })
+}
+
 
 export default {
   addSignUp,
@@ -94,6 +106,7 @@ export default {
   updateUser,
   selectUser,
   changeUserPassword,
-  getByToken
+  getByToken,
+  removeUser
 
 }

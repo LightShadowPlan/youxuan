@@ -233,7 +233,7 @@ const updateUser = async (req, res) => {
     delete req.body.wechat
     delete req.body.phoneNumber
     //判断是否更新图片
-    if (req.body.headPortrait === '') {
+    if (req.body.headPortrait === '' || req.body.old_headPortrait === 'static/images/photo.png') {
       delete req.body.headPortrait
     } else {
       fs.unlink(Path.resolve(__dirname, '../../yx/' + req.body.old_headPortrait), (err) => {
@@ -258,8 +258,34 @@ const updateUser = async (req, res) => {
  * 删除用户
  */
 const removeUser = async (req, res) => {
-  let _data = await admin.removeUser(req.body)
-  handleData(_data, res, 'position')
+  if (req.body.accountToken && req.body._id) {
+    let _accountToken = await token.checkToken(req.body.accountToken)
+    if (_accountToken) {
+      let user_id = req.body._id
+      let account_id = _accountToken._id
+      let account_data = await admin.selectAccount({'_id': account_id})
+      if (account_data.length > 0 && account_data[0].authority >= 2) {
+        let user_data = await admin.removeUser({'_id': user_id})
+        console.log('user_data:',user_data);
+        handleData(user_data, res, 'position')
+      } else{
+        handleData(206, res, 'position')
+      }
+    } else {
+      handleData(205, res, 'position')
+    }
+  } else {
+    let _userToken = await token.checkToken(req.body.userToken)
+    if (_userToken) {
+      let user_id = _userToken.data._id
+      let user_data = await admin.removeUser({'_id': user_id})
+      console.log('_data:', user_data);
+      handleData(user_data, res, 'position')
+    } else {
+      handleData(205, res, 'position')
+    }
+  }
+
 }
 
 /**
