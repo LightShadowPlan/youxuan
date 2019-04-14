@@ -24,6 +24,7 @@ const addUser = (data) => {
     }
   })
 }
+
 //登录查询用户账号
 const loginUser = (data) => {
   return $.ajax({
@@ -35,6 +36,7 @@ const loginUser = (data) => {
     }
   })
 }
+
 //查询用户账号
 const selectUser = (data) => {
   return $.ajax({
@@ -46,7 +48,8 @@ const selectUser = (data) => {
     }
   })
 }
-//更新当前账号信息
+
+//更新用户账号信息
 const updateUser = () => {
   return new Promise((resolve) => {
     $('#user').ajaxSubmit({
@@ -59,12 +62,38 @@ const updateUser = () => {
   })
 }
 
+//token获取数据
+const getByToken = (data) => {
+  return $.ajax({
+    url: 'http://localhost:3000/api/admin/getByToken',
+    type: 'post',
+    data,
+    success: (results) => {
+      return results
+    }
+  })
+}
+
+//更改用户密码
+const changeUserPassword = (data) => {
+  return $.ajax({
+    url: 'http://localhost:3000/api/admin/changeUserPassword',
+    type: 'post',
+    data,
+    success: (results) => {
+      return results
+    }
+  })
+}
+
 
 export default {
   addSignUp,
   addUser,
   loginUser,
   updateUser,
-  selectUser
+  selectUser,
+  changeUserPassword,
+  getByToken
 
 }

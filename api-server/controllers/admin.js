@@ -198,8 +198,8 @@ const addUser = async (req, res) => {
     }
   })
 
-
 }
+
 
 /**
  * 查询用户
@@ -212,6 +212,7 @@ const selectUser = async (req, res, callback) => {
     handleData(_data, res, 'position')
   }
 }
+
 
 /**
  * 更新用户个人信息
@@ -240,18 +241,13 @@ const updateUser = async (req, res) => {
     }
     delete req.body.old_headPortrait
     //查询最新数据，并返回
-    console.log('req.body:', req.body);
     let _data = await admin.updateUser(req.body)
-    console.log('_data:', _data);
     if (_data.nModified > 0) {
-      await selectUser(req, res, function (data) {
-        console.log('select:', data);
-        handleData(data, res, 'position')
-      })
+      returnData(req, res, 'user')
     } else {
       handleData(_data, res, 'position')
     }
-  } else{
+  } else {
     handleData(205, res, 'position')
   }
 
@@ -266,6 +262,38 @@ const removeUser = async (req, res) => {
   handleData(_data, res, 'position')
 }
 
+/**
+ * 更改用户密码
+ */
+
+const changeUserPassword = async (req, res) => {
+  let _token = await token.checkToken(req.body.userToken)
+
+  delete req.body.userToken
+  if (_token) {
+    let _body = req.body
+    req.body = {}
+    req.body._id = _token.data._id
+    req.body.password = hash(_body.oldPassword, 'hex')
+    await selectUser(req, res, async function (data) {
+      if (data.length > 0) {
+        req.body.password = hash(_body.newPassword, 'hex')
+        let _data = await admin.updateUser(req.body)
+        let newToken = token.createToken({
+          '_id': _token.data._id
+        }, 7200)
+        _data.token = newToken
+        handleData(_data, res, 'position')
+      } else {
+        console.log('204');
+        handleData(204, res, 'position')
+      }
+    })
+  } else {
+    handleData(205, res, 'position')
+  }
+}
+
 
 /**
  * 用户登陆验证
@@ -278,8 +306,7 @@ const loginUser = async (req, res) => {
       let _data = JSON.parse(JSON.stringify(data[0]))
       //生成token存入要发送的数据中
       let _token = token.createToken({
-        '_id': _data._id,
-        'mailbox': _data.mailbox
+        '_id': _data._id
       }, 7200)
       _data.token = _token
       handleData(_data, res, 'position')
@@ -289,6 +316,45 @@ const loginUser = async (req, res) => {
   })
 }
 
+
+// 验证token,获取信息
+const getByToken = async (req, res) => {
+  let _token = await token.checkToken(req.body.token)
+  let _type = req.body.type
+  if (_token) {
+    req.body._id = _token.data._id
+    delete req.body.token
+    delete req.body.type
+    returnData(req, res, _type)
+  } else {
+    handleData(205, res, 'position')
+  }
+}
+
+//获取信息
+const returnData = async (req, res, _type) => {
+  if (_type === 'user') {
+    await selectUser(req, res, async function (data) {
+      let _data = JSON.parse(JSON.stringify(data[0]))
+      //更新Token
+      let newToken = await token.createToken({
+        '_id': _data._id
+      }, 7200)
+      _data.token = newToken
+      handleData(_data, res, 'position')
+    })
+  } else {
+    await selectAccount(req, res, async function (data) {
+      let _data = JSON.parse(JSON.stringify(data[0]))
+      //更新Token
+      let newToken = await token.createToken({
+        '_id': _data._id
+      }, 7200)
+      _data.token = newToken
+      handleData(_data, res, 'position')
+    })
+  }
+}
 
 module.exports = {
   addSignUp,
@@ -301,5 +367,7 @@ module.exports = {
   updateUser,
   removeUser,
   loginAccount,
-  loginUser
+  loginUser,
+  changeUserPassword,
+  getByToken,
 }

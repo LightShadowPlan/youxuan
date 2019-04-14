@@ -17,6 +17,46 @@
 <div class="toast">
     <div class="toast-box">提示信息</div>
 </div>
+<!--更改密码-->
+<div class="change-password-toast">
+    <div class="password-toast-box">
+        <p class="toast-title">
+            <span>更改密码</span>
+            <span class="fa fa-times pw-cancel"></span>
+        </p>
+        <form method="post" id="changePassword" enctype="multipart/form-data">
+            <input type="text" class="changepw_token" name="userToken" value=""/>
+            <div>
+                <span>旧密码：</span>
+                <input type="password" class="old-password" name="oldPassword" autocomplete="off" placeholder="请输入密码 / 8-16个字符"/>
+            </div>
+            <div>
+                <span>新密码：</span>
+                <input type="password" class="new-password" name="newPassword" autocomplete="off" placeholder="请输入密码 / 8-16个字符"/>
+            </div>
+            <div>
+                <button type="button" class="pw-cancel">取消</button>
+                <button type="submit" class="pw-submit">确认</button>
+            </div>
+        </form>
+    </div>
+</div>
+<!--操作确认-->
+<div class="change-notarize-toast">
+    <div class="notarize-toast-box">
+         <p class="toast-title">
+            <span>更改信息</span>
+            <span class="fa fa-times toast-cancel"></span>
+        </p>
+        <div class="toast-content">
+            <div class="toast-text">你确定要更改信息</div>
+            <div class="notarize-box">
+                <span class="notarize-cancel">取消</span>
+                <span class="notarize-submit">确认</span>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- 头部 -->
 <header id="header" class="header">
     <img class="logo" src="../static/images/logo.png" alt=""/>

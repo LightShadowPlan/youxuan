@@ -11,35 +11,15 @@
   >> /api/position/ + 具体接口名
 
 #### 跨域
-* 设置cors跨域，使用 cors 模块
+* 设置cors跨域，使用 cors 模块,将前端跨域域名加入白名单
 
 #### 工具
 * util/email.js  邮箱发送消息
   * verificationMail 函数
-  > from：2103875834@qq.com   // 发送者
-  
-  > to：传入的邮箱  // 接受者,可以同时发送多个,以逗号隔开
-  
-  > subject: 优选商城管理系统账号注册验证 // 标题
-  
-  > text: 点击验证 // 文本
-  
-  > html: 一个HTML模板
-  
-  > attachments: content.attachments//附件
+  > 向指定邮箱发送验证码
 
   * sendMail 函数
-  > from: "2103875834@qq.com" // 发送者
-  
-  > to: 传入的邮箱 // 接受者,可以同时发送多个,以逗号隔开
-  
-  > subject: content.title // 标题
-  
-  > text: content.text // 文本
-  
-  > html: content.html //传入的html
-  
-  > attachments: content.attachments//附件
+  > 向指定邮箱发送邮件
   
   * verificationCode 函数
   > 产生一个六位数的随机验证码
@@ -57,7 +37,11 @@
   
   > 202 : 验证码错误 返回202
   
-  > 203 : 账号或密码错误 返回203
+  > 203 : 验证码过期 返回203
+  
+  > 204 : 账号或密码错误 返回204
+  
+  > 205 : token失效 返回205
   
   > true : 成功 返回200
   
@@ -117,80 +101,3 @@
 ##### 消息，物品信息，交易增删改查
 
 
- #### 数据层
- 
- ##### 帐号的增删改查
-* 注册用户数据库
-  * mailbox: String
-  * verification: String
-  * addTime: Date
-  
-* 管理人员账号数据库
-  * mailbox: String,
-  * password: String,
-  * nickname: String,
-  * headPortrait: String,
-  * authority: String,
-  * state: String,
-  * message: Array,
-  * notification: [{
-    * sender: String,
-    * receiver: String,
-    * content: String,
-    * addTime: Date
-  * }],
-  * addTime: Date
- 
-  
-* 用户账号数据库
-  * mailbox: String,
-  * password: String,
-  * nickname: String,
-  * headPortrait: String,
-  * contactWay: String,
-  * state: String,
-  * message: Array,
-  * notification: [{
-    * sender: String,
-    * receiver: String,
-    * content: String,
-    * addTime: Date
-  * }],
-  * sellGoods: Array,
-  * purchaserGoods: Array,
-  * favorite: Array,
-  * addTime: Date
-
- ##### 消息，物品信息，交易增删改查
-* 消息数据库
-  * sender: String
-  * receiver: String
-  * content: String
-  * addTime: Date
-  
-* 物品数据库
-  * goodsName: String,
-  * goodsPrice: Number,
-  * goodsContent: String,
-  * goodsPhoto: Array,
-  * goodsState: Number,
-  * goodComment: [{
-    * userId: String,
-    * nickname: String,
-    * headPortrait: String,
-    * comment: String,
-    * addTime: Date
-  * }],
-  * goodsAuction: [{
-    * purchaser: String,
-    * headPortrait: String
-  * }],
-  * seller: String,
-  * transaction: String,
-  * addTime: Date
- 
-  
-* 用户账号数据库
-  * seller: String,
-  * purchaser: String,
-  * addTime: Date

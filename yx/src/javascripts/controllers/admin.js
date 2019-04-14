@@ -1,5 +1,5 @@
 import {bus, toast} from '../util'
-
+import checkState from './checkState'
 // model
 import admin_model from '../models/admin'
 
@@ -11,13 +11,21 @@ import account_html from '../views/account-box.html'
 import qs from 'querystring'
 
 const loginEvent = async () => {
-  if (localStorage.user) {
-    go_mine_show()
+  //判断登录
+  if (sessionStorage.user) {  //检查sessionStorage是否有数据
+    go_mine_show()          //有，不用更新
   } else {
-    go_default()
+    let state = await checkState()  //没有，检查token有效，有效会更新数据
+    if (state) {
+      go_mine_show()  //有效，进入我的信息
+    } else {
+      go_default()   //进入登录页面
+    }
   }
-  let flag = true
+  //--------------------------------------------------------------------------------------------
+
   //默认页/登录页/注册页
+  let flag = true
   //跳转注册页
   $(".go-sign-up").on("click", () => {
     go_sign_up()
@@ -29,6 +37,7 @@ const loginEvent = async () => {
 
   $('.account-box').height($('.account-box .show-box').height())
 
+  //----------------------------------------------------------------------------------------------
   //跳转到登录页面
   function go_login() {
     $('.account-box > div').removeClass("show-box")
@@ -68,7 +77,7 @@ const loginEvent = async () => {
               //登录成功，存入数据，包括token
               localStorage.userToken = _result.data.token
               delete _result.data.token
-              localStorage.user = JSON.stringify(_result.data)
+              sessionStorage.user = JSON.stringify(_result.data)
 
               $('.login-show .input').val("")
               go_mine_show()
@@ -224,13 +233,15 @@ const loginEvent = async () => {
     $('.account-box > div').removeClass("show-box")
     $(".mine-show").addClass("show-box")
 
+    //获取本地数据
+    let user = JSON.parse(sessionStorage.user)
+    console.log('user:', user);
+    let userToken = localStorage.userToken
+    console.log('token:', userToken);
+
     //获取信息
     function show_user() {
-      //获取本地数据
-      let user = JSON.parse(localStorage.user)
-      console.log('user:', user);
-      let userToken = localStorage.userToken
-      console.log('token:', userToken);
+
       //将数据导入表单
       $('.mail-box p').html(user.mailbox)
       user.gender === 'male' ? maleSelect() : femaleSelece()
@@ -270,17 +281,15 @@ const loginEvent = async () => {
         setTimeout(function () {
           $('.user-submit').attr({'type': 'button'})
         }, 100)
-        console.log('_result:', _result);
-        if (Object.prototype.toString.call(_result.data) === '[object Array]') {
-          console.log('Array');
-          localStorage.user = JSON.stringify(_result.data[0])
+
+        if (_result.data._id) {
+          sessionStorage.user = JSON.stringify(_result.data)
+          localStorage.userToken = _result.data.token
           show_user()
-        } else {
-          console.log('Object');
         }
         toast('保存成功')
       } else if (_result.status === 205) {
-          toast('token失效，请重新登录', 'error')
+        toast('token失效，请重新登录', 'error')
       } else {
         toast('保存失败，请重新再试', 'error')
       }
@@ -307,6 +316,41 @@ const loginEvent = async () => {
       }
     }
 
+    //更改密码
+    $('.change-password').on('click', function (e) {
+      e.preventDefault()
+      $('.change-password-toast').addClass('active')
+      $('.changepw_token').val(userToken)
+      $('.pw-cancel').on('click', function () {
+        $('.change-password-toast').removeClass('active')
+        $('#changePassword input').val('')
+      })
+
+    })
+    $('#changePassword').on('submit', async function (e) {
+      e.preventDefault()
+      let body = qs.parse($('#changePassword').serialize())
+      console.log('body:',body);
+      let _result = await admin_model.changeUserPassword(body)
+      console.log('_result:',_result);
+      switch (_result.status) {
+        case 200 :
+          toast('更改成功');
+          break;
+        case 204 :
+          toast('密码错误，请重新再试', 'error');
+          break;
+        case 205 :
+          toast('token失效，请重新登录', 'error');
+          break;
+        default :
+          toast('未知错误，请重新再试', 'error');
+          break;
+      }
+      $('.change-password-toast').removeClass('active')
+      $('#changePassword input').val('')
+    })
+
 
     //性别选择
     $('#male').on('click', function () {
@@ -332,11 +376,16 @@ const loginEvent = async () => {
 
     //退出登录
     $('.exit').on('click', () => {
-      localStorage.user = ''
+      sessionStorage.user = ''
+      localStorage.userToken = ''
       go_default()
     })
   }
 
+  //---------------------------------------------------------------------------------------------------
+
+
+  //----------------------------------------------------------------------------------------------------
 }
 
 const mineEvent = () => {

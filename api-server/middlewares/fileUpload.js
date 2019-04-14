@@ -54,5 +54,6 @@ const fileUploadAccount = function (req, res, next) {
 
 module.exports = {
   fileUploadUser,
-  fileUploadAccount
+  fileUploadAccount,
+
 }

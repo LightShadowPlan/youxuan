@@ -54,6 +54,190 @@ ul li {
   color: #ff5340;
 }
 
+.change-password-toast, .change-notarize-toast {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.change-password-toast {
+  display: none;
+  .password-toast-box {
+    width: 600px;
+    height: 360px;
+    background: #fff;
+    border-radius: 10px;
+    .toast-title {
+      padding: 0 10px;
+      height: 50px;
+      border-bottom: 1px solid #888;
+      display: flex;
+      box-sizing: border-box;
+      justify-content: space-between;
+      align-items: center;
+      span:first-child {
+        font-size: 18px;
+        font-weight: bolder;
+      }
+      span:last-child {
+        font-size: 24px;
+        cursor: pointer;
+        color: #aaa;
+        transition: 0.3s;
+        &:hover {
+          color: #666;
+        }
+      }
+    }
+    #changePassword {
+      width: 100%;
+      height: 310px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      .changepw_token{
+        width: 0;
+        height: 0;
+        opacity: 0;
+        display: none;
+      }
+      div {
+        width: 460px;
+        height: 60px;
+        margin: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        input {
+          width: 300px;
+          height: 30px;
+          line-height: 30px;
+          margin-left: 10px;
+          padding: 10px;
+          border: none;
+          outline: none;
+          background: transparent;
+          border-bottom: 1px solid #888;
+          font-size: 1em;
+        }
+      }
+      div:last-child {
+        height: 100px;
+        display: flex;
+        justify-content: space-around;
+        button {
+          width: 120px;
+          height: 40px;
+          outline: none;
+          background: #fff;
+          border: 1px solid #888;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: 0.3s;
+          &:last-child {
+            border-color: tomato;
+            color: tomato;
+          }
+          &:hover {
+            background: #888;
+            color: #fff;
+          }
+          &:last-child:hover {
+            background: tomato;
+          }
+        }
+      }
+    }
+  }
+}
+
+.change-notarize-toast {
+  display: none;
+  .notarize-toast-box {
+    width: 600px;
+    height: 240px;
+    background: #fff;
+    border-radius: 10px;
+    .toast-title {
+      padding: 0 10px;
+      height: 50px;
+      border-bottom: 1px solid #888;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      span:first-child {
+        font-size: 18px;
+        font-weight: bolder;
+      }
+      span:last-child {
+        font-size: 24px;
+        cursor: pointer;
+        color: #aaa;
+        transition: 0.3s;
+        &:hover {
+          color: #666;
+        }
+      }
+    }
+    .toast-content {
+      width: 100%;
+      height: 190px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: center;
+      div.toast-text {
+        width: 500px;
+        line-height: 20px;
+        font-size: 1em;
+        text-align: center;
+      }
+      div.notarize-box {
+        width: 60%;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        span {
+          width: 120px;
+          height: 40px;
+          outline: none;
+          background: #fff;
+          border: 1px solid #888;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: 0.3s;
+          text-align: center;
+          line-height: 40px;
+          &:last-child {
+            border-color: tomato;
+            color: tomato;
+          }
+          &:hover {
+            background: #888;
+            color: #fff;
+          }
+          &:last-child:hover {
+            background: tomato;
+          }
+        }
+      }
+    }
+  }
+}
+.change-password-toast.active, .change-notarize-toast.active {
+  display: flex;
+}
+
 #header {
   width: 100%;
   height: 1rem;
@@ -829,7 +1013,7 @@ ul li {
                   height: 320px;
                   cursor: pointer;
                 }
-                input{
+                input {
                   width: 100%;
                   height: 100%;
                   outline: none;
@@ -876,7 +1060,7 @@ ul li {
                     z-index: 99;
                     display: none;
                   }
-                  .user-token, .user-old-headPortrait{
+                  .user-token, .user-old-headPortrait {
                     width: 0;
                     height: 0;
                     opacity: 0;
@@ -1083,7 +1267,7 @@ ul li {
             cursor: pointer;
           }
 
-          p.to-favorite{
+          p.to-favorite {
             width: 4rem;
             height: 0.667rem;
             background: #71c4ff;
@@ -1163,14 +1347,14 @@ ul li {
         height: 30px;
         line-height: 30px;
         text-align: center;
-        background: rgba(0,0,0,0.4);
+        background: rgba(0, 0, 0, 0.4);
         color: #fff;
         cursor: pointer;
         position: fixed;
         top: 20px;
         left: 20px;
         z-index: 999;
-        &:before{
+        &:before {
           content: '';
           display: block;
           height: 0;

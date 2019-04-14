@@ -3,7 +3,7 @@
  */
 var express = require('express');
 var router = express.Router();
-var { fileUploadUser } = require('../middlewares/fileUpload')
+var { fileUploadUser, fileUploadAccount, test } = require('../middlewares/fileUpload')
 var admin_controller = require('../controllers/admin')
 
 // 抽离响应头的设置 中间件
@@ -25,5 +25,7 @@ router.post('/selectUser', admin_controller.selectUser)
 router.post('/updateUser', fileUploadUser, admin_controller.updateUser)
 router.post('/removeUser', admin_controller.removeUser)
 router.post('/loginUser', admin_controller.loginUser)
+router.post('/changeUserPassword', admin_controller.changeUserPassword)
+router.post('/getByToken', admin_controller.getByToken)
 
 module.exports = router;
