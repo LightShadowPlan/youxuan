@@ -22,6 +22,8 @@ import user_template from '../views/user.html'
 import person_template from '../views/person.html'
 // 404视图
 import fzf_template from '../views/404.html'
+// 权限申请视图
+import powerRequire_template from '../views/powerRequire.html'
 
 import Echarts from './echarts'
 import position_model from '../models/position'
@@ -32,6 +34,7 @@ import qs from 'querystring'
 
 //加载事件
 //登录，注册
+import loginEvent from './login'
 import adminEvent from './admin'
 
 // 首页视图的控制器
@@ -83,6 +86,7 @@ const account = async (req, res, next) => {
 const person = async (req, res, next) => {
   res.render(person_template)
   bodyEvent.show_admin()
+  adminEvent()
 }
 
 // 用户账号管理视图的控制器
@@ -94,9 +98,19 @@ const user = async (req, res, next) => {
 // 登录视图的控制器
 const login = async (req, res, next) => {
   res.render(login_template)
-  adminEvent.loginEvent()
+  loginEvent()
 }
 
+//权限申请页面
+const powerRequire = async (req, res, next) => {
+  res.render(powerRequire_template)
+  bodyEvent.large()
+  bodyEvent.show_admin()
+  $('.go-back-login').on('click', function() {
+    localStorage.accountToken = ''
+    bus.emit('go', '/login')
+  })
+}
 
 // 404视图的控制器
 const fzf = async (req, res, next) => {
@@ -142,5 +156,6 @@ export default {
   powerApply,
   account,
   user,
-  person
+  person,
+  powerRequire
 }

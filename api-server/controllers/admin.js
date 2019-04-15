@@ -125,8 +125,34 @@ const selectAccount = async (req, res, callback) => {
  * 更新管理人员
  */
 const updateAccount = async (req, res) => {
-  let _data = await admin.updateAccount(req.body)
-  handleData(_data, res, 'position')
+  delete req.body.oldPassword
+  delete req.body.newPassword
+  let _token = await token.checkToken(req.body.accountToken)
+  delete req.body.accountToken
+  if (_token) {
+    req.body._id = _token.data._id
+    //判断是否更新图片
+    if (req.body.headPortrait === '') {
+      delete req.body.headPortrait
+    } else {
+      if (req.body.old_headPortrait !== 'static/images/photo.png') {
+        fs.unlink(Path.resolve(__dirname, '../../fe/' + req.body.old_headPortrait), (err) => {
+        })
+      }
+
+    }
+    delete req.body.old_headPortrait
+    //查询最新数据，并返回
+    console.log('req.body:',req.body);
+    let _data = await admin.updateAccount(req.body)
+    if (_data.nModified > 0) {
+      returnData(req, res, 'account')
+    } else {
+      handleData(_data, res, 'position')
+    }
+  } else {
+    handleData(205, res, 'position')
+  }
 }
 
 /**
@@ -136,6 +162,38 @@ const removeAccount = async (req, res) => {
   let _data = await admin.removeAccount(req.body)
   handleData(_data, res, 'position')
 }
+
+/**
+ * 更改用户密码
+ */
+
+const changeAccountPassword = async (req, res) => {
+  let _token = await token.checkToken(req.body.accountToken)
+  delete req.body.accountToken
+  if (_token) {
+    let _body = req.body
+    req.body = {}
+    req.body._id = _token.data._id
+    req.body.password = hash(_body.oldPassword, 'hex')
+    await selectAccount(req, res, async function (data) {
+      if (data.length > 0) {
+        req.body.password = hash(_body.newPassword, 'hex')
+        let _data = await admin.updateAccount(req.body)
+        let newToken = token.createToken({
+          '_id': _token.data._id
+        }, 7200)
+        _data.token = newToken
+        handleData(_data, res, 'position')
+      } else {
+        console.log('204');
+        handleData(204, res, 'position')
+      }
+    })
+  } else {
+    handleData(205, res, 'position')
+  }
+}
+
 
 /**
  * 管理人员登陆验证
@@ -148,7 +206,7 @@ const loginAccount = async (req, res) => {
       let _data = JSON.parse(JSON.stringify(data[0]))
       //生成token存入要发送的数据中
       let _token = token.createToken({
-        'mailbox': _data.mailbox
+        '_id': _data._id
       }, 7200)
       _data.token = _token
       handleData(_data, res, 'position')
@@ -233,11 +291,14 @@ const updateUser = async (req, res) => {
     delete req.body.wechat
     delete req.body.phoneNumber
     //判断是否更新图片
-    if (req.body.headPortrait === '' || req.body.old_headPortrait === 'static/images/photo.png') {
+    if (req.body.headPortrait === '') {
       delete req.body.headPortrait
     } else {
-      fs.unlink(Path.resolve(__dirname, '../../yx/' + req.body.old_headPortrait), (err) => {
-      })
+      if (req.body.old_headPortrait !== 'static/images/photo.png') {
+        fs.unlink(Path.resolve(__dirname, '../../yx/' + req.body.old_headPortrait), (err) => {
+        })
+      }
+
     }
     delete req.body.old_headPortrait
     //查询最新数据，并返回
@@ -266,9 +327,9 @@ const removeUser = async (req, res) => {
       let account_data = await admin.selectAccount({'_id': account_id})
       if (account_data.length > 0 && account_data[0].authority >= 2) {
         let user_data = await admin.removeUser({'_id': user_id})
-        console.log('user_data:',user_data);
+        console.log('user_data:', user_data);
         handleData(user_data, res, 'position')
-      } else{
+      } else {
         handleData(206, res, 'position')
       }
     } else {
@@ -368,16 +429,21 @@ const returnData = async (req, res, _type) => {
       }, 7200)
       _data.token = newToken
       handleData(_data, res, 'position')
+
     })
   } else {
     await selectAccount(req, res, async function (data) {
       let _data = JSON.parse(JSON.stringify(data[0]))
-      //更新Token
-      let newToken = await token.createToken({
-        '_id': _data._id
-      }, 7200)
-      _data.token = newToken
-      handleData(_data, res, 'position')
+      if (_data.authority >= 1) {
+        //更新Token
+        let newToken = await token.createToken({
+          '_id': _data._id
+        }, 7200)
+        _data.token = newToken
+        handleData(_data, res, 'position')
+      } else {
+        handleData(206, res, 'position')
+      }
     })
   }
 }
@@ -388,6 +454,7 @@ module.exports = {
   selectAccount,
   updateAccount,
   removeAccount,
+  changeAccountPassword,
   addUser,
   selectUser,
   updateUser,

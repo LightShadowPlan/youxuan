@@ -7,16 +7,24 @@
     </div>
     <div class="person-content">
         <form action="" id="person">
-            <img src="https://lightshadow.xyz/youxuan/admin/static/images/photo.png" alt=""/>
+            <div class="photo-box">
+                <input type="file" class="headPortrait-file" name="headPortrait"/>
+                <img class="person-photo" src="https://lightshadow.xyz/youxuan/admin/static/images/photo.png" alt=""/>
+            </div>
             <div class="person-about">
-                <p>邮箱：1982285973@qq.com</p>
-                <p>权限：中级管理员</p>
-                <p>昵称：<input type="text" placeholder="请输入昵称 / 2-8个字符"/></p>
-                <p class="active old-password">原密码：<input type="password" placeholder="请输入密码 / 8-16个字符"/></p>
-                <p class="active new-password">新密码：<input type="password" placeholder="请输入密码 / 8-16个字符"/></p>
+                <p class="person-mailbox">邮箱：1982285973@qq.com</p>
+                <p class="person-authority">权限：中级管理员</p>
+                <p class="other-data">
+                    <input class="account-token"  type="text" name="accountToken" value=""/>
+                    <input class="account-old-headPortrait"type="text" name="old_headPortrait" value=""/>
+                </p>
+                <p>昵称：<input type="text" class="nickname" name="nickname" placeholder="请输入昵称 / 2-8个字符"/></p>
+                <p class=" old-password">旧密码：<input type="password" class="oldPassword" required name="oldPassword" placeholder="请输入密码 / 8-16个字符"/></p>
+                <p class=" new-password">新密码：<input type="password" class="newPassword" required name="newPassword" placeholder="请输入密码 / 8-16个字符"/></p>
                 <p>
+                    <input class="getup" type="button" value="取消"/>
                     <input class="change-password" type="button" value="修改密码"/>
-                    <input type="button" value="确认修改"/>
+                    <input class="change-person" type="submit" value="确认修改"/>
                 </p>
             </div>
         </form>

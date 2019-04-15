@@ -8,7 +8,6 @@ import sell_html from '../views/sell-box.html'
 import purchaser_html from '../views/purchase-box.html'
 import account_html from '../views/account-box.html'
 
-
 //解析路径
 import qs from 'querystring'
 
@@ -128,21 +127,21 @@ const loginEvent = async () => {
   }
 
   //注册页
-  let signUPSubmitFlag = 0
+  let signUpSubmitFlag = 0
   $('.sign-up-show').on('submit', '#sign-up-form', async function (e) {
     //阻止浏览器默认事
     e.preventDefault() ? e.preventDefault() : e.returnValue = false
     //邮箱格式验证
-    signUPSubmitFlag ? '' : !/[a-zA-z0-9]+@[a-zA-z0-9]+\.[a-z]+/.test($('.sign-up-mailbox').val()) ? signUPSubmitFlag = 1 : ''
+    signUpSubmitFlag ? '' : !/[a-zA-z0-9]+@[a-zA-z0-9]+\.[a-z]+/.test($('.sign-up-mailbox').val()) ? signUpSubmitFlag = 1 : ''
     //验证码格式验证
-    signUPSubmitFlag ? '' : !/[0-9]{6}/.test($('.verification').val()) ? signUPSubmitFlag = 2 : ''
+    signUpSubmitFlag ? '' : !/[0-9]{6}/.test($('.verification').val()) ? signUpSubmitFlag = 2 : ''
     //密码格式验证
-    signUPSubmitFlag ? '' : !/[a-zA-Z0-9]{8,16}/.test($('.sign-up-password').val()) ? signUPSubmitFlag = 3 : ''
+    signUpSubmitFlag ? '' : !/[a-zA-Z0-9]{8,16}/.test($('.sign-up-password').val()) ? signUpSubmitFlag = 3 : ''
     //两次密码相等验证
-    signUPSubmitFlag ? '' : $('.sign-up-password').val() !== $('.r-sign-up-password').val() ? signUPSubmitFlag = 4 : ''
+    signUpSubmitFlag ? '' : $('.sign-up-password').val() !== $('.r-sign-up-password').val() ? signUpSubmitFlag = 4 : ''
     //用户协议勾选
-    signUPSubmitFlag ? '' : !$('.sign-up-agree').prop("checked") ? signUPSubmitFlag = 5 : ''
-    switch (signUPSubmitFlag) {
+    signUpSubmitFlag ? '' : !$('.sign-up-agree').prop("checked") ? signUpSubmitFlag = 5 : ''
+    switch (signUpSubmitFlag) {
       case 1 :
         toast('邮箱格式错误', 'error', 1500);
         break;
@@ -162,12 +161,12 @@ const loginEvent = async () => {
         toast('请求未处理完，请勿频繁操作', 'error', 1500);
         break;
       default:
-        signUPSubmitFlag = 6
+        signUpSubmitFlag = 6
         //获取表单内容
         let _params = $('#sign-up-form').serialize()
         //解析，发送请求
         let _result = await admin_model.addUser(qs.parse(_params))
-        signUPSubmitFlag = 0
+        signUpSubmitFlag = 0
         switch (_result.status) {
           case 200:
             toast('注册成功', 'success');
@@ -337,7 +336,6 @@ const loginEvent = async () => {
       $('.change-password-toast').removeClass('active')
       $('#changePassword input').val('')
     })
-
   })
   //更改密码表单提交
   $('#changePassword').on('submit', async function (e) {

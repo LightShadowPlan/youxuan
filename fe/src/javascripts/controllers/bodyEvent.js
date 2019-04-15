@@ -3,6 +3,9 @@
  */
 //
 //------------------------------------------------------------
+
+import {bus, toast} from '../util'
+
 function trigger(selector1, selector2, className) {
   if (selector1.attr('index') === '1') {
     selector2.removeClass(className)
@@ -33,6 +36,11 @@ const headEvent = async () => {
   }
   showTime()
   setInterval(showTime, 60000)
+  $('.exit').on('click', function () {
+    localStorage.accountToken = ''
+    sessionStorage.account = ''
+    bus.emit('go', '/login')
+  })
 
 }
 //侧边栏子目录显示与隐藏
@@ -44,18 +52,14 @@ const sidebarEvent = () => {
 }
 
 //----------------------------------------------------------------
-//侧边栏选中状态
-const show_admin = (hash) => {
-  let admin = JSON.parse(localStorage.admin)
-  $('.admin-photo').attr('src', admin.headPortrait)
-  $('.admin-nickname').html(admin.nickname)
-  if (admin.message.length > 0) {
-    $('.message').html(admin.message.length)
+//侧边栏个人中心状态
+const show_admin = () => {
+  let account = JSON.parse(sessionStorage.account)
+  $('.admin-photo').attr('src', account.headPortrait)
+  $('.admin-nickname').html(account.nickname)
+  if (account.message.length > 0) {
+    $('.message').html(account.message.length)
     $('.message').addClass('show')
-  }
-  if (admin.notification.length > 0) {
-    $('.notification').html(admin.notification.length)
-    $('.notification').addClass('show')
   }
   //判断location.hash中是否有'?',取出'?'前的hash值
   let url = location.hash.indexOf('?') > 0 ? location.hash.slice(0, location.hash.indexOf('?')) : location.hash
@@ -65,6 +69,7 @@ const show_admin = (hash) => {
   active.addClass('active')
   active.parent().parent().find('p').addClass('active')
 }
+
 
 //页面状态
 const large = () => {
@@ -79,5 +84,5 @@ export default {
   sidebarEvent,
   show_admin,
   large,
-  little
+  little,
 }

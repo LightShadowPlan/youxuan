@@ -36,6 +36,8 @@ const _init = () => {
     router.route('/user', position_controller.user)
     //个人中心管理
     router.route('/person', position_controller.person)
+    //权限申请
+    router.route('/powerRequire', position_controller.powerRequire)
     // 404路由
     router.route('/404', position_controller.fzf)
 
