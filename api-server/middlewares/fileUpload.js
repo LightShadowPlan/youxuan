@@ -3,8 +3,8 @@
 var PATH = require('path')
 var multer = require('multer')
 
-
-function filehandle(req, res, next, name, filename, url) {
+function filehandle(req, res, next, name, filename, url, type) {
+  let photoArray = []
   // 控制文件存储位置和名字
   let storage = multer.diskStorage({
     // 存储位置
@@ -18,18 +18,28 @@ function filehandle(req, res, next, name, filename, url) {
       let _baseName = PATH.basename(_originalName, _extName); // 文件名
       let _filename = _baseName + '_' + Date.now() + _extName // 最终的名字，拼上时间戳，防止覆盖
       // 将图片的路径放入到req.body中的，下个中间件就可以取用了
-      req.body.headPortrait = 'static/image/' + url + _filename
+      if(type === 'single') {
+        req.body[name] = 'static/image/' + url + _filename
+      } else{
+        photoArray.push('static/image/' + url + _filename)
+        req.body[name] = photoArray
+      }
       cb(null, _filename)
     }
   })
 
-// 过滤文件类型
+  // 过滤文件类型
   function fileFilter(req, file, cb) {
     let _flag = file.mimetype.startsWith('image')
     cb(_flag ? null : new Error('请上传正确格式的图片'), _flag)
   }
+  let upload
+  if(type === 'single') {
+    upload = multer({storage, fileFilter}).single(name)
+  } else{
+    upload = multer({storage, fileFilter}).array(name, 3)
+  }
 
-  let upload = multer({storage, fileFilter}).single(name)  // .single处理单文件上层
   upload(req, res, function (err) {
     if (err) {
       res.render('position', {
@@ -45,15 +55,20 @@ function filehandle(req, res, next, name, filename, url) {
 
 // 在upload中间件外面套上一个空壳中间件，目的是为了让upload处理错误后选择是否继续向下执行
 const fileUploadUser = function (req, res, next) {
-  filehandle(req, res, next, 'headPortrait', 'yx','user/')
+  filehandle(req, res, next, 'headPortrait', 'yx','user/', 'single')
 }
 
 const fileUploadAccount = function (req, res, next) {
-  filehandle(req, res, next, 'headPortrait', 'fe','account/')
+  filehandle(req, res, next, 'headPortrait', 'fe','account/','single')
+}
+
+const fileUploadAddGoods = function (req, res, next) {
+
+  filehandle(req, res, next, 'goodsPhoto', 'yx','goods/','array')
 }
 
 module.exports = {
   fileUploadUser,
   fileUploadAccount,
-
+  fileUploadAddGoods
 }

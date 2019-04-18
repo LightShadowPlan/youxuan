@@ -7,6 +7,8 @@ import goodsAll_template from '../views/goodsAll.html'
 import favorite_template from '../views/favorite.html'
 // 我的视图
 import mine_template from '../views/mine.html'
+// 添加物品视图
+import addGoods_template from '../views/addGoods.html'
 // 物品详情
 import goods_template from '../views/goods.html'
 // 404视图
@@ -55,6 +57,12 @@ const mine = async (req, res, next) => {
   bodyEvent.delectGoods()
 }
 
+// 添加物品视图的控制器
+const addGoods = async (req, res, next) => {
+  res.render(addGoods_template)
+  bodyEvent.addGoods()
+}
+
 // 物品详情的控制器
 const goods = async (req, res, next) => {
   res.render(goods_template)
@@ -76,4 +84,5 @@ export default {
   favorite,
   goods,
   fzf,
+  addGoods
 }

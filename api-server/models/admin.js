@@ -104,7 +104,7 @@ const addAccount = async (body) => {
     headPortrait: defaultsPhoto,
     nickname: defaultsNickname,
     gender: defaultGender,
-    addTime: Date.now(),
+    addTime: _timestamp,
     formatTime: moment.format("YYYY-MM-DD  hh:mm")
   }).save(
 
@@ -217,6 +217,7 @@ const updateUser = async (body) => {
     return false
   })
 }
+
 
 /**
  * 删除用户

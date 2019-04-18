@@ -105,7 +105,6 @@ const login = async (req, res, next) => {
 const powerRequire = async (req, res, next) => {
   res.render(powerRequire_template)
   bodyEvent.large()
-  bodyEvent.show_admin()
   $('.go-back-login').on('click', function() {
     localStorage.accountToken = ''
     bus.emit('go', '/login')

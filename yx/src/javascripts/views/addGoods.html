@@ -1,0 +1,56 @@
+<div class="addGoods-container">
+    <div class="addGoods-box">
+        <div class="addGoods-title">物品出售</div>
+        <form action="" method="post" id="addGoods" enctype="multipart/form-data">
+            <input type="text" class="userToken" name="userToken"/>
+            <div class="input-box">
+                <span>物品名字：</span>
+                <input type="text" placeholder="请填写物品名字" class="goodsName" name="goodsName"/>
+            </div>
+            <div class="input-box">
+                <span>物品价格：</span>
+                <input type="number" placeholder="请填写物品价格 单位/元"  class="goodsPrice" name="goodsPrice"/>
+            </div>
+            <div class="input-box">
+                <span>物品种类：</span>
+                <div class="radio-box">
+                    <span>书籍/资料</span>
+                    <input type="radio" name="goodsClass" checked value="book"/>
+                    <span>笔/文具</span>
+                    <input type="radio" name="goodsClass" value="penOrTool"/>
+                    <span>化妆品</span>
+                    <input type="radio" name="goodsClass" value="cosmetics"/>
+                    <span>日用品</span>
+                    <input type="radio" name="goodsClass" value="dailyNecessities"/>
+                    <span>球/球拍</span>
+                    <input type="radio" name="goodsClass" value="ball"/>
+                    <span>自行车/健身</span>
+                    <input type="radio" name="goodsClass" value="bicycle"/>
+                    <span>手机/电脑</span>
+                    <input type="radio" name="goodsClass" value="phone"/>
+                    <span>电子产品</span>
+                    <input type="radio" name="goodsClass" value="electronics"/>
+                </div>
+            </div>
+            <div class="input-box">
+                <span>物品描述：</span>
+                <textarea name="goodsContent" class="goodsContent" placeholder="请填写物品描述"></textarea>
+            </div>
+            <div class="input-box">
+                <span>物品图片：</span>
+                <div class="img-box">
+                    <img src="../../../static/images/plus.jpg" alt=""/>
+                    <img src="" alt=""/>
+                    <img src="" alt=""/>
+                </div>
+                <input type="file" required class="goodsPhoto" name="goodsPhoto" aria-valuemax="3" multiple/>
+            </div>
+             <div class="input-box button">
+                <input type="reset" value="重置"/>
+                <input type="submit"  value="提交"/>
+            </div>
+        </form>
+    </div>
+    <p class="go-back">返回</p>
+</div>
+

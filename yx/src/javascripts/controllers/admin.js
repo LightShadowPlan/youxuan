@@ -3,6 +3,7 @@ import checkState from './checkState'
 import lookPic from './lookPic'
 // model
 import admin_model from '../models/admin'
+import position_model from '../models/position'
 
 import sell_html from '../views/sell-box.html'
 import purchaser_html from '../views/purchase-box.html'
@@ -170,7 +171,7 @@ const loginEvent = async () => {
         switch (_result.status) {
           case 200:
             toast('注册成功', 'success');
-            $('.sign-up-show .input').val("")
+            $('#sign-up-form input').val("")
             go_login()
             break;
           case 500:
@@ -198,7 +199,7 @@ const loginEvent = async () => {
   $('#get-verification-code').on('click', async function (e) {
     //邮箱格式验证
     let submitFlag = 0
-    signUPSubmitFlag ? '' : !/[a-zA-z0-9]+@[a-zA-z0-9]+\.[a-z]+/.test($('.sign-up-mailbox').val()) ? signUPSubmitFlag = 1 : ''
+    submitFlag ? '' : !/[a-zA-z0-9]+@[a-zA-z0-9]+\.[a-z]+/.test($('.sign-up-mailbox').val()) ? submitFlag = 1 : ''
     if (!submitFlag) {
       //判断是否可以发送请求，发送一次请求后隔60秒后才能再次发送
       if (codeFlag) {
@@ -388,8 +389,8 @@ const loginEvent = async () => {
       sessionStorage.user = ''
       toast('注销成功')
       go_default()
-    } else{
-      toast('注销失败，请重新再试','error')
+    } else {
+      toast('注销失败，请重新再试', 'error')
     }
     $('.change-notarize-toast').removeClass('active')
   }
@@ -407,38 +408,56 @@ const loginEvent = async () => {
 
 const mineEvent = () => {
   //我的 出售/购买/我的信息 之间进行切换
-  account()
+  sell()
   $('.mine-nav-sell').on('click', function () {
     sell()
   })
   $('.mine-nav-purchaser').on('click', function () {
-    purchaser()
+    purchase()
   })
   $('.mine-nav-account').on('click', function () {
     account()
   })
 
-  //出售
-  function sell() {
-    $('.mine-nav li').removeClass('show-box')
-    $('.mine-nav-sell').addClass('show-box')
-    $('.mine-box').html(sell_html);
-  }
+  //添加物品
 
-  //购买
-  function purchaser() {
-    $('.mine-nav li').removeClass('show-box')
-    $('.mine-nav-purchaser').addClass('show-box')
-    $('.mine-box').html(purchaser_html);
-  }
 
-  //我的信息
-  function account() {
-    $('.mine-nav li').removeClass('show-box')
-    $('.mine-nav-account').addClass('show-box')
-    $('.mine-box').html(account_html);
-    loginEvent()
-  }
+}
+
+//出售
+const sell = async () => {
+  $('.plus-sell').on('click', function () {
+    bus.emit('go', '/addGoods')
+  })
+  $('.mine-nav li').removeClass('show-box')
+  $('.mine-nav-sell').addClass('show-box')
+  $('.mine-box').html(sell_html);
+  let sellData = JSON.parse(sessionStorage.user).sellGoods || []
+  let body = {'goods': JSON.stringify(sellData)}
+  console.log('body.goods:', JSON.stringify(sellData));
+  let _result = await position_model.selectGoods(body)
+  console.log('_result:', _result);
+  // let goods_html = template.render(sell_html,{
+  //     data: _result.data
+  // })
+  // res.render(goods_html)
+}
+
+//购买
+const purchase = async () => {
+  $('.mine-nav li').removeClass('show-box')
+  $('.mine-nav-purchaser').addClass('show-box')
+  $('.mine-box').html(purchaser_html);
+  let purcharseData = JSON.parse(sessionStorage.user).purchaserGoods || []
+  console.log(purcharseData);
+}
+
+//我的信息
+const account = async () => {
+  $('.mine-nav li').removeClass('show-box')
+  $('.mine-nav-account').addClass('show-box')
+  $('.mine-box').html(account_html);
+  loginEvent()
 }
 
 

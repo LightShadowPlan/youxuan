@@ -3,7 +3,7 @@
  */
 const url = require('url')
 const {handleData, sendMail, verificationMail, verificationCode} = require('../util')
-const admin = require('../models/admin')
+const position = require('../models/position')
 const {hash, token} = require('../util/token')
 const fs = require('fs')
 const Path = require('path')
@@ -35,7 +35,7 @@ const addSignUp = async (req, res) => {
       //获取一个随机验证码，存入
       let Code = verificationCode()
       req.body.verification = Code
-      let _data = await admin.addSignUp(req.body)
+      let _data = await position.addSignUp(req.body)
       handleData(_data, res, 'position')
       verificationMail(req.body.mailbox, Code)
     }
@@ -51,13 +51,13 @@ const addSignUp = async (req, res) => {
  * 删除注册信息
  */
 const removeSignUp = async (req, res) => {
-  let _data = await admin.removeSignUp(req.body)
+  let _data = await position.removeSignUp(req.body)
 }
 /**
  * 查询注册信息
  */
 const selectSignUp = async (req, res, callback) => {
-  let _data = await admin.selectSignUp(req.body)
+  let _data = await position.selectSignUp(req.body)
   if (callback.name !== 'next') {
     callback(_data)
   } else {
@@ -92,7 +92,7 @@ const addAccount = async (req, res) => {
             req.body.password = hash(req.body.password, 'hex')
             req.body.headPortrait = 'https://lightshadow.xyz/CDN/file/images/photo.png'
             req.body.nickname = '优选管理'
-            let _data = await admin.addAccount(req.body)
+            let _data = await position.addAccount(req.body)
             //移除注册数据库里的记录
             removeSignUp(_req, res)
             //返回数据
@@ -113,7 +113,7 @@ const addAccount = async (req, res) => {
  * 查询管理人员
  */
 const selectAccount = async (req, res, callback) => {
-  let _data = await admin.selectAccount(req.body)
+  let _data = await position.selectAccount(req.body)
   if (callback.name !== 'next') {
     callback(_data)
   } else {
@@ -144,7 +144,7 @@ const updateAccount = async (req, res) => {
     delete req.body.old_headPortrait
     //查询最新数据，并返回
     console.log('req.body:',req.body);
-    let _data = await admin.updateAccount(req.body)
+    let _data = await position.updateAccount(req.body)
     if (_data.nModified > 0) {
       returnData(req, res, 'account')
     } else {
@@ -159,7 +159,7 @@ const updateAccount = async (req, res) => {
  * 删除管理人员
  */
 const removeAccount = async (req, res) => {
-  let _data = await admin.removeAccount(req.body)
+  let _data = await position.removeAccount(req.body)
   handleData(_data, res, 'position')
 }
 
@@ -178,7 +178,7 @@ const changeAccountPassword = async (req, res) => {
     await selectAccount(req, res, async function (data) {
       if (data.length > 0) {
         req.body.password = hash(_body.newPassword, 'hex')
-        let _data = await admin.updateAccount(req.body)
+        let _data = await position.updateAccount(req.body)
         let newToken = token.createToken({
           '_id': _token.data._id
         }, 7200)
@@ -242,7 +242,7 @@ const addUser = async (req, res) => {
           if (Time < 720) {
             //先加密密码，再将账号密码存入数据库
             req.body.password = hash(req.body.password, 'hex')
-            let _data = await admin.addUser(req.body)
+            let _data = await position.addUser(req.body)
             //移除注册数据库里的记录
             removeSignUp(_req, res)
             //返回数据
@@ -263,7 +263,7 @@ const addUser = async (req, res) => {
  * 查询用户
  */
 const selectUser = async (req, res, callback) => {
-  let _data = await admin.selectUser(req.body)
+  let _data = await position.selectUser(req.body)
   if (callback.name !== 'next') {
     callback(_data)
   } else {
@@ -302,7 +302,7 @@ const updateUser = async (req, res) => {
     }
     delete req.body.old_headPortrait
     //查询最新数据，并返回
-    let _data = await admin.updateUser(req.body)
+    let _data = await position.updateUser(req.body)
     if (_data.nModified > 0) {
       returnData(req, res, 'user')
     } else {
@@ -324,9 +324,9 @@ const removeUser = async (req, res) => {
     if (_accountToken) {
       let user_id = req.body._id
       let account_id = _accountToken._id
-      let account_data = await admin.selectAccount({'_id': account_id})
+      let account_data = await position.selectAccount({'_id': account_id})
       if (account_data.length > 0 && account_data[0].authority >= 2) {
-        let user_data = await admin.removeUser({'_id': user_id})
+        let user_data = await position.removeUser({'_id': user_id})
         console.log('user_data:', user_data);
         handleData(user_data, res, 'position')
       } else {
@@ -339,7 +339,7 @@ const removeUser = async (req, res) => {
     let _userToken = await token.checkToken(req.body.userToken)
     if (_userToken) {
       let user_id = _userToken.data._id
-      let user_data = await admin.removeUser({'_id': user_id})
+      let user_data = await position.removeUser({'_id': user_id})
       console.log('_data:', user_data);
       handleData(user_data, res, 'position')
     } else {
@@ -365,7 +365,7 @@ const changeUserPassword = async (req, res) => {
     await selectUser(req, res, async function (data) {
       if (data.length > 0) {
         req.body.password = hash(_body.newPassword, 'hex')
-        let _data = await admin.updateUser(req.body)
+        let _data = await position.updateUser(req.body)
         let newToken = token.createToken({
           '_id': _token.data._id
         }, 7200)
@@ -388,6 +388,7 @@ const changeUserPassword = async (req, res) => {
 const loginUser = async (req, res) => {
   //将密码加密
   req.body.password = hash(req.body.password, 'hex')
+
   await selectUser(req, res, async function (data) {
     if (data.length > 0) {
       let _data = JSON.parse(JSON.stringify(data[0]))

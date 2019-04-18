@@ -17,7 +17,7 @@ const checkState = async () => {
         toast(`欢迎回来，${_result.data.nickname}`);
         return true;
       case 205 :
-        toast('Token失效，请重新登录', 'error');
+        toast('登录过期，请重新登录', 'error');
         return false;
       case 500 :
         toast('服务器错误，请重试', 'error');

@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var fileUpload = require('../middlewares/fileUpload')
+var { fileUploadAddGoods } = require('../middlewares/fileUpload')
 var position_controller = require('../controllers/position')
 
 // 抽离响应头的设置 中间件
@@ -14,7 +14,7 @@ router.use(resApplicationJson)
 router.post('/addMessage', position_controller.addMessage)
 router.post('/selectMessage', position_controller.selectMessage)
 router.post('/removeMessage', position_controller.removeMessage)
-router.post('/addGoods', position_controller.addGoods)
+router.post('/addGoods',fileUploadAddGoods, position_controller.addGoods)
 router.post('/selectGoods', position_controller.selectGoods)
 router.post('/updateGoods', position_controller.updateGoods)
 router.post('/removeGoods', position_controller.removeGoods)

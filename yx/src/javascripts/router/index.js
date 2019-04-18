@@ -24,6 +24,8 @@ const _init = () => {
   router.route('/mine', position_controller.mine)
   //物品详情
   router.route('/goods', position_controller.goods)
+  //添加物品
+  router.route('/addGoods', position_controller.addGoods)
   // 404路由
   router.route('/404', position_controller.fzf)
 

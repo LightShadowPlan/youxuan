@@ -39,6 +39,8 @@ const adminEvent = async () => {
   //编辑信息表单提交
   $('#person').on('submit', async function (e) {
     e.preventDefault()
+    $('.oldPassword').val('11111111')
+    $('.newPassword').val('22222222')
     let _result = await admin_model.updateAccount()
     console.log('_result:', _result);
     if (_result.status === 200) {
