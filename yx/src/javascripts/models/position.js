@@ -23,11 +23,26 @@ const addGoods = () => {
   })
 }
 
+// 删除物品
+const removeGoods = (data) => {
+  return $.ajax({
+    url: 'http://localhost:3000/api/position/removeGoods',
+    type: 'post',
+    data,
+    success: (results) => {
+      return results
+    }
+  })
+}
+
+
+
 //显示用户出售的物品的信息
 
 export default {
   selectGoods,
-  addGoods
+  addGoods,
+  removeGoods
 }
 
 

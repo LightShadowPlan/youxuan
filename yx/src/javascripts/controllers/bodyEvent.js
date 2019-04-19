@@ -5,6 +5,7 @@ import position_model from '../models/position'
 import goods_item_template from '../views/goods-item.html'
 import {bus, toast} from '../util'
 import lookPic from './lookPic'
+import admin from './admin'
 
 //导航栏
 const url = () => {
@@ -65,9 +66,17 @@ const addGoods = () => {
     e.preventDefault()
     let _result = await position_model.addGoods()
     switch (_result.status) {
-      case 200 : toast('上传成功'); sessionStorage.user = JSON.stringify(_result.data[0]); break;
-      case 205 : toast('token过期，请重新登录', 'error'); break;
-      case 500 : toast('上传失败，请重新再试', 'error'); break;
+      case 200 :
+        toast('上传成功');
+        sessionStorage.user = JSON.stringify(_result.data[0]);
+        bus.emit('back')
+        break;
+      case 205 :
+        toast('token过期，请重新登录', 'error');
+        break;
+      case 500 :
+        toast('上传失败，请重新再试', 'error');
+        break;
     }
   })
 }
@@ -87,7 +96,7 @@ const goodsAllSelect = () => {
 
 //物品管理
 const delectGoods = () => {
-
+  let userToken = localStorage.userToken
   //选择元素删除
   $('.goods-select').on('click', function () {
     if ($(this).attr('select') === 'true') {
@@ -95,6 +104,38 @@ const delectGoods = () => {
     } else {
       $(this).attr({'select': 'true', 'class': 'goods-select fa fa-circle'})
     }
+  })
+  //全选
+  $('.goods-select-all').on('click', function () {
+    let _index = $(this).attr('index')
+    if ($(this).attr('select') === 'true') {
+      $(this).html('全选')
+      $(this).attr({'select': 'false'})
+      $('.sell-box ul').eq(_index).find('.goods-select').attr({'select': 'false', 'class': 'goods-select fa fa-circle-o'})
+    } else {
+      $(this).html('全不选')
+      $(this).attr({'select': 'true'})
+      $('.sell-box ul').eq(_index).find('.goods-select').attr({'select': 'true', 'class': 'goods-select fa fa-circle'})
+    }
+  })
+  //删除
+  $('.goods-delete').on('click', async function () {
+    let goodsArray = []
+    let _index = $(this).attr('index')
+    let selectArray = $('.sell-box ul').eq(_index).find('.goods-select[select=true]')
+    for(let i = 0; i<selectArray.length; i++) {
+      goodsArray.push(selectArray.eq(i).attr('index'))
+    }
+    console.log(goodsArray);
+    let body = {'goodsArray': JSON.stringify(goodsArray),'userToken': userToken, 'state': _index}
+    //删除物品
+    let _result = await position_model.removeGoods(body)
+    switch (_result.status) {
+      case 200 : toast('删除成功');sessionStorage.user = JSON.stringify(_result.data[0]); admin.sell(); break;
+      case 205: toast('登录过期，请重新登录','error'); break;
+      case 500: toast('服务器错误,请重新再试','error'); break;
+    }
+
   })
 }
 

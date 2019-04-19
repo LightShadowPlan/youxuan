@@ -749,12 +749,13 @@ ul li {
               text-align: center;
               cursor: pointer;
               color: #fff;
+              user-select: none;
             }
             .goods-select-all {
               background: #31be32;
               margin: 0 0.133rem;
             }
-            &:nth-of-type(2) span:first-child {
+            &:nth-last-of-type(2) span:first-child {
               background: #65c7fe;
               &:after {
                 border-left-color: #65c7fe;
@@ -776,7 +777,6 @@ ul li {
             display: flex;
             flex-wrap: wrap;
             border-radius: 10px;
-            justify-content: space-around;
             align-content: space-around;
             li {
               width: 48%;
@@ -799,28 +799,44 @@ ul li {
                 height: 3.2rem;
                 display: flex;
                 align-items: center;
-                img {
-                  width: auto;
+                p.goods-photo {
+                  width: 3.2rem;
                   height: 3.2rem;
+                  overflow: hidden;
+                  text-align: center;
+                  line-height: 3.2em;
                   flex-shrink: 0;
                   border-radius: 0.133rem;
-                  overflow: hidden;
+                  img {
+                    width: auto;
+                    height: 3.2rem;
+                    border-radius: 0.133rem;
+                  }
                 }
                 p.goods-about {
+                  width: 3.2rem;
+                  height: 3.2rem;
+                  padding-left: 0.267rem;
                   display: flex;
                   flex-direction: column;
-                  justify-content: space-around;
                   align-items: flex-start;
                   span {
                     &:nth-of-type(1) {
                       color: #444;
                       font-size: 1.2em;
+                      margin-top: 0.133rem;
                     }
                     &:nth-of-type(2) {
                       color: tomato;
+                      margin-top: 0.133rem;
+
                     }
                     &:nth-of-type(3) {
-
+                      margin-top: 0.133rem;
+                      display: -webkit-box;
+                      -webkit-box-orient: vertical;
+                      -webkit-line-clamp: 4;
+                      overflow: hidden;
                     }
                   }
                 }
@@ -1445,7 +1461,7 @@ ul li {
           width: 100%;
           height: auto;
           margin: auto;
-          .userToken{
+          .userToken {
             width: 0;
             height: 0;
             display: none;
@@ -1524,11 +1540,11 @@ ul li {
               cursor: pointer;
             }
           }
-          .button{
+          .button {
             width: 600px;
             height: 80px;
             margin: 10px auto;
-            input{
+            input {
               width: 150px;
               height: 50px;
               border: 1px solid #888;
@@ -1538,7 +1554,7 @@ ul li {
               background: transparent;
               cursor: pointer;
               transition: 0.3s;
-              &:hover{
+              &:hover {
                 color: #00cfff;
                 border-color: #00cfff;
               }

@@ -143,7 +143,7 @@ const updateAccount = async (req, res) => {
     }
     delete req.body.old_headPortrait
     //查询最新数据，并返回
-    console.log('req.body:',req.body);
+    console.log('req.body:', req.body);
     let _data = await position.updateAccount(req.body)
     if (_data.nModified > 0) {
       returnData(req, res, 'account')
@@ -320,20 +320,15 @@ const updateUser = async (req, res) => {
  */
 const removeUser = async (req, res) => {
   if (req.body.accountToken && req.body._id) {
-    let _accountToken = await token.checkToken(req.body.accountToken)
-    if (_accountToken) {
-      let user_id = req.body._id
-      let account_id = _accountToken._id
-      let account_data = await position.selectAccount({'_id': account_id})
-      if (account_data.length > 0 && account_data[0].authority >= 2) {
-        let user_data = await position.removeUser({'_id': user_id})
-        console.log('user_data:', user_data);
-        handleData(user_data, res, 'position')
-      } else {
-        handleData(206, res, 'position')
-      }
-    } else {
+    let user_id = req.body._id
+    let authority = await powerChecked(req.body.accountToken)
+    if (authority <= 0) {
       handleData(205, res, 'position')
+    } else if (authority === 1) {
+      handleData(206, res, 'position')
+    } else {
+      let user_data = await position.removeUser({'_id': user_id})
+      handleData(user_data, res, 'position')
     }
   } else {
     let _userToken = await token.checkToken(req.body.userToken)
@@ -372,7 +367,6 @@ const changeUserPassword = async (req, res) => {
         _data.token = newToken
         handleData(_data, res, 'position')
       } else {
-        console.log('204');
         handleData(204, res, 'position')
       }
     })
@@ -404,10 +398,11 @@ const loginUser = async (req, res) => {
   })
 }
 
+//------------------------------------------------------------------------------
 
-// 验证token,获取信息
+// 验证token,获取信息，常用于页面加载后检测token，然后再加信息，避免重复登陆
 const getByToken = async (req, res) => {
-  let _token = await token.checkToken(req.body.token)
+  let _token = await token.checkToken(req.body.accountToken)
   let _type = req.body.type
   if (_token) {
     req.body._id = _token.data._id
@@ -449,6 +444,18 @@ const returnData = async (req, res, _type) => {
   }
 }
 
+//权限检查，返回权限,token失效返回-1
+const powerChecked = async (Token) => {
+  let _token = await token.checkToken(Token)
+  if (_token) {
+    let account = await selectAccount({'_id': _token.data._id})
+    return account[0].authority
+  } else {
+    return -1
+  }
+}
+
+
 module.exports = {
   addSignUp,
   addAccount,
@@ -464,4 +471,5 @@ module.exports = {
   loginUser,
   changeUserPassword,
   getByToken,
+  powerChecked
 }

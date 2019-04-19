@@ -303,14 +303,15 @@ const updateUser = async (body) => {
 }
 //更新用户出售信息
 const updateUserSellGoods = async (body) => {
-  let _id = body._id
+  console.log(body);
+  let { _id, goods } = body
   delete body._id
   return UserModel.updateOne(
     {
       _id: _id
     },
     {
-      '$addToSet' : body
+      ...goods
     }
   ).then((res) => {
     return res
@@ -401,9 +402,9 @@ const addGoods = async (body) => {
  * 查询物品
  */
 const selectGoods = async (body) => {
-  console.log(body);
+  let { goodsArray,state = [0, 1, 2] } = body
   return GoodsModel.find(
-   { _id: { $in: body } }
+   { _id: { $in: goodsArray }, state: { $in: state } }
   ).then((res) => {
     return res
   }).catch(() => {
@@ -430,8 +431,9 @@ const updateGoods = async (body) => {
  * 删除物品
  */
 const removeGoods = async (body) => {
-  return GoodsModel.deleteOne(
-    body
+  let { goodsArray } = body
+  return GoodsModel.deleteMany(
+    { _id: { $in: goodsArray } }
   ).then((res) => {
     return res
   }).catch(() => {

@@ -50,7 +50,7 @@ const addGoods = async (req, res) => {
     if (_data) {
       req.body = {
         _id: _token.data._id,
-        sellGoods: _data._id
+        goods: {'$addToSet': {'sellGoods': _data._id}}
       }
       await position.updateUserSellGoods(req.body)
       let user_data = await position.selectUser({_id: _token.data._id})
@@ -68,9 +68,9 @@ const addGoods = async (req, res) => {
  * 查询物品
  */
 const selectGoods = async (req, res, callback) => {
-  let goods = JSON.parse(req.body.goods)
-  let _data = await position.selectGoods(goods)
-  console.log('_data:',_data);
+  req.body.goodsArray = JSON.parse(req.body.goodsArray)
+  req.body.state = JSON.parse(req.body.state)
+  let _data = await position.selectGoods(req.body)
   if (callback.name !== 'next') {
     callback(_data)
   } else {
@@ -90,8 +90,52 @@ const updateGoods = async (req, res) => {
  * 删除物品
  */
 const removeGoods = async (req, res) => {
-  let _data = await position.removeUser(req.body)
-  handleData(_data, res, 'position')
+  let goodsArray = JSON.parse(req.body.goodsArray)
+  //判断删除操作由用户还是管理员触发
+  if (req.body.accountToken) {
+    let authority = await admin.powerChecked(req.accountToken)
+    //判断权限
+    if (authority <= 0) {
+      handleData(205, res, 'position')
+    } else if (authority === 1) {
+      handleData(206, res, 'position')
+    } else {
+
+    }
+  } else {
+    let _token = await token.checkToken(req.body.userToken)
+    delete req.body.userToken
+    if (_token) {
+      //判断物品状态
+      let user_id = _token.data._id
+      //未交易
+      if (~~req.body.state === 0) {
+        body = {
+          _id: user_id,
+          goods: {'$pull': {'sellGoods': {'$each': goodsArray}}}
+
+        }
+        //删除用户记录此物品的记录
+        await position.updateUserSellGoods(body)
+        //删除物品记录
+        await removeGoodsItem(goodsArray)
+        //查询用户数据
+        let user_data = await position.selectUser({_id: user_id})
+        handleData(user_data, res, 'position')
+      } else if(req.body.state === 1){  //交易中
+
+      } else if(req.body.state === 2){ //交易完成
+
+      }
+
+    } else {
+      handleData(205, res, 'position')
+    }
+  }
+}
+
+const removeGoodsItem = async (goods) => {
+  await position.removeGoods({'goodsArray': goods})
 }
 
 /**

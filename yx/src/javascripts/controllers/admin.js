@@ -1,6 +1,7 @@
 import {bus, toast} from '../util'
 import checkState from './checkState'
 import lookPic from './lookPic'
+import bodyEvent from './bodyEvent'
 // model
 import admin_model from '../models/admin'
 import position_model from '../models/position'
@@ -418,38 +419,93 @@ const mineEvent = () => {
   $('.mine-nav-account').on('click', function () {
     account()
   })
-
-  //添加物品
-
-
 }
 
 //出售
 const sell = async () => {
+  $('.mine-nav li').removeClass('show-box')
+  $('.mine-nav-sell').addClass('show-box')
+  //向模版添加的数据
+  let sellData = {
+    stateOne: [],
+    stateTwo: [],
+    stateThree: []
+  }
+  if (sessionStorage.user) {
+    //取出本地物品的_id数组
+    let sellGoods = JSON.parse(sessionStorage.user).sellGoods
+    let body = {'goodsArray': JSON.stringify(sellGoods), 'state': JSON.stringify([0, 1, 2])}
+    //获取物品详细信息
+    let _result = await position_model.selectGoods(body)
+    console.log(_result);
+    //处理数据
+    _result.data.forEach(item => {
+      switch (item.state) {
+        case 0 :
+          sellData.stateOne.push(item);
+          break;
+        case 1 :
+          sellData.stateTwo.push(item);
+          break;
+        case 2 :
+          sellData.stateThree.push(item);
+          break;
+      }
+    })
+    console.log('_result:', _result);
+  }
+
+  let goods_html = template.render(sell_html, {
+    data: sellData
+  })
+  $('.mine-box').html(goods_html)
+
   $('.plus-sell').on('click', function () {
     bus.emit('go', '/addGoods')
   })
-  $('.mine-nav li').removeClass('show-box')
-  $('.mine-nav-sell').addClass('show-box')
-  $('.mine-box').html(sell_html);
-  let sellData = JSON.parse(sessionStorage.user).sellGoods || []
-  let body = {'goods': JSON.stringify(sellData)}
-  console.log('body.goods:', JSON.stringify(sellData));
-  let _result = await position_model.selectGoods(body)
-  console.log('_result:', _result);
-  // let goods_html = template.render(sell_html,{
-  //     data: _result.data
-  // })
-  // res.render(goods_html)
+  bodyEvent.delectGoods()
 }
 
 //购买
 const purchase = async () => {
   $('.mine-nav li').removeClass('show-box')
   $('.mine-nav-purchaser').addClass('show-box')
-  $('.mine-box').html(purchaser_html);
-  let purcharseData = JSON.parse(sessionStorage.user).purchaserGoods || []
-  console.log(purcharseData);
+  //向模版添加的数据
+  let purchaserData = {
+    stateTwo: [],
+    stateThree: []
+  }
+  if (sessionStorage.user) {
+    //取出本地物品的_id数组
+    let purchaserGoods = JSON.parse(sessionStorage.user).purchaserGoods
+    let body = {'goodsArray': JSON.stringify(purchaserGoods), 'state': JSON.stringify([ 1, 2])}
+    //获取物品详细信息
+    let _result = await position_model.selectGoods(body)
+    console.log(_result);
+    //处理数据
+    _result.data.forEach(item => {
+      switch (item.state) {
+        case 0 :
+          purchaserData.stateOne.push(item);
+          break;
+        case 1 :
+          purchaserData.stateTwo.push(item);
+          break;
+        case 2 :
+          purchaserData.stateThree.push(item);
+          break;
+      }
+    })
+    console.log('_result:', _result);
+  }
+
+  let goods_html = template.render(purchaser_html, {
+    data: purchaserData
+  })
+  $('.mine-box').html(goods_html)
+
+  bodyEvent.delectGoods()
+
 }
 
 //我的信息
@@ -462,5 +518,6 @@ const account = async () => {
 
 
 export default {
-  mineEvent
+  mineEvent,
+  sell
 }

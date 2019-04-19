@@ -54,7 +54,6 @@ const mine = async (req, res, next) => {
   res.render(mine_template)
   adminEvent.mineEvent()
   bodyEvent.url()
-  bodyEvent.delectGoods()
 }
 
 // 添加物品视图的控制器
