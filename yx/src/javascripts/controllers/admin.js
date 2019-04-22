@@ -381,7 +381,7 @@ const loginEvent = async () => {
   })
 
   const removeUser = async () => {
-    let body = {'userToken': userToken}
+    let body = {'userToken': userToken,headPortrait: user.headPortrait}
     console.log('usetToken:', body);
     let _result = await admin_model.removeUser(body)
     console.log('_result:', _result);
@@ -403,7 +403,6 @@ const loginEvent = async () => {
     go_default()
   })
   //---------------------------------------------------------------------------------------------------
-
 
 }
 
@@ -434,7 +433,11 @@ const sell = async () => {
   if (sessionStorage.user) {
     //取出本地物品的_id数组
     let sellGoods = JSON.parse(sessionStorage.user).sellGoods
-    let body = {'goodsArray': JSON.stringify(sellGoods), 'state': JSON.stringify([0, 1, 2])}
+    console.log(sellGoods);
+    let body = {
+      query: JSON.stringify({_id: {$in: sellGoods}}),
+      vernier: JSON.stringify({sort: {addTime: 1}})
+    }
     //获取物品详细信息
     let _result = await position_model.selectGoods(body)
     console.log(_result);
@@ -452,7 +455,6 @@ const sell = async () => {
           break;
       }
     })
-    console.log('_result:', _result);
   }
 
   let goods_html = template.render(sell_html, {

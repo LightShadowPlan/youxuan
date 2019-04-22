@@ -6,6 +6,8 @@ const {handleData, sendMail, verificationMail, verificationCode} = require('../u
 const position = require('../models/position')
 const admin = require('./admin')
 const {token} = require('../util/token')
+const fs = require('fs')
+const Path = require('path')
 /**
  * 添加消息
  */
@@ -48,11 +50,11 @@ const addGoods = async (req, res) => {
   if (_token) {
     let _data = await position.addGoods(req.body) || []
     if (_data) {
-      req.body = {
+      let body = {
         _id: _token.data._id,
         goods: {'$addToSet': {'sellGoods': _data._id}}
       }
-      await position.updateUserSellGoods(req.body)
+      await position.updateUserSellGoods(body)
       let user_data = await position.selectUser({_id: _token.data._id})
       handleData(user_data, res, 'position')
     } else {
@@ -68,8 +70,8 @@ const addGoods = async (req, res) => {
  * 查询物品
  */
 const selectGoods = async (req, res, callback) => {
-  req.body.goodsArray = JSON.parse(req.body.goodsArray)
-  req.body.state = JSON.parse(req.body.state)
+  req.body.query = JSON.parse(req.body.query)
+  req.body.vernier = JSON.parse(req.body.vernier)
   let _data = await position.selectGoods(req.body)
   if (callback.name !== 'next') {
     callback(_data)
@@ -110,21 +112,24 @@ const removeGoods = async (req, res) => {
       let user_id = _token.data._id
       //未交易
       if (~~req.body.state === 0) {
-        body = {
+        let body = {
           _id: user_id,
           goods: {'$pull': {'sellGoods': {'$each': goodsArray}}}
-
         }
         //删除用户记录此物品的记录
-        await position.updateUserSellGoods(body)
+        let delete_data = await position.updateUserSellGoods(body)
+        console.log(delete_data);
+        //删除图片
+        deletePhoto(goodsArray)
         //删除物品记录
-        await removeGoodsItem(goodsArray)
+        await position.removeGoods({'goodsArray': goodsArray})
+
         //查询用户数据
         let user_data = await position.selectUser({_id: user_id})
         handleData(user_data, res, 'position')
-      } else if(req.body.state === 1){  //交易中
+      } else if (req.body.state === 1) {  //交易中
 
-      } else if(req.body.state === 2){ //交易完成
+      } else if (req.body.state === 2) { //交易完成
 
       }
 
@@ -133,63 +138,75 @@ const removeGoods = async (req, res) => {
     }
   }
 }
+//删除物品图片
 
-const removeGoodsItem = async (goods) => {
-  await position.removeGoods({'goodsArray': goods})
+const deletePhoto = async (photoArray) => {
+  let body = {
+    query: { _id: {$in: photoArray}},
+    vernier: {}
+  }
+  let _data = await position.selectGoods(body)
+  _data.forEach(item => {
+    let photoArray = item.goodsPhoto
+    photoArray.forEach(item => {
+      fs.unlink(Path.resolve(__dirname, '../../yx/' + item), (err) => {})
+    })
+  })
 }
 
-/**
- * 添加交易
- */
-const addTransactions = async (req, res) => {
-  let _data = await position.selectUser(req.query)
-  if (callback.name !== 'next') {
-    callback(_data)
-  } else {
+
+  /**
+   * 添加交易
+   */
+  const addTransactions = async (req, res) => {
+    let _data = await position.selectUser(req.query)
+    if (callback.name !== 'next') {
+      callback(_data)
+    } else {
+      handleData(_data, res, 'position')
+    }
+
+  }
+
+  /**
+   * 查询交易
+   */
+  const selectTransactions = async (req, res, callback) => {
+    let _data = await position.selectUser(req.query)
+    if (callback.name !== 'next') {
+      callback(_data)
+    } else {
+      handleData(_data, res, 'position')
+    }
+  }
+
+  /**
+   * 更新交易
+   */
+  const updateTransactions = async (req, res) => {
+    let _data = await position.updateUser(req.body)
     handleData(_data, res, 'position')
   }
 
-}
-
-/**
- * 查询交易
- */
-const selectTransactions = async (req, res, callback) => {
-  let _data = await position.selectUser(req.query)
-  if (callback.name !== 'next') {
-    callback(_data)
-  } else {
+  /**
+   * 删除交易
+   */
+  const removeTransactions = async (req, res) => {
+    let _data = await position.removeUser(req.body)
     handleData(_data, res, 'position')
   }
-}
-
-/**
- * 更新交易
- */
-const updateTransactions = async (req, res) => {
-  let _data = await position.updateUser(req.body)
-  handleData(_data, res, 'position')
-}
-
-/**
- * 删除交易
- */
-const removeTransactions = async (req, res) => {
-  let _data = await position.removeUser(req.body)
-  handleData(_data, res, 'position')
-}
 
 
-module.exports = {
-  addMessage,
-  selectMessage,
-  removeMessage,
-  addGoods,
-  selectGoods,
-  updateGoods,
-  removeGoods,
-  addTransactions,
-  selectTransactions,
-  updateTransactions,
-  removeTransactions
-}
+  module.exports = {
+    addMessage,
+    selectMessage,
+    removeMessage,
+    addGoods,
+    selectGoods,
+    updateGoods,
+    removeGoods,
+    addTransactions,
+    selectTransactions,
+    updateTransactions,
+    removeTransactions
+  }

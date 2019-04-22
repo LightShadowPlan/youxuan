@@ -295,8 +295,7 @@ const updateUser = async (req, res) => {
       delete req.body.headPortrait
     } else {
       if (req.body.old_headPortrait !== 'static/images/photo.png') {
-        fs.unlink(Path.resolve(__dirname, '../../yx/' + req.body.old_headPortrait), (err) => {
-        })
+        fs.unlink(Path.resolve(__dirname, '../../yx/' + req.body.old_headPortrait), (err) => {})
       }
 
     }
@@ -328,6 +327,7 @@ const removeUser = async (req, res) => {
       handleData(206, res, 'position')
     } else {
       let user_data = await position.removeUser({'_id': user_id})
+      fs.unlink(Path.resolve(__dirname, '../../yx/' + req.body.headPortrait), (err) => {})
       handleData(user_data, res, 'position')
     }
   } else {
@@ -335,6 +335,7 @@ const removeUser = async (req, res) => {
     if (_userToken) {
       let user_id = _userToken.data._id
       let user_data = await position.removeUser({'_id': user_id})
+      fs.unlink(Path.resolve(__dirname, '../../yx/' + req.body.headPortrait), (err) => {})
       console.log('_data:', user_data);
       handleData(user_data, res, 'position')
     } else {
@@ -402,7 +403,7 @@ const loginUser = async (req, res) => {
 
 // 验证token,获取信息，常用于页面加载后检测token，然后再加信息，避免重复登陆
 const getByToken = async (req, res) => {
-  let _token = await token.checkToken(req.body.accountToken)
+  let _token = await token.checkToken(req.body.token)
   let _type = req.body.type
   if (_token) {
     req.body._id = _token.data._id

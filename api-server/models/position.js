@@ -108,16 +108,7 @@ let DataStatisticsModel = mongoose.model('data_statistics', new mongoose.Schema(
     purchaser: Number,
     sellerPurchaser: Number
   },
-  goodsClass: {
-    book: Number,
-    penOrTool: Number,
-    cosmetics: Number,
-    dailyNecessities: Number,
-    ball: Number,
-    bicycle: Number,
-    phone: Number,
-    electronics: Number
-  },
+  goodsClass: String,
   supplyDemand: [{
     goodsClass: String,
     supply: Number,
@@ -303,16 +294,12 @@ const updateUser = async (body) => {
 }
 //更新用户出售信息
 const updateUserSellGoods = async (body) => {
-  console.log(body);
-  let { _id, goods } = body
-  delete body._id
+  let {_id, goods} = body
   return UserModel.updateOne(
     {
       _id: _id
     },
-    {
-      ...goods
-    }
+    goods
   ).then((res) => {
     return res
   }).catch(() => {
@@ -402,14 +389,15 @@ const addGoods = async (body) => {
  * 查询物品
  */
 const selectGoods = async (body) => {
-  let { goodsArray,state = [0, 1, 2] } = body
   return GoodsModel.find(
-   { _id: { $in: goodsArray }, state: { $in: state } }
+    body.query,
+    null,
+    body.vernier
   ).then((res) => {
-    return res
-  }).catch(() => {
-    return false
-  })
+      return res
+    }).catch(() => {
+      return false
+    })
 }
 /**
  *更新物品
@@ -431,9 +419,9 @@ const updateGoods = async (body) => {
  * 删除物品
  */
 const removeGoods = async (body) => {
-  let { goodsArray } = body
+  let {goodsArray} = body
   return GoodsModel.deleteMany(
-    { _id: { $in: goodsArray } }
+    {_id: {$in: goodsArray}}
   ).then((res) => {
     return res
   }).catch(() => {

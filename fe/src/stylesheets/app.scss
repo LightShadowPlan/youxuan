@@ -640,30 +640,27 @@ ul li {
             overflow: hidden;
             background: #f7f7f7;
             position: relative;
-            &:before {
+            span{
               position: absolute;
-              right: 5px;
-              top: 5px;
-              color: tomato;
-              font-size: 20px;
+              top: 0;
+              right: 0;
+              width: 30px;
+              height: 30px;
+              line-height: 30px;
               text-align: center;
-              width: 20px;
-              height: 20px;
-              line-height: 20px;
+              font-size: 24px;
               cursor: pointer;
-              border-radius: 50%;
-              border: 1px solid tomato;
-              padding: 2px;
+              color: tomato;
             }
             img {
               width: 100%;
             }
             p {
-              min-height: 30px;
+              min-height: 40px;
               padding: 0 10px;
               input {
                 width: 85%;
-                height: 24px;
+                height: 30px;
                 border: none;
                 border-bottom: 1px solid #666;
                 background: transparent;

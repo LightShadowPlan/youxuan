@@ -52,16 +52,13 @@ const swiper = () => {
   })
 }
 
-//添加商品
+//添加出售商品
 const addGoods = () => {
   let userToken = localStorage.userToken
   defaultEvent()
   let imgArr = [$('.img-box img').eq(0), $('.img-box img').eq(1), $('.img-box img').eq(2)]
-  //图片处理
-  lookPic($('.goodsPhoto'), imgArr, true);
-  //token
+  lookPic($('.goodsPhoto'), imgArr, true);  //图片处理
   $('.userToken').val(userToken)
-
   $('#addGoods').on('submit', async function (e) {
     e.preventDefault()
     let _result = await position_model.addGoods()
@@ -69,32 +66,48 @@ const addGoods = () => {
       case 200 :
         toast('上传成功');
         sessionStorage.user = JSON.stringify(_result.data[0]);
-        bus.emit('back')
-        break;
+        bus.emit('back'); break;
       case 205 :
-        toast('token过期，请重新登录', 'error');
-        break;
+        toast('token过期，请重新登录', 'error'); break;
       case 500 :
-        toast('上传失败，请重新再试', 'error');
-        break;
+        toast('上传失败，请重新再试', 'error'); break;
     }
   })
 }
 
 //闲置馆
 const goodsAllSelect = () => {
+  let goodsClass = {$nin: ['nice']}, skip = 0, limit = 16, state = {$in: [0]}
+  showGoods(goodsClass, skip, limit, state)
+  //点击头部筛选
   $('.search-goods-box').on('click', 'li', function () {
     $(this).addClass('active').siblings().removeClass('active')
-    let type = $(this).attr('type')
-    let _result = position_model.selectGoods({type: type})
+    goodsClass = $(this).attr('goodsClass')
+    showGoods(goodsClass, skip, limit, state)
+  })
+  //滚动页面刷新
+}
+//获取数据
+const showGoods = async (goodsClass, skip, limit, state) => {
+  let body = {
+    query: JSON.stringify({state: state, goodsClass: goodsClass}),
+    vernier: JSON.stringify({skip: skip, limit: limit, sort: {addTime: 1}})
+  }
+  let _result = await position_model.selectGoods(body)
+  console.log(_result);
+  if (_result.status === 200) {
     let goodsAll_html = template.render(goods_item_template, {
       data: _result.data
     })
     $('.goodsAll-container').html(goodsAll_html)
-  })
+  } else {
+    $('.goodsAll-container').html('服务器出差了')
+  }
+
+
 }
 
-//物品管理
+//出售物品删除
 const delectGoods = () => {
   let userToken = localStorage.userToken
   //选择元素删除
@@ -111,7 +124,10 @@ const delectGoods = () => {
     if ($(this).attr('select') === 'true') {
       $(this).html('全选')
       $(this).attr({'select': 'false'})
-      $('.sell-box ul').eq(_index).find('.goods-select').attr({'select': 'false', 'class': 'goods-select fa fa-circle-o'})
+      $('.sell-box ul').eq(_index).find('.goods-select').attr({
+        'select': 'false',
+        'class': 'goods-select fa fa-circle-o'
+      })
     } else {
       $(this).html('全不选')
       $(this).attr({'select': 'true'})
@@ -123,18 +139,33 @@ const delectGoods = () => {
     let goodsArray = []
     let _index = $(this).attr('index')
     let selectArray = $('.sell-box ul').eq(_index).find('.goods-select[select=true]')
-    for(let i = 0; i<selectArray.length; i++) {
+    for (let i = 0; i < selectArray.length; i++) {
       goodsArray.push(selectArray.eq(i).attr('index'))
     }
-    console.log(goodsArray);
-    let body = {'goodsArray': JSON.stringify(goodsArray),'userToken': userToken, 'state': _index}
-    //删除物品
-    let _result = await position_model.removeGoods(body)
-    switch (_result.status) {
-      case 200 : toast('删除成功');sessionStorage.user = JSON.stringify(_result.data[0]); admin.sell(); break;
-      case 205: toast('登录过期，请重新登录','error'); break;
-      case 500: toast('服务器错误,请重新再试','error'); break;
+    if (goodsArray.length > 0) {
+      let body = {
+        'goodsArray': JSON.stringify(goodsArray),
+        'userToken': userToken,
+        'state': _index,
+        'goodsPhotoArray': []
+      }
+      //删除物品
+      let _result = await position_model.removeGoods(body)
+      switch (_result.status) {
+        case 200 :
+          toast('删除成功');
+          sessionStorage.user = JSON.stringify(_result.data[0]);
+          admin.sell();
+          break;
+        case 205:
+          toast('登录过期，请重新登录', 'error');
+          break;
+        case 500:
+          toast('服务器错误,请重新再试', 'error');
+          break;
+      }
     }
+
 
   })
 }

@@ -481,6 +481,8 @@ ul li {
             background-size: auto 100%;
           }
           li.active {
+            width: 50%;
+            flex-shrink: 0;
             color: #06dcfd;
           }
         }
@@ -503,7 +505,6 @@ ul li {
         overflow: hidden;
         background: #f7f7f7;
         display: flex;
-        justify-content: space-around;
         flex-wrap: wrap;
         border-radius: 0 0 0.2rem 0.2rem;
         li {
@@ -512,7 +513,7 @@ ul li {
           background: #fff;
           border-radius: 0.133rem;
           overflow: hidden;
-          margin-bottom: 0.267rem;
+          margin: 10px 15px;
           a {
             display: block;
             width: 100%;
@@ -1524,6 +1525,7 @@ ul li {
             .img-box {
               width: 76%;
               padding: 2%;
+              min-height: 100px;
               display: flex;
               justify-content: space-around;
               align-items: center;

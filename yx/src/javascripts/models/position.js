@@ -1,4 +1,4 @@
-// 提供闲置馆列表数据
+// 搜索物品
 const selectGoods = (data) => {
   return $.ajax({
     url: 'http://localhost:3000/api/position/selectGoods',

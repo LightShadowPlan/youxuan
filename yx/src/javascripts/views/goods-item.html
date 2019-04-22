@@ -1,8 +1,10 @@
-<li>
-    <a href="#/goods">
-        <img src="https://lightshadow.xyz/youxuan/index/static/images/photo.png" alt=""/>
-        <span class="goods-title">电脑椅</span>
-        <span class="goods-price">￥30</span>
-        <span class="goods-content">此电脑椅九成新</span>
+{{ each data }}
+<li >
+    <a href="#/goods?_id={{$value._id}}">
+        <p><img src="../../../{{ $value.goodsPhoto[0] }}" alt=""/></p>
+        <span class="goods-title">{{ $value.goodsName }}</span>
+        <span class="goods-price">￥{{ $value.goodsPrice }}</span>
+        <span class="goods-content">{{ $value.goodsContent }}</span>
     </a>
 </li>
+{{/each}}

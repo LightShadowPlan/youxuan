@@ -2,8 +2,11 @@
  * Created by qiangxl on 2019/4/14.
  */
 const lookPic = (options, imgOptions, array) => {
+  let photoNum
   options.on('change', function () {
     previewImage(options[0], imgOptions, array)
+    photoNum = options[0].files.length
+    return photoNum
   });
 
   function previewImage(file, imgOptions, array) {
