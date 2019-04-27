@@ -1,0 +1,25 @@
+<div class="message">
+    <div class="message-title">消息</div>
+    <div class="message-sidebar">
+        <ul>
+            {{ each data.senderArray }}
+            <li class="message-item">
+                <p class="message-nickname"><span>{{$value[0].sender}}</span><span>{{$value[0].formatTime}}</span></p>
+                <p class="message-text">{{$value[0].content}}</p>
+                {{if data.senderName[$index] > 0 }}
+                <div class="no-read">{{data.senderName[$index]}}</div>
+                {{else}}
+                <div class="no-read read"></div>
+                {{/if}}
+
+            </li>
+            {{ /each }}
+        </ul>
+    </div>
+    <div class="message-content">
+        <ul  class="message-list-box">
+
+        </ul>
+    </div>
+    <p class="go-back">返回</p>
+</div>

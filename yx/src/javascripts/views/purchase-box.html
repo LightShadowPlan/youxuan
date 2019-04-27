@@ -1,16 +1,18 @@
 <div class="purchase-box">
     <p class="purchase-title">
         <span>交易中</span>
-        <span class="goods-delete" index="0">删除</span>
+        <span class="goods-delete" index="0" state="1">取消订单</span>
         <span class="goods-select-all " index="0" select="false">全选</span>
     </p>
     <ul>
         {{ each data.stateTwo }}
         <li>
-            <p class="sell-time">{{ $value.formatTime }}</p>
+            <p class="sell-time">物品上架时间： {{ $value.formatTime }}</p>
             <div class="goods-box">
                 <p class="goods-photo">
-                    <img src="../../../{{ $value.goodsPhoto[0] }}" alt=""/>
+                    <a href="#/goods?_id={{$value._id}}">
+                        <img src="../../../{{ $value.goodsPhoto[0] }}" alt=""/>
+                    </a>
                 </p>
                 <p class="goods-about">
                     <span>{{ $value.goodsName }}</span>
@@ -19,31 +21,33 @@
                 </p>
             </div>
             <div class="purchaser-box">
-                <img class="purchaser-photo" src="https://lightshadow.xyz/youxuan/index/static/images/photo.png"
-                     alt=""/>
+                <a href="#/user?_id={{$value.purchaser._id}}">
+                    <img class="purchaser-photo" src="{{$value.seller.headPortrait}}" alt=""/>
+                </a>
                 <p class="purchaser-about">
-                    <span>购买人信息</span>
-                    <span>科院小透明</span>
-                    <span>交易时间：2019-3-21</span>
+                    <span>出售用户：{{$value.seller.nickname}}</span>
+                    <span>交易时间：{{$value.purchaser.time}}</span>
+                    <span>交易编号：{{$value.transaction}}</span>
                 </p>
+                <p class="transaction-over" index="{{$value._id}}" seller="{{$value.seller._id}}"  transaction="{{$value.transaction}}">交易完成</p>
             </div>
-            <div class="goods-select fa fa-circle-o" index="{{$value._id}}" select="false"></div>
+            <div class="goods-select fa fa-circle-o" index="{{$value._id}}"   transaction="{{$value.transaction}}" select="false"></div>
         </li>
         {{/each}}
 
     </ul>
     <p class="purchase-title">
         <span>已购买</span>
-        <span class="goods-delete" index="0">删除</span>
-        <span class="goods-select-all " index="0" select="false">全选</span>
     </p>
     <ul>
         {{ each data.stateThree }}
         <li>
-            <p class="sell-time">{{ $value.formatTime }}</p>
+            <p class="sell-time">物品上架时间： {{ $value.formatTime }}</p>
             <div class="goods-box">
                 <p class="goods-photo">
-                    <img src="../../../{{ $value.goodsPhoto[0] }}" alt=""/>
+                    <a href="#/goods?_id={{$value._id}}">
+                        <img src="../../../{{ $value.goodsPhoto[0] }}" alt=""/>
+                    </a>
                 </p>
                 <p class="goods-about">
                     <span>{{ $value.goodsName }}</span>
@@ -52,15 +56,15 @@
                 </p>
             </div>
             <div class="purchaser-box">
-                <img class="purchaser-photo" src="https://lightshadow.xyz/youxuan/index/static/images/photo.png"
-                     alt=""/>
+                 <a href="#/user?_id={{$value.purchaser._id}}">
+                    <img class="purchaser-photo" src="{{$value.seller.headPortrait}}" alt=""/>
+                </a>
                 <p class="purchaser-about">
-                    <span>购买人信息</span>
-                    <span>科院小透明</span>
-                    <span>交易时间：2019-3-21</span>
+                    <span>出售用户：{{$value.seller.nickname}}</span>
+                    <span>交易时间：{{$value.purchaser.time}}</span>
+                    <span>交易编号：{{$value.transaction}}</span>
                 </p>
             </div>
-            <div class="goods-select fa fa-circle-o" index="{{$value._id}}" select="false"></div>
         </li>
         {{/each}}
     </ul>

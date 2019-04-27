@@ -25,6 +25,7 @@ const adminEvent = async () => {
     $('.person-mailbox').html('邮箱：&nbsp;' + account.mailbox)
     $('.person-authority').html('权限：&nbsp;' + authorityName)
     $('.nickname').val(account.nickname)
+    $('.person_id').val(account._id)
     $('.account-token').val(accountToken)
     $('.account-old-headPortrait').val(account.headPortrait)
     $('.person-photo').attr({'src': '../' + account.headPortrait})

@@ -10,7 +10,7 @@ const selectGoods = (data) => {
   })
 }
 
-// 添加物品
+// 添加出售物品
 const addGoods = () => {
   return new Promise((resolve) => {
     $('#addGoods').ajaxSubmit({
@@ -35,6 +35,29 @@ const removeGoods = (data) => {
   })
 }
 
+//更新物品
+const updateGoods = (data) => {
+  return $.ajax({
+    url: 'http://localhost:3000/api/position/updateGoods',
+    type: 'post',
+    data,
+    success: (results) => {
+      return results
+    }
+  })
+}
+
+//首页显示
+const homeShow = () => {
+  return $.ajax({
+    url: 'http://localhost:3000/api/position/homeShow',
+    type: 'post',
+    success: (results) => {
+      return results
+    }
+  })
+}
+
 
 
 //显示用户出售的物品的信息
@@ -42,7 +65,9 @@ const removeGoods = (data) => {
 export default {
   selectGoods,
   addGoods,
-  removeGoods
+  removeGoods,
+  updateGoods,
+  homeShow
 }
 
 

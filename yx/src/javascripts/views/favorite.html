@@ -1,41 +1,19 @@
 <div class="favorite-box">
-    <p class="favorite-title"><span class="goods-select-all">全选</span><span class="goods-delete">删除</span></p>
+    <p class="favorite-title">
+        <span class="goods-select-all" index="0" select="false">全选</span>
+        <span class="goods-delete">删除</span>
+    </p>
     <ul class="favorite-box-content">
+        {{ each data }}
         <li>
-            <p class="goods-select fa fa-circle-o" select="false"></p>
-            <a href="#/favorite">
-                <img src="https://lightshadow.xyz/youxuan/index/static/images/photo.png" alt=""/>
-                <span class="goods-title">电脑椅</span>
-                <span class="goods-price">￥30</span>
-                <span class="goods-content">此电脑椅九成新</span>
+            <p class="goods-select fa fa-circle-o" select="false" index="{{$value._id}}"></p>
+            <a href="#/goods?_id={{$value._id}}">
+                <p><img src="../../../{{$value.goodsPhoto[0]}}" alt=""/></p>
+                <span class="goods-title">{{$value.goodsName}}</span>
+                <span class="goods-price">￥{{$value.goodsPrice}}</span>
+                <span class="goods-content">{{$value.goodsContent}}</span>
             </a>
         </li>
-        <li>
-            <p class="goods-select fa fa-circle-o" select="false"></p>
-            <a href="#/favorite">
-                <img src="https://lightshadow.xyz/youxuan/index/static/images/photo.png" alt=""/>
-                <span class="goods-title">电脑椅</span>
-                <span class="goods-price">￥30</span>
-                <span class="goods-content">此电脑椅九成新此电脑椅九成新</span>
-            </a>
-        </li>
-        <li>
-            <p class="goods-select fa fa-circle-o" select="false"></p>
-            <a href="#/favorite">
-                <img src="https://lightshadow.xyz/youxuan/index/static/images/photo.png" alt=""/>
-                <span class="goods-title">电脑椅</span>
-                <span class="goods-price">￥30</span>
-                <span class="goods-content">此电脑椅九成新此电脑椅九成新此电脑椅九成新</span>
-            </a>
-        </li>
-        <li>
-            <p class="goods-select fa fa-circle-o" select="false"></p>
-            <a href="#/favorite">
-                <img src="https://lightshadow.xyz/youxuan/index/static/images/photo.png" alt=""/>
-                <span class="goods-title">电脑椅</span>
-                <span class="goods-price">￥30</span>
-                <span class="goods-content">此电脑椅九成新此电脑椅九成新此电脑椅九成新此电脑椅九成新此电脑椅九成新此电脑椅九成新</span>
-            </a>
-        </li>
+        {{ /each }}
     </ul>
 </div>

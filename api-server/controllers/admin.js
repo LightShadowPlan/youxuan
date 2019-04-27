@@ -7,6 +7,8 @@ const position = require('../models/position')
 const {hash, token} = require('../util/token')
 const fs = require('fs')
 const Path = require('path')
+const Moment = require('moment')
+
 /**
  * 添加注册信息
  */
@@ -125,12 +127,14 @@ const selectAccount = async (req, res, callback) => {
  * 更新管理人员
  */
 const updateAccount = async (req, res) => {
+  let account_id = req.body._id
   delete req.body.oldPassword
   delete req.body.newPassword
+  let account_data = await position.selectAccount({_id: account_id})
+  console.log(account_data);
   let _token = await token.checkToken(req.body.accountToken)
   delete req.body.accountToken
   if (_token) {
-    req.body._id = _token.data._id
     //判断是否更新图片
     if (req.body.headPortrait === '') {
       delete req.body.headPortrait
@@ -154,6 +158,175 @@ const updateAccount = async (req, res) => {
     handleData(205, res, 'position')
   }
 }
+//更新用户物品信息
+const updateUserGoods = async (req, res) => {
+  let user_id = req.body._id
+  let user_data = await position.selectUser({_id: user_id})
+  let state = user_data ? user_data[0].state : false
+  let _token = await token.checkToken(req.body.userToken, state)
+  delete req.body.userToken
+  if (_token) {
+    let content = JSON.parse(req.body.content)
+    let body = {
+      _id: req.body._id,
+      content: content
+    }
+    await position.updateUserContent(body)
+    let _data = await position.selectUser({_id: body._id})
+    console.log(_data);
+    handleData(_data, res, 'position')
+  } else {
+    handleData(205, res, 'position')
+  }
+
+}
+
+//购买物品
+const purchaseGoods = async (req, res) => {
+  let seller_id = req.body.purchaser_id //出售人ID
+  let purchaser_id = req.body.purchaser_id //购买人ID
+  let user_data = await position.selectUser({_id: purchaser_id})
+  let state = user_data ? user_data[0].state : false
+  let _token = await token.checkToken(req.body.userToken, state)
+  delete req.body.userToken
+  if (_token) {
+
+    //更新购买人购买信息
+    let content = JSON.parse(req.body.content)
+    let body = {
+      _id: req.body.purchaser_id,
+      content: content
+    }
+    await position.updateUserContent(body)
+
+    //更新交易状态
+    let _body = {
+      seller: seller_id,
+      purchaser: req.body.purchaser_id,
+      state: 1,
+      goodsId: content.$addToSet.purchaserGoods,
+    }
+    let transactions_data = await position.addTransactions(_body)
+
+    //更新物品状态
+    let _timestamp = Date.now()
+    let moment = Moment(_timestamp).format("YYYY-MM-DD  hh:mm")
+    let __body = {
+      _id: {_id: {$in: [content.$addToSet.purchaserGoods]}},
+      content: {
+        state: 1,
+        purchaser: {
+          _id: _token.data._id,
+          headPortrait: user_data[0].headPortrait,
+          nickname: user_data[0].nickname,
+          time: moment
+        },
+        transaction: transactions_data._id
+      }
+    }
+    await position.updateGoods(__body)
+
+    //返回购买人新的信息
+    let _data = await position.selectUser({_id: body._id})
+
+    handleData(_data, res, 'position')
+  } else {
+    handleData(205, res, 'position')
+  }
+}
+
+//交易完成
+
+const transactionOver = async (req, res) => {
+  let user_id = req.body.user_id
+  let seller_id = req.body.seller_id
+  let goods_id = req.body.goods_id
+  let transaction_id = req.body.transaction_id
+  let user_data = await position.selectUser({_id: user_id})
+  let state = user_data ? user_data[0].state : false
+  let _token = await token.checkToken(req.body.userToken, state)
+  delete req.body.userToken
+  if (_token) {
+    //更改物品状态
+    let body = {
+      _id: {_id: goods_id},
+      content: {state: 2}
+    }
+    await position.updateGoods(body)
+    //更改交易状态
+    let _body = {
+      query: {_id: transaction_id},
+      content: {state: 2}
+    }
+    await position.updateTransactions(body)
+
+    let message1_body = {
+      sender: '商城系统',
+      receiver: seller_id,
+      content: '尊敬的用户，您所出售的部分物品已完成交易，谢谢你的使用。'
+    }
+    let message2_body = {
+      sender: '商城系统',
+      receiver: user_id,
+      content: '尊敬的用户，您所购买的部分物品已完成交易，谢谢你的使用。'
+    }
+    let message1_data = await position.addMessage(message1_body)
+    let message2_data = await position.addMessage(message2_body)
+    let body1 = {
+      _id: seller_id,
+      content: {$addToSet: {message: message1_data._id}}
+    }
+    console.log(message2_data);
+    let body2 = {
+      _id: user_id,
+      content: {$addToSet: {message: message2_data._id}}
+    }
+    await position.updateUserContent(body1)
+    await position.updateUserContent(body2)
+
+    let user_data = await position.selectUser({_id: user_id})
+    handleData(user_data, res, 'position')
+  } else {
+    handleData(205, res, 'position')
+  }
+}
+
+//查询消息
+const getMessage = async (req, res) => {
+  let _id = req.body._id
+  let messageArray = JSON.parse(req.body.messageArray)
+  let user_data = await position.selectUser({_id: _id})
+  let state = user_data ? user_data[0].state : false
+  let _token = await token.checkToken(req.body.userToken, state)
+  delete req.body.userToken
+  if (_token) {
+    let body = {
+      query: {_id: {$in: messageArray}},
+      content: {}
+    }
+    let message_data = await position.selectMessage(body)
+    handleData(message_data, res, 'position')
+  } else {
+    handleData(205, res, 'position')
+  }
+}
+
+//更新消息状态
+
+const updateMessage = async (req, res) => {
+  let messageArray = JSON.parse(req.body.messageArray)
+  let allMessageArray = JSON.parse(req.body.allMessageArray)
+  let body = {
+    _id: {_id: {$in: messageArray}},
+    content: {state: 1}
+  }
+  console.log(messageArray);
+  let new_data = await position.updateMessage(body)
+  console.log(new_data);
+  let message_data = await position.selectMessage({query: {_id: {$in: allMessageArray}}, content: {}})
+  handleData(message_data, res, 'position')
+}
+
 
 /**
  * 删除管理人员
@@ -276,11 +449,12 @@ const selectUser = async (req, res, callback) => {
  * 更新用户个人信息
  */
 const updateUser = async (req, res) => {
-
-  let _token = await token.checkToken(req.body.userToken)
+  let user_id = req.body._id
+  let user_data = await position.selectUser({_id: user_id})
+  let state = user_data ? user_data[0].state : false
+  let _token = await token.checkToken(req.body.userToken, state)
   delete req.body.userToken
   if (_token) {
-    req.body._id = _token.data._id
     //联系方式
     req.body.contactWay = {
       qq: req.body.qq,
@@ -295,7 +469,8 @@ const updateUser = async (req, res) => {
       delete req.body.headPortrait
     } else {
       if (req.body.old_headPortrait !== 'static/images/photo.png') {
-        fs.unlink(Path.resolve(__dirname, '../../yx/' + req.body.old_headPortrait), (err) => {})
+        fs.unlink(Path.resolve(__dirname, '../../yx/' + req.body.old_headPortrait), (err) => {
+        })
       }
 
     }
@@ -318,24 +493,30 @@ const updateUser = async (req, res) => {
  * 删除用户
  */
 const removeUser = async (req, res) => {
-  if (req.body.accountToken && req.body._id) {
-    let user_id = req.body._id
-    let authority = await powerChecked(req.body.accountToken)
+  if (req.body.accountToken && req.body._id && req.body.account_id) {
+    let user_id = req.body.user_id
+    let account_id = req.body.account_id
+    let authority = await powerChecked(req.body.accountToken, account_id)
     if (authority <= 0) {
       handleData(205, res, 'position')
     } else if (authority === 1) {
       handleData(206, res, 'position')
     } else {
       let user_data = await position.removeUser({'_id': user_id})
-      fs.unlink(Path.resolve(__dirname, '../../yx/' + req.body.headPortrait), (err) => {})
+      fs.unlink(Path.resolve(__dirname, '../../yx/' + req.body.headPortrait), (err) => {
+      })
       handleData(user_data, res, 'position')
     }
   } else {
-    let _userToken = await token.checkToken(req.body.userToken)
+    let user_id = req.body._id
+    let user_data = await position.selectUser({_id: user_id})
+    let state = user_data ? user_data[0].state : false
+    let _userToken = await token.checkToken(req.body.userToken, state)
     if (_userToken) {
       let user_id = _userToken.data._id
       let user_data = await position.removeUser({'_id': user_id})
-      fs.unlink(Path.resolve(__dirname, '../../yx/' + req.body.headPortrait), (err) => {})
+      fs.unlink(Path.resolve(__dirname, '../../yx/' + req.body.headPortrait), (err) => {
+      })
       console.log('_data:', user_data);
       handleData(user_data, res, 'position')
     } else {
@@ -350,7 +531,10 @@ const removeUser = async (req, res) => {
  */
 
 const changeUserPassword = async (req, res) => {
-  let _token = await token.checkToken(req.body.userToken)
+  let user_id = req.body._id
+  let user_data = await position.selectUser({_id: user_id})
+  let state = user_data ? user_data[0].state : false
+  let _token = await token.checkToken(req.body.userToken, state)
 
   delete req.body.userToken
   if (_token) {
@@ -397,6 +581,11 @@ const loginUser = async (req, res) => {
       handleData(204, res, 'position')
     }
   })
+}
+//用户在线状态 0,下线, 1,在线, 2,封禁,
+const userState = async (_id, state) => {
+  let _data = await position.updateUserContent({_id: _id, content: {state: state}})
+  console.log('state:', _data);
 }
 
 //------------------------------------------------------------------------------
@@ -447,7 +636,10 @@ const returnData = async (req, res, _type) => {
 
 //权限检查，返回权限,token失效返回-1
 const powerChecked = async (Token) => {
-  let _token = await token.checkToken(Token)
+  let account_id = req.body._id
+  let account_data = await position.selectAccount({_id: account_id})
+  let state = account_data ? account_data[0].state : false
+  let _token = await token.checkToken(Token, state)
   if (_token) {
     let account = await selectAccount({'_id': _token.data._id})
     return account[0].authority
@@ -467,10 +659,16 @@ module.exports = {
   addUser,
   selectUser,
   updateUser,
+  purchaseGoods,
+  updateUserGoods,
   removeUser,
   loginAccount,
   loginUser,
+  transactionOver,
   changeUserPassword,
   getByToken,
-  powerChecked
+  powerChecked,
+  userState,
+  getMessage,
+  updateMessage
 }

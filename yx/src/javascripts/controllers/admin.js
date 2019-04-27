@@ -2,6 +2,7 @@ import {bus, toast} from '../util'
 import checkState from './checkState'
 import lookPic from './lookPic'
 import bodyEvent from './bodyEvent'
+import userState from './webSocket'
 // model
 import admin_model from '../models/admin'
 import position_model from '../models/position'
@@ -12,27 +13,45 @@ import account_html from '../views/account-box.html'
 
 //解析路径
 import qs from 'querystring'
-
-const loginEvent = async () => {
+//我的信息更新信息
+const show_user = async () => {
   //获取本地数据----------------------------------------------------------------------------
   let user, userToken
+  user = JSON.parse(sessionStorage.user)
+  userToken = localStorage.userToken
+  //消息
+  await bodyEvent.messageHomeShow(user, userToken)
+  //将数据导入表单
+  $('.mail-box p').html(user.mailbox)
+  user.gender === 'male' ? maleSelect() : femaleSelect()
+  $('.nickname input').val(user.nickname)
+  $('.user-token').val(userToken)
+  $('.user-id').val(user._id)
+  $('.user-old-headPortrait').val(user.headPortrait)
+  $('.contact-way input').eq(0).val(user.contactWay.qq)
+  $('.contact-way input').eq(1).val(user.contactWay.wechat)
+  $('.contact-way input').eq(2).val(user.contactWay.phoneNumber)
+  $('.photo-box img').attr({'src': '../' + user.headPortrait})
+  await bodyEvent.messageHomeShow(user,userToken)
+}
 
-  //我的信息更新信息
-  function show_user() {
-    //更新本地数据
-    user = JSON.parse(sessionStorage.user)
-    userToken = localStorage.userToken
-    //将数据导入表单
-    $('.mail-box p').html(user.mailbox)
-    user.gender === 'male' ? maleSelect() : femaleSelece()
-    $('.nickname input').val(user.nickname)
-    $('.user-token').val(userToken)
-    $('.user-old-headPortrait').val(user.headPortrait)
-    $('.contact-way input').eq(0).val(user.contactWay.qq)
-    $('.contact-way input').eq(1).val(user.contactWay.wechat)
-    $('.contact-way input').eq(2).val(user.contactWay.phoneNumber)
-    $('.photo-box img').attr({'src': '../' + user.headPortrait})
-  }
+function maleSelect() {
+  $('#male').addClass('active')
+  $('#male + lable').addClass('active')
+  $('#female').removeClass('active')
+  $('#female + lable').removeClass('active')
+}
+
+function femaleSelect() {
+  $('#female').addClass('active')
+  $('#female + lable').addClass('active')
+  $('#male').removeClass('active')
+  $('#male + lable').removeClass('active')
+}
+
+const loginEvent = async () => {
+
+
 
   //判断登录
   if (sessionStorage.user) {  //检查sessionStorage是否有数据
@@ -40,6 +59,8 @@ const loginEvent = async () => {
   } else {
     let state = await checkState()  //没有，检查token有效，有效会更新数据
     if (state) {
+      let user = JSON.parse(sessionStorage.user)
+      userState(user._id)
       go_mine_show()  //有效，进入我的信息
     } else {
       go_default()   //进入登录页面
@@ -102,7 +123,7 @@ const loginEvent = async () => {
             localStorage.userToken = _result.data.token
             delete _result.data.token
             sessionStorage.user = JSON.stringify(_result.data)
-
+            userState(_result.data._id)
             $('.login-show .input').val("")
             go_mine_show()
             break;
@@ -120,6 +141,7 @@ const loginEvent = async () => {
     }
 
   })
+
 
   //-----------------------------------------------------------------------------------------------
   //跳转到注册页面
@@ -260,6 +282,7 @@ const loginEvent = async () => {
     $(".mine-show").addClass("show-box")
     //刷新数据
     show_user()
+
   }
 
   //编辑信息
@@ -285,22 +308,9 @@ const loginEvent = async () => {
     maleSelect()
   })
   $('#female').on('click', function () {
-    femaleSelece()
+    femaleSelect()
   })
 
-  function maleSelect() {
-    $('#male').addClass('active')
-    $('#male + lable').addClass('active')
-    $('#female').removeClass('active')
-    $('#female + lable').removeClass('active')
-  }
-
-  function femaleSelece() {
-    $('#female').addClass('active')
-    $('#female + lable').addClass('active')
-    $('#male').removeClass('active')
-    $('#male + lable').removeClass('active')
-  }
 
   //编辑信息表单提交
   $('#user').on('submit', async function (e) {
@@ -331,12 +341,12 @@ const loginEvent = async () => {
 
   //更改密码
   $('.change-password').on('click', function (e) {
+    $('#changePassword input').val('')
     e.preventDefault()
     $('.change-password-toast').addClass('active')
     $('.changepw_token').val(userToken)
     $('.pw-cancel').on('click', function () {
       $('.change-password-toast').removeClass('active')
-      $('#changePassword input').val('')
     })
   })
   //更改密码表单提交
@@ -344,6 +354,7 @@ const loginEvent = async () => {
     e.preventDefault()
     //只能取出表单信息传送。不然表单本身传输时出现问题，后台接受不到数据，待以后处理。
     let body = qs.parse($('#changePassword').serialize())
+    body._id = user._id
     let _result = await admin_model.changeUserPassword(body)
     switch (_result.status) {
       case 200 :
@@ -381,7 +392,7 @@ const loginEvent = async () => {
   })
 
   const removeUser = async () => {
-    let body = {'userToken': userToken,headPortrait: user.headPortrait}
+    let body = {'_id': user._id, 'userToken': userToken, headPortrait: user.headPortrait}
     console.log('usetToken:', body);
     let _result = await admin_model.removeUser(body)
     console.log('_result:', _result);
@@ -432,15 +443,18 @@ const sell = async () => {
   }
   if (sessionStorage.user) {
     //取出本地物品的_id数组
-    let sellGoods = JSON.parse(sessionStorage.user).sellGoods
-    console.log(sellGoods);
+    let user = JSON.parse(sessionStorage.user)
+    let userToken = localStorage.userToken
+    let sellGoods = user.sellGoods
+    //消息
+    await bodyEvent.messageHomeShow(user, userToken)
     let body = {
       query: JSON.stringify({_id: {$in: sellGoods}}),
       vernier: JSON.stringify({sort: {addTime: 1}})
     }
     //获取物品详细信息
     let _result = await position_model.selectGoods(body)
-    console.log(_result);
+
     //处理数据
     _result.data.forEach(item => {
       switch (item.state) {
@@ -455,17 +469,19 @@ const sell = async () => {
           break;
       }
     })
+
+    let goods_html = template.render(sell_html, {
+      data: sellData
+    })
+    $('.mine-box').html(goods_html)
+
+
+    $('.plus-sell').on('click', function () {
+      bus.emit('go', '/addGoods')
+    })
+    await bodyEvent.delectGoods('sell-box')
   }
 
-  let goods_html = template.render(sell_html, {
-    data: sellData
-  })
-  $('.mine-box').html(goods_html)
-
-  $('.plus-sell').on('click', function () {
-    bus.emit('go', '/addGoods')
-  })
-  bodyEvent.delectGoods()
 }
 
 //购买
@@ -479,17 +495,22 @@ const purchase = async () => {
   }
   if (sessionStorage.user) {
     //取出本地物品的_id数组
-    let purchaserGoods = JSON.parse(sessionStorage.user).purchaserGoods
-    let body = {'goodsArray': JSON.stringify(purchaserGoods), 'state': JSON.stringify([ 1, 2])}
+    let user = JSON.parse(sessionStorage.user)
+    let userToken = localStorage.userToken
+    //消息
+    await bodyEvent.messageHomeShow(user, userToken)
+    let purchaserGoods = user.purchaserGoods
+    let body = {
+      query: JSON.stringify({_id: {$in: purchaserGoods}}),
+      vernier: JSON.stringify({sort: {addTime: 1}})
+    }
     //获取物品详细信息
     let _result = await position_model.selectGoods(body)
-    console.log(_result);
+
+
     //处理数据
     _result.data.forEach(item => {
       switch (item.state) {
-        case 0 :
-          purchaserData.stateOne.push(item);
-          break;
         case 1 :
           purchaserData.stateTwo.push(item);
           break;
@@ -498,15 +519,30 @@ const purchase = async () => {
           break;
       }
     })
-    console.log('_result:', _result);
+    let goods_html = template.render(purchaser_html, {
+      data: purchaserData
+    })
+    $('.mine-box').html(goods_html)
+    bodyEvent.delectGoods('purchase-box')
+    $('.transaction-over').on('click', async function () {
+      let goods_id = $(this).attr('index')
+      let transaction_id = $(this).attr('transaction')
+      let seller_id = $(this).attr('seller')
+      let body = {
+        user_id: user._id,
+        seller_id: seller_id,
+        goods_id: goods_id,
+        transaction_id: transaction_id,
+        userToken: userToken
+      }
+      let _result = await admin_model.transactionOver(body)
+      //消息
+      await bodyEvent.messageHomeShow(_result.data[0], userToken, false)
+      sessionStorage.user = JSON.stringify(_result.data[0])
+      await purchase()
+    })
   }
 
-  let goods_html = template.render(purchaser_html, {
-    data: purchaserData
-  })
-  $('.mine-box').html(goods_html)
-
-  bodyEvent.delectGoods()
 
 }
 

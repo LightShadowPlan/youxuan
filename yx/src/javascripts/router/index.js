@@ -18,7 +18,7 @@ const _init = () => {
   router.route('/home', position_controller.home)
   //闲置馆
   router.route('/goodsAll', position_controller.goodsAll)
-  //闲置馆
+  //收藏夹馆
   router.route('/favorite', position_controller.favorite)
   // 我的
   router.route('/mine', position_controller.mine)
@@ -26,9 +26,14 @@ const _init = () => {
   router.route('/goods', position_controller.goods)
   //添加物品
   router.route('/addGoods', position_controller.addGoods)
+  // 消息页
+  router.route('/message', position_controller.message)
+  // 用户信息页
+  router.route('/user', position_controller.user)
   // 404路由
   router.route('/404', position_controller.fzf)
-
+  // 活动页
+  router.route('/active', position_controller.active)
 
   //上面的没有匹配到就会跳转404路由或者首页
   router.route('*', (req, res, next) => {

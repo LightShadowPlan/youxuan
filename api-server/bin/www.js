@@ -3,6 +3,7 @@ const debug = require('debug')('back-end:server');
 const http = require('http');
 const fs = require('fs');
 const https = require('https');
+const webSocket = require('../controllers/webSocket');
 
 const privateKey = fs.readFileSync('./ssl/0_lightshadow.xyz.key', 'utf8');
 
@@ -19,6 +20,7 @@ httpserver.on('error', onError);
 httpsServer.listen(3443);
 httpsServer.on('error', onError);
 
+webSocket()
 
 function onError(error) {
   if (error.syscall !== 'listen') {

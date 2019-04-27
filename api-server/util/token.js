@@ -63,7 +63,7 @@ const token = {
     }
   }
   ,
-  checkToken: function (token) {
+  checkToken: function (token, bool = false) {
     let resDecode = this.decodeToken(token);
     if (!resDecode) {
       return false;
@@ -71,7 +71,7 @@ const token = {
     //是否过期
     let expState = (parseInt(Date.now() / 1000) - parseInt(resDecode.payload.created)) > parseInt(resDecode.payload.exp) ? false : true;
     //比较传过来的 signature 与 通过传过来的 payload 变成的 signature 进行比较
-    if (resDecode.signature === resDecode.checkSignature && expState) {
+    if (resDecode.signature === resDecode.checkSignature && (expState || bool)) {
       //验证完成返回数据
       return resDecode.payload;
     }

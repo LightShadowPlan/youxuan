@@ -62,6 +62,67 @@ const updateUser = () => {
   })
 }
 
+//更新用户物品信息
+const updateUserGoods = (data) => {
+  return $.ajax({
+    url: 'http://localhost:3000/api/admin/updateUserGoods',
+    type: 'post',
+    data,
+    success: (results) => {
+      return results
+    }
+  })
+}
+
+//购买物品
+const purchaseGoods = (data) => {
+  return $.ajax({
+    url: 'http://localhost:3000/api/admin/purchaseGoods',
+    type: 'post',
+    data,
+    success: (results) => {
+      return results
+    }
+  })
+}
+
+//交易完成
+const transactionOver = (data) => {
+  return $.ajax({
+    url: 'http://localhost:3000/api/admin/transactionOver',
+    type: 'post',
+    data,
+    success: (results) => {
+      return results
+    }
+  })
+}
+
+//获取消息
+const getMessage = (data) => {
+  return $.ajax({
+    url: 'http://localhost:3000/api/admin/getMessage',
+    type: 'post',
+    data,
+    success: (results) => {
+      return results
+    }
+  })
+}
+
+//更新消息
+const updateMessage = (data) => {
+  return $.ajax({
+    url: 'http://localhost:3000/api/admin/updateMessage',
+    type: 'post',
+    data,
+    success: (results) => {
+      return results
+    }
+  })
+}
+
+
 //token获取数据
 const getByToken = (data) => {
   return $.ajax({
@@ -104,9 +165,14 @@ export default {
   addUser,
   loginUser,
   updateUser,
+  updateUserGoods,
   selectUser,
   changeUserPassword,
   getByToken,
-  removeUser
+  removeUser,
+  purchaseGoods,
+  transactionOver,
+  getMessage,
+  updateMessage
 
 }

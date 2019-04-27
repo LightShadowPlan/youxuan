@@ -52,8 +52,9 @@ let MessageModel = mongoose.model('messages', new mongoose.Schema({
   sender: String,
   receiver: String,
   content: String,
-  start: Number,
-  addTime: Date
+  state: Number,
+  addTime: Date,
+  formatTime: String
 }));
 
 //物品数据库
@@ -63,15 +64,16 @@ let GoodsModel = mongoose.model('goods', new mongoose.Schema({
   goodsContent: String,
   goodsPhoto: Array,
   goodsClass: String,
-  goodComment: [{
-    userId: String,
+  goodsComment: [{
+    _id: String,
     nickname: String,
     headPortrait: String,
     comment: String,
-    addTime: Date
+    addTime: String
   }],
   state: Number,
-  seller: String,
+  seller: Object,
+  purchaser: Object,
   transaction: String,
   addTime: Date,
   formatTime: String
@@ -268,7 +270,7 @@ const selectUser = async (body) => {
   return UserModel.find(
     body,
     {
-      'password': false
+      'password': false,
     }
   ).then((res) => {
     return res
@@ -278,7 +280,7 @@ const selectUser = async (body) => {
 }
 
 /**
- *更新用户
+ *更新用户基本信息
  */
 const updateUser = async (body) => {
   return UserModel.updateOne(
@@ -292,14 +294,14 @@ const updateUser = async (body) => {
     return false
   })
 }
-//更新用户出售信息
-const updateUserSellGoods = async (body) => {
-  let {_id, goods} = body
+//更新用户其他信息
+const updateUserContent = async (body) => {
+  let {_id, content} = body
   return UserModel.updateOne(
     {
       _id: _id
     },
-    goods
+    content
   ).then((res) => {
     return res
   }).catch(() => {
@@ -329,6 +331,7 @@ const addMessage = async (body) => {
   let moment = Moment(_timestamp)
   return MessageModel({
     ...body,
+    state: 0,
     addTime: _timestamp,
     formatTime: moment.format("YYYY-MM-DD  hh:mm")
   }).save(
@@ -345,18 +348,33 @@ const addMessage = async (body) => {
  */
 const selectMessage = async (body) => {
   return MessageModel.find(
-    body
+    body.query,
+    null,
+    body.content
   ).then((res) => {
     return res
   }).catch(() => {
     return false
   })
 }
+
+//更新消息
+const updateMessage = async (body) => {
+  return MessageModel.updateMany(
+    body._id,
+    body.content
+  ).then((res) => {
+    return res
+  }).catch(() => {
+    return false
+  })
+}
+
 /**
  * 删除消息
  */
 const removeMessage = async (body) => {
-  return MessageModel.deleteOne(
+  return MessageModel.delete(
     body
   ).then((res) => {
     return res
@@ -394,20 +412,18 @@ const selectGoods = async (body) => {
     null,
     body.vernier
   ).then((res) => {
-      return res
-    }).catch(() => {
-      return false
-    })
+    return res
+  }).catch(() => {
+    return false
+  })
 }
 /**
  *更新物品
  */
 const updateGoods = async (body) => {
-  return GoodsModel.updateOne(
-    {
-      _id: body._id
-    },
-    body
+  return GoodsModel.updateMany(
+    body._id,
+    body.content
   ).then((res) => {
     return res
   }).catch(() => {
@@ -442,7 +458,7 @@ const addTransactions = async (body) => {
   }).save(
 
   ).then((res) => {
-    return res.mailbox
+    return res
   }).catch(() => {
     return false
   })
@@ -463,11 +479,9 @@ const selectTransactions = async (body) => {
  *更新交易
  */
 const updateTransactions = async (body) => {
-  return TransactionsModel.updateOne(
-    {
-      _id: body._id
-    },
-    body
+  return TransactionsModel.updateMany(
+    body.query,
+    body.content
   ).then((res) => {
     return res
   }).catch(() => {
@@ -558,9 +572,10 @@ module.exports = {
   addUser,
   selectUser,
   updateUser,
-  updateUserSellGoods,
+  updateUserContent,
   removeUser,
   addMessage,
+  updateMessage,
   selectMessage,
   removeMessage,
   addGoods,
@@ -574,5 +589,6 @@ module.exports = {
   addDataStatistics,
   selectDataStatistics,
   updateDataStatistics,
-  removeDataStatistics
+  removeDataStatistics,
+
 }
