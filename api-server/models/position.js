@@ -89,6 +89,14 @@ let TransactionsModel = mongoose.model('transactions', new mongoose.Schema({
   formatTime: String
 }));
 
+// 首页推送数据库
+let HomePushModel = mongoose.model('homePush', new mongoose.Schema({
+  homePhoto: String,
+  content: String,
+  url: String,
+  addTime: Date,
+  formatTime: String
+}));
 
 //数据统计数据库
 let DataStatisticsModel = mongoose.model('data_statistics', new mongoose.Schema({
@@ -221,7 +229,6 @@ const updateAccount = async (body) => {
     return false
   })
 }
-
 /**
  * 删除管理人员
  */
@@ -234,8 +241,6 @@ const removeAccount = async (body) => {
     return false
   })
 }
-
-
 /**
  * 添加用户
  */
@@ -308,7 +313,6 @@ const updateUserContent = async (body) => {
     return false
   })
 }
-
 /**
  * 删除用户
  */
@@ -321,8 +325,6 @@ const removeUser = async (body) => {
     return false
   })
 }
-
-
 /**
  * 添加消息
  */
@@ -357,7 +359,6 @@ const selectMessage = async (body) => {
     return false
   })
 }
-
 //更新消息
 const updateMessage = async (body) => {
   return MessageModel.updateMany(
@@ -369,7 +370,6 @@ const updateMessage = async (body) => {
     return false
   })
 }
-
 /**
  * 删除消息
  */
@@ -382,8 +382,6 @@ const removeMessage = async (body) => {
     return false
   })
 }
-
-
 /**
  * 添加物品
  */
@@ -430,7 +428,6 @@ const updateGoods = async (body) => {
     return false
   })
 }
-
 /**
  * 删除物品
  */
@@ -444,7 +441,6 @@ const removeGoods = async (body) => {
     return false
   })
 }
-
 /**
  * 添加交易
  */
@@ -488,7 +484,6 @@ const updateTransactions = async (body) => {
     return false
   })
 }
-
 /**
  * 删除交易
  */
@@ -501,7 +496,64 @@ const removeTransactions = async (body) => {
     return false
   })
 }
+/**
+ * 添加首页推送
+ */
+const addHomePush = async (body) => {
+  let _timestamp = Date.now()
+  let moment = Moment(_timestamp)
+  return HomePushModel({
+    ...body,
+    addTime: _timestamp,
+    formatTime: moment.format("YYYY-MM-DD  hh:mm")
+  }).save(
 
+  ).then((res) => {
+    return res.mailbox
+  }).catch(() => {
+    return false
+  })
+}
+/**
+ * 查询首页推送
+ */
+const selectHomePush = async (body) => {
+  return HomePushModel.find(
+    body.query,
+    null,
+    body.vernier
+  ).then((res) => {
+    return res
+  }).catch(() => {
+    return false
+  })
+}
+/**
+ *更新首页推送
+ */
+const updateHomePush = async (body) => {
+  return HomePushModel.updateMany(
+    body._id,
+    body.content
+  ).then((res) => {
+    return res
+  }).catch(() => {
+    return false
+  })
+}
+
+/**
+ * 删除首页推送
+ */
+const removeHomePush = async (body) => {
+  return HomePushModel.deleteOne(
+    body
+  ).then((res) => {
+    return res
+  }).catch(() => {
+    return false
+  })
+}
 /**
  * 添加数据分析
  */

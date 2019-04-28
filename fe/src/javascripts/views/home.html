@@ -6,64 +6,47 @@
         </p>
     </div>
     <div class="home-swiper">
-        <form action="" id="form-swiper">
-            <div class="home-swiper-title">
-                <p>首页轮播推荐</p>
-                <p class="change-swiper">编辑</p>
-                <p class="submit-swiper active"><input type="submit" value="保存"/></p>
-            </div>
-            <ul class="swiper-box">
-                <li class="swiper-item">
-                    <img src="https://lightshadow.xyz/youxuan/index/static/images/swiper1.jpg" alt=""/>
-                    <p>描述： <input type="text" placeholder="请输入描述"/></p>
-                    <p>链接： <input type="text" placeholder="请输入链接"/></p>
-                    <span class="time fa fa-times"></span>
-                </li>
-                <li class="swiper-item">
-                    <img src="https://lightshadow.xyz/youxuan/index/static/images/swiper2.jpg" alt=""/>
-                    <p>描述： <input type="text" placeholder="请输入描述"/></p>
-                    <p>链接： <input type="text" placeholder="请输入链接"/></p>
-                    <span class="time fa fa-times"></span>
-                </li>
-                <li class="swiper-item">
-                    <img src="https://lightshadow.xyz/youxuan/index/static/images/swiper3.jpg" alt=""/>
-                    <p>描述： <input type="text" placeholder="请输入描述"/></p>
-                    <p>链接： <input type="text" placeholder="请输入链接"/></p>
-                    <span class="time fa fa-times"></span>
-                </li>
-                <li class="swiper-item">
-                    <img src="https://lightshadow.xyz/youxuan/index/static/images/swiper4.jpg" alt=""/>
-                    <p>描述： <input type="text" placeholder="请输入描述"/></p>
-                    <p>链接： <input type="text" placeholder="请输入链接"/></p>
-                    <span class="time fa fa-times"></span>
-                </li>
-                <li class="swiper-item">
-                    <img src="https://lightshadow.xyz/youxuan/index/static/images/swiper1.jpg" alt=""/>
-                    <p>描述： <input type="text" placeholder="请输入描述"/></p>
-                    <p>链接： <input type="text" placeholder="请输入链接"/></p>
-                    <span class="time fa fa-times"></span>
-                </li>
-                <li class="swiper-item">
-                    <img src="../../../static/images/plus.jpg" alt=""/>
-                </li>
-            </ul>
-        </form>
+        <div class="home-swiper-title">
+            <p>首页轮播推荐</p>
+        </div>
+        <ul class="swiper-box">
+            <li class="swiper-item">
+                <form _index="0" action="">
+                    <input class="url-file input" type="file" disabled required aria-valuemax="1"/>
+                    <img class="swiper-item-img" src="https://lightshadow.xyz/youxuan/index/home/static/images/swiper1.jpg" alt=""/>
+                    <div class="url-content ">
+                        <p>
+                            <span>描述： </span>
+                            <input class="input" type="text" disabled required placeholder="请输入活动描述"/>
+                            <input _index="0" class="change-url" type="button" value="编辑"/>
+                        </p>
+                        <p>
+                            <span>链接： </span>
+                            <input class="input" type="text" disabled required placeholder="请输入活动链接"/>
+                            <input _index="0" class="submit-url" type="button" value="保存"/>
+                        </p>
+                    </div>
+                    <p class="times fa fa-times"></p>
+                </form>
+            </li>
+            <li class="swiper-item plus-one-box">
+                <img  class="plus-one-photo" src="../../../static/images/plus.jpg" alt=""/>
+            </li>
+        </ul>
+
     </div>
     <div class="home-news">
-        <form action="" id="form-news">
-            <div class="home-news-title">
-                <p>通知推送</p>
-                <p class="change-news">编辑</p>
-                <p class="submit-news active"><input type="submit" value="保存"/></p>
+        <div class="home-news-title">
+            <p>通知推送</p>
+        </div>
+        <div class="news-box">
+            <div class="news-item">
+                <p>通知标题： <input type="text" placeholder="请输入描述"/></p>
+                <p>通知范围： 管理员<input type="checkbox" checked/>用户<input type="checkbox" checked/></p>
+                <p>通知内容：<textarea name="" id="" cols="30" rows="10"></textarea></p>
             </div>
-            <div class="news-box">
-                <div class="news-item">
-                    <p>通知标题： <input type="text" placeholder="请输入描述"/></p>
-                    <p>通知范围： 管理员<input type="checkbox" checked/>用户<input type="checkbox" checked/></p>
-                    <p>通知内容：<textarea name="" id="" cols="30" rows="10"></textarea></p>
-                </div>
-            </div>
-        </form>
+        </div>
+
     </div>
 
 </div>

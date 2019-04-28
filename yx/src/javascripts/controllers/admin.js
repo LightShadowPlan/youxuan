@@ -32,7 +32,8 @@ const show_user = async () => {
   $('.contact-way input').eq(1).val(user.contactWay.wechat)
   $('.contact-way input').eq(2).val(user.contactWay.phoneNumber)
   $('.photo-box img').attr({'src': '../' + user.headPortrait})
-  await bodyEvent.messageHomeShow(user,userToken)
+  await bodyEvent.messageHomeShow(user, userToken)
+  userState()
 }
 
 function maleSelect() {
@@ -51,8 +52,6 @@ function femaleSelect() {
 
 const loginEvent = async () => {
 
-
-
   //判断登录
   if (sessionStorage.user) {  //检查sessionStorage是否有数据
     go_mine_show()          //有，不用更新
@@ -60,7 +59,6 @@ const loginEvent = async () => {
     let state = await checkState()  //没有，检查token有效，有效会更新数据
     if (state) {
       let user = JSON.parse(sessionStorage.user)
-      userState(user._id)
       go_mine_show()  //有效，进入我的信息
     } else {
       go_default()   //进入登录页面
@@ -123,7 +121,6 @@ const loginEvent = async () => {
             localStorage.userToken = _result.data.token
             delete _result.data.token
             sessionStorage.user = JSON.stringify(_result.data)
-            userState(_result.data._id)
             $('.login-show .input').val("")
             go_mine_show()
             break;
@@ -326,7 +323,6 @@ const loginEvent = async () => {
       }, 100)
       //信息有改动，没改动不刷新数据
       if (_result.data._id) {
-        console.log('res:', _result);
         sessionStorage.user = JSON.stringify(_result.data)
         localStorage.userToken = _result.data.token
         show_user()
@@ -393,9 +389,7 @@ const loginEvent = async () => {
 
   const removeUser = async () => {
     let body = {'_id': user._id, 'userToken': userToken, headPortrait: user.headPortrait}
-    console.log('usetToken:', body);
     let _result = await admin_model.removeUser(body)
-    console.log('_result:', _result);
     if (_result.status === 200 && _result.data.deletedCount === 1) {
       localStorage.userToken = ''
       sessionStorage.user = ''
@@ -409,9 +403,11 @@ const loginEvent = async () => {
 
   //退出登录
   $('.exit').on('click', () => {
+    userState(true)
     sessionStorage.user = ''
     localStorage.userToken = ''
     go_default()
+
   })
   //---------------------------------------------------------------------------------------------------
 

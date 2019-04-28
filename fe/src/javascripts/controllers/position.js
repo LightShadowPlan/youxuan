@@ -42,6 +42,7 @@ const home = async (req, res, next) => {
   res.render(home_template)
   bodyEvent.little()
   bodyEvent.show_admin()
+  await bodyEvent.homePush(req, res)
   toast('加载完成')
 }
 

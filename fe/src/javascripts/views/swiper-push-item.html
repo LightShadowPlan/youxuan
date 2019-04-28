@@ -1,0 +1,19 @@
+<li class="swiper-item">
+    <form _index="{{data}}" action="">
+        <input class="url-file input" type="file" required aria-valuemax="1"/>
+        <img class="swiper-item-img" src="../../../static/images/plus.jpg" alt=""/>
+        <div class="url-content ">
+            <p>
+                <span>描述： </span>
+                <input class="input" type="text" required placeholder="请输入活动描述"/>
+                <input _index="{{data}}" class="change-url" type="button" value="编辑"/>
+            </p>
+            <p>
+                <span>链接： </span>
+                <input class="input" type="text" required placeholder="请输入活动链接"/>
+                <input _index="{{data}}" class="submit-url" type="button" value="保存"/>
+            </p>
+        </div>
+        <p class="times fa fa-times"></p>
+    </form>
+</li>

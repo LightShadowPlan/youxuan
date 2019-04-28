@@ -4,7 +4,11 @@
 //
 //------------------------------------------------------------
 
+
 import {bus, toast} from '../util'
+import lookPic from './lookPic'
+
+import swiper_push_item from '../views/swiper-push-item.html'
 
 function trigger(selector1, selector2, className) {
   if (selector1.attr('index') === '1') {
@@ -70,6 +74,45 @@ const show_admin = () => {
   active.parent().parent().find('p').addClass('active')
 }
 
+//首页
+const homePush = async (req, res) => {
+  //编辑
+  $('.change-url').on('click', async function () {
+    let _index = $(this).attr('_index')
+    $(this).parent().parent().addClass('active')
+    $(`form[_index=${_index}] .input`).removeAttr('disabled')
+    let file = $(`form[_index=${_index}] .url-file`)
+    let photo = $(`form[_index=${_index}] .swiper-item-img`)
+    lookPic(file, photo)
+
+  })
+  //保存
+  $('.submit-url').on('click', async function () {
+    let _index = $(this).attr('_index')
+    $(this).parent().parent().removeClass('active')
+    $(`form[_index=${_index}] .input`).attr({'disabled': ''})
+  })
+  //添加
+  $('.plus-one-box').on('click', function () {
+    let length = $('.swiper-item').length - 1
+    let swiper_push_html = template.render(swiper_push_item, {
+      data: length
+    })
+    $(this).before(swiper_push_html)
+    if (length >= 5) {
+      $(this).css({display: 'none'})
+    }
+    //删除
+    $('.times').on('click', function () {
+      $(this).parent().parent().remove()
+    })
+  })
+  //删除
+  $('.times').on('click', function () {
+    $(this).parent().parent().remove()
+  })
+}
+
 
 //页面状态
 const large = () => {
@@ -85,4 +128,5 @@ export default {
   show_admin,
   large,
   little,
+  homePush
 }

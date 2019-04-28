@@ -44,7 +44,6 @@ const goods = async (req, res) => {
     vernier: JSON.stringify({})
   }
   let _result = await position_model.selectGoods(body)
-  console.log(_result);
   goodsHtml(_result.data[0])
 
   function goodsHtml(data) {
@@ -82,13 +81,11 @@ const goods = async (req, res) => {
             addTime: d,
             comment: commentText
           }
-          console.log($('.addComment-textarea').val());
           let body = {
             '_id': _id,
             'content': JSON.stringify({'$addToSet': {'goodsComment': comment}})
           }
           let _result = await position_model.updateGoods(body)
-          console.log('_result:', _result);
           goodsHtml(_result.data[0])
         } else {
           toast('未登录用户不能评论', 'error')
@@ -172,15 +169,42 @@ const user = async (req, res) => {
   }
   let _result = await admin_model.selectUser(body)
   if(_result.status = 200 && _result.data.length > 0) {
+    let _body ={
+      query: JSON.stringify({_id: {$in: _result.data[0].sellGoods}}),
+      vernier: JSON.stringify({sort: {addTime: 1}})
+    }
+    //获取物品详细信息
+    let goods_result = await position_model.selectGoods(_body)
+    let sellerArray = [], selling = 0, selled = 0
+    //处理数据
+    goods_result.data.forEach(item => {
+      switch (item.state) {
+        case 0 :
+          sellerArray.push(item);
+          break;
+        case 1 :
+          selling++;
+          break;
+        case 2 :
+          selled++;
+          break;
+      }
+    })
+    let data = {
+      user: _result.data[0],
+      sellerArray: sellerArray,
+      selling: selling,
+      selled: selled
+    }
+
     let user_html = template.render(user_template, {
-      data: _result.data[0]
+      data: data
     })
     res.render(user_html)
     defaultEvent()
   } else{
     res.render('<div class="user"><div class="user-box">用户不存在或已注销</div><p class="go-back">返回</p></div>')
   }
-  console.log(_result);
 }
 
 //商品轮播
@@ -211,7 +235,6 @@ const swiper = () => {
 const addGoods = () => {
   let userToken = localStorage.userToken
   let user = JSON.parse(sessionStorage.user)
-  console.log('user:', user);
   defaultEvent()
   let imgArr = [$('.img-box img').eq(0), $('.img-box img').eq(1), $('.img-box img').eq(2)]
   lookPic($('.goodsPhoto'), imgArr, true);  //图片处理
@@ -240,7 +263,6 @@ const addGoods = () => {
 const homeShow = async (res) => {
 
   let _result = await position_model.homeShow()
-  console.log(_result);
   let home_html = template.render(home_template, {
     data: _result.data
   })
@@ -287,7 +309,6 @@ const showGoods = async (goodsClass, skip, limit, state) => {
     vernier: JSON.stringify({skip: skip, limit: limit, sort: {addTime: 1}})
   }
   let _result = await position_model.selectGoods(body)
-  console.log(_result);
   if (_result.status === 200) {
     let goodsAll_html = template.render(goods_item_template, {
       data: _result.data
@@ -319,7 +340,6 @@ const newFavorite = async (req, res) => {
     vernier: JSON.stringify({sort: {addTime: 1}})
   }
   let _result = await position_model.selectGoods(body)
-  console.log(_result);
   if (_result.data.length > 0) {
     let favorite_html = template.render(favorite_template, {
       data: _result.data
@@ -341,9 +361,7 @@ const newFavorite = async (req, res) => {
 
       let newFavoriteGoods = []
       favorite.forEach(item => {
-        console.log(goodsArray.indexOf(item))
         if (goodsArray.indexOf(item) === -1 && item !== null) {
-          console.log('ok');
           newFavoriteGoods.push(item)
         }
       })
@@ -523,7 +541,6 @@ const delectGoods = async (options) => {
     let _index = $(this).attr('index')
     let _state = $(this).attr('state')
     $('.no-read').addClass('read')
-    console.log(_state);
     let selectArray = $(`.${options} ul`).eq(_index).find('.goods-select[select=true]')
     for (let i = 0; i < selectArray.length; i++) {
       goodsArray.push(selectArray.eq(i).attr('index'))
@@ -549,7 +566,6 @@ const delectGoods = async (options) => {
       }
       //删除物品
       let _result = await position_model.removeGoods(body)
-      console.log(_result);
       switch (_result.status) {
         case 200 :
           toast('删除成功');

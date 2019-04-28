@@ -29,6 +29,8 @@ const adminEvent = async () => {
     $('.account-token').val(accountToken)
     $('.account-old-headPortrait').val(account.headPortrait)
     $('.person-photo').attr({'src': '../' + account.headPortrait})
+    $('.oldPassword').val('11111111')
+    $('.newPassword').val('22222222')
   }
 
   show_account()
@@ -39,9 +41,9 @@ const adminEvent = async () => {
   //修改信息
   //编辑信息表单提交
   $('#person').on('submit', async function (e) {
+    console.log($('.newPassword').val());
     e.preventDefault()
-    $('.oldPassword').val('11111111')
-    $('.newPassword').val('22222222')
+
     let _result = await admin_model.updateAccount()
     console.log('_result:', _result);
     if (_result.status === 200) {
@@ -70,12 +72,14 @@ const adminEvent = async () => {
         $('.new-password').addClass('active')
         $('.change-password').val('保存密码')
         $('.getup').addClass('active')
+        $('.oldPassword').val('')
+        $('.newPassword').val('')
         changePasswordFlag = 1
       } else {
         //修改完成，保存
         let body = {
           oldPassword: $('.oldPassword').val(),
-          newPassword: $('.oldPassword').val(),
+          newPassword: $('.newPassword').val(),
           accountToken: $('.account-token').val()
         }
         //旧密码格式验证
@@ -125,8 +129,10 @@ const adminEvent = async () => {
 
   //取消更改密码
   $('.getup').on('click', function () {
-    $('.old-password').removeClass('active').val('')
-    $('.new-password').removeClass('active').val('')
+    $('.old-password').removeClass('active')
+    $('.new-password').removeClass('active')
+    $('.oldPassword').val('11111111')
+    $('.newPassword').val('22222222')
     $('.change-password').val('修改密码')
     $('.getup').removeClass('active')
     changePasswordFlag = 0
