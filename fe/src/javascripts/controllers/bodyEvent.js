@@ -7,7 +7,9 @@
 
 import {bus, toast} from '../util'
 import lookPic from './lookPic'
+import position from '../models/position'
 
+import home_template from '../views/home.html'
 import swiper_push_item from '../views/swiper-push-item.html'
 
 function trigger(selector1, selector2, className) {
@@ -76,40 +78,101 @@ const show_admin = () => {
 
 //首页
 const homePush = async (req, res) => {
+  let account = JSON.parse(sessionStorage.account)
+  let accountToken = localStorage.accountToken
+  let home_data = await position.selectHomePush({})
+  console.log(home_data.data);
+  let home_html = template.render(home_template, {
+    data: home_data.data
+  })
+  res.render(home_html)
   //编辑
   $('.change-url').on('click', async function () {
+    //获取当前表单编号
     let _index = $(this).attr('_index')
+    //input表单出现下划线，可以填写内容
     $(this).parent().parent().addClass('active')
     $(`form[_index=${_index}] .input`).removeAttr('disabled')
+    //file图片可视化
     let file = $(`form[_index=${_index}] .url-file`)
     let photo = $(`form[_index=${_index}] .swiper-item-img`)
     lookPic(file, photo)
+    //附带一个token
+    $('.swiper-accountToken').val(accountToken)
 
   })
   //保存
-  $('.submit-url').on('click', async function () {
-    let _index = $(this).attr('_index')
-    $(this).parent().parent().removeClass('active')
+  $('.swiper-item form').on('submit', async function (e) {
+    e.preventDefault()
+    let _index = e.target.attributes['_index'].value
+    $(this).find('.url-content').removeClass('active')
     $(`form[_index=${_index}] .input`).attr({'disabled': ''})
+    let _result = await position.updateHomePush(_index)
+
+
   })
   //添加
-  $('.plus-one-box').on('click', function () {
+  $('.plus-one-box').on('click', async function () {
     let length = $('.swiper-item').length - 1
     let swiper_push_html = template.render(swiper_push_item, {
       data: length
     })
+    //插入一个li
     $(this).before(swiper_push_html)
     if (length >= 5) {
-      $(this).css({display: 'none'})
+      $(this).addClass('hide')
     }
+    //图片上传可视化
+    let file = $(`form[_index=${length}] .url-file`)
+    let photo = $(`form[_index=${length}] .swiper-item-img`)
+    lookPic(file, photo)
+
     //删除
     $('.times').on('click', function () {
       $(this).parent().parent().remove()
+      let length = $('.swiper-moban').length
+      if (length <= 1) {
+        $('.plus-one-box').removeClass('hide')
+      }
     })
+    //删除
+    $('.change-url').on('click', function () {
+      let _index = $(this).attr('_index')
+      $(`.swiper-item[_index=${_index}]`).remove()
+      let length = $('.swiper-moban').length
+      if (length <= 1) {
+        $('.plus-one-box').removeClass('hide')
+      }
+    })
+    //上传新的推荐
+    $('.swiper-item form').on('submit', async function (e) {
+      e.preventDefault()
+      let _index = e.target.attributes['_index'].value
+      let _result = await position.addHomePush(_index)
+      console.log(_result);
+    })
+
   })
   //删除
-  $('.times').on('click', function () {
+  $('.times').on('click', async function () {
+    let _id = $(this).attr('_id')
+    let oldHomePhoto = $('.swiper-oldHomePhoto').val()
+    let length = $('.swiper-item').length
+    if (length <= 1) {
+      $('.plus-one-box').addClass('hide')
+    }
     $(this).parent().parent().remove()
+
+    let body = {
+      accountToken: accountToken,
+      _id: _id,
+      oldHomePhoto: oldHomePhoto
+    }
+    let _result = await position.removeHomePush(body)
+
+    console.log(_result.data);
+
+
   })
 }
 

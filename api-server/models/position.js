@@ -90,7 +90,7 @@ let TransactionsModel = mongoose.model('transactions', new mongoose.Schema({
 }));
 
 // 首页推送数据库
-let HomePushModel = mongoose.model('homePush', new mongoose.Schema({
+let HomePushModel = mongoose.model('homePushes', new mongoose.Schema({
   homePhoto: String,
   content: String,
   url: String,
@@ -546,7 +546,7 @@ const updateHomePush = async (body) => {
  * 删除首页推送
  */
 const removeHomePush = async (body) => {
-  return HomePushModel.deleteOne(
+  return HomePushModel.deleteMany(
     body
   ).then((res) => {
     return res
@@ -642,5 +642,9 @@ module.exports = {
   selectDataStatistics,
   updateDataStatistics,
   removeDataStatistics,
+  addHomePush,
+  selectHomePush,
+  updateHomePush,
+  removeHomePush
 
 }

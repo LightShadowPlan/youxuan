@@ -10,7 +10,7 @@ const fs = require('fs')
 const Path = require('path')
 
 /**
- *首页显示
+ *商城首页显示
  */
 const homeShow = async (req, res) => {
   let skip = 0, limit = 16, state = {$in: [0]}
@@ -19,8 +19,18 @@ const homeShow = async (req, res) => {
     query: {goodsClass: {$in: goodsArray}, state: state},
     vernier: {skip: skip, limit: limit}
   }
-  let _data = await position.selectGoods(body)
-  handleData(_data, res, 'position')
+  let _body = {
+    query: {},
+    vernier: {}
+  }
+  let data = {}
+  let goods_data = await position.selectGoods(body)
+  let home_data = await position.selectHomePush(_body)
+  data = {
+    goodsArray: goods_data,
+    homeArray: home_data
+  }
+  handleData(data, res, 'position')
 }
 
 
@@ -261,9 +271,58 @@ const removeTransactions = async (req, res) => {
   handleData(_data, res, 'position')
 }
 
+//系统首页添加轮播
+const addHomePush = async (req, res) => {
+  console.log('req.body:', req.body);
+  let _data = await position.addHomePush(req.body)
+  handleData(_data, res, 'position')
+}
+
+//系统首页更新轮播
+const updateHomePush = async (req, res) => {
+  console.log(req.body);
+  let accountToken = req.body.accountToken
+  let oldHomePhoto = req.body.oldHomePhoto
+
+  let body = {
+    _id: {_id: req.body._id},
+    content: {
+      content: req.body.content,
+      url: req.body.url,
+      homePhoto: req.body.homePhoto
+    }
+  }
+  if ( !req.body.homePhoto || req.body.homePhoto === ('' || null)) {
+    console.log('ok');
+    delete body.content.homePhoto
+  } else {
+    fs.unlink(Path.resolve(__dirname, '../../fe/' + oldHomePhoto), (err) => {})
+  }
+  let _data = await position.updateHomePush(body)
+  console.log(_data);
+  handleData(_data, res, 'position')
+}
+//系统首页查询轮播
+const selectHomePush = async (req, res) => {
+  let body = {
+    query: {},
+    vernier: {}
+  }
+  let _data = await position.selectHomePush(body)
+  handleData(_data, res, 'position')
+}
+//系统首页删除轮播
+const removeHomePush = async (req, res) => {
+  console.log('req.body:', req.body);
+  let accountToken = req.body.accountToken
+  delete accountToken
+  let _data = await position.removeHomePush({_id: req.body._id})
+  fs.unlink(Path.resolve(__dirname, '../../fe/' + req.body.oldHomePhoto), (err) => {})
+  handleData(_data, res, 'position')
+}
+
 
 module.exports = {
-
   addGoods,
   selectGoods,
   updateGoods,
@@ -272,5 +331,9 @@ module.exports = {
   selectTransactions,
   updateTransactions,
   removeTransactions,
-  homeShow
+  homeShow,
+  addHomePush,
+  updateHomePush,
+  selectHomePush,
+  removeHomePush,
 }

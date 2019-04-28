@@ -63,12 +63,16 @@ const fileUploadAccount = function (req, res, next) {
 }
 
 const fileUploadAddGoods = function (req, res, next) {
-
   filehandle(req, res, next, 'goodsPhoto', 'yx','goods/','array')
+}
+
+const fileUploadHomePush = function (req, res, next) {
+  filehandle(req, res, next, 'homePhoto', 'fe','swiper/','single')
 }
 
 module.exports = {
   fileUploadUser,
   fileUploadAccount,
-  fileUploadAddGoods
+  fileUploadAddGoods,
+  fileUploadHomePush
 }

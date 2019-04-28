@@ -21,7 +21,7 @@
     <div class="study-content-box">
         <div class="line-bar">闲置物品</div>
         <ul>
-            {{ each data }}
+            {{ each data.goodsArray }}
             <li>
                 <a href="#/goods?_id={{$value._id}}">
                     <p><img src="../../../{{ $value.goodsPhoto[0] }}" alt=""/></p>

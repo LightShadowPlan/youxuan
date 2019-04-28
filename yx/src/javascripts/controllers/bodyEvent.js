@@ -263,6 +263,7 @@ const addGoods = () => {
 const homeShow = async (res) => {
 
   let _result = await position_model.homeShow()
+  console.log(_result.data);
   let home_html = template.render(home_template, {
     data: _result.data
   })

@@ -39,7 +39,6 @@ import adminEvent from './admin'
 
 // 首页视图的控制器
 const home = async (req, res, next) => {
-  res.render(home_template)
   bodyEvent.little()
   bodyEvent.show_admin()
   await bodyEvent.homePush(req, res)
