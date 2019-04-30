@@ -588,6 +588,12 @@ const userState = async (_id, state) => {
   console.log('state:', _data);
 }
 
+//用户在线状态 0,下线, 1,在线, 2,封禁,
+const accountState = async (_id, state) => {
+  let _data = await position.updateAccountContent({_id: _id, content: {state: state}})
+  console.log('state:', _data);
+}
+
 //------------------------------------------------------------------------------
 
 // 验证token,获取信息，常用于页面加载后检测token，然后再加信息，避免重复登陆
@@ -635,14 +641,12 @@ const returnData = async (req, res, _type) => {
 }
 
 //权限检查，返回权限,token失效返回-1
-const powerChecked = async (Token) => {
-  let account_id = req.body._id
-  let account_data = await position.selectAccount({_id: account_id})
+const powerChecked = async (Token,_id) => {
+  let account_data = await position.selectAccount({_id: _id})
   let state = account_data ? account_data[0].state : false
   let _token = await token.checkToken(Token, state)
   if (_token) {
-    let account = await selectAccount({'_id': _token.data._id})
-    return account[0].authority
+    return account_data[0].authority
   } else {
     return -1
   }
@@ -669,6 +673,7 @@ module.exports = {
   getByToken,
   powerChecked,
   userState,
+  accountState,
   getMessage,
   updateMessage
 }

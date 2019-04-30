@@ -11,25 +11,45 @@ const webSocket = async () => {
   let server2 = ws.createServer(function (conn) {
     conn.on("text", async function (code) {
       let data = JSON.parse(code)
-      console.log(data);
+
+      //将用户的登录状态改为在线
       if (~~data.state === 1) {
-        let wsConn = {
-          _id: data.user_id,
-          conn: conn
-        }
-        wsArray.push(wsConn)
-        if (data.sendType === 'state') {
-          //将用户的登录状态改为在线
+
+        if (data.userType === 'user') {
+          let wsConn = {
+            _id: data.user_id,
+            conn: conn
+          }
+          wsArray.push(wsConn)
           conn.sendText('state: 1')
           await admin.userState(data.user_id, 1)
-        }
-      } else{
-        wsArray.forEach(async (item,index) => {
-          if(item._id === data.user_id) {
-            wsArray.splice(index,1)
-            await admin.userState(data.user_id, 0)
+        } else {
+          let wsConn = {
+            _id: data.account_id,
+            conn: conn
           }
-        })
+          wsArray.push(wsConn)
+          conn.sendText('state: 1')
+          await admin.accountState(data.account_id, 1)
+        }
+
+      } else {
+        if (data.userType === 'user') {
+          wsArray.forEach(async (item, index) => {
+            if (item._id === data.user_id) {
+              wsArray.splice(index, 1)
+              await admin.userState(data.user_id, 0)
+            }
+          })
+        } else{
+          wsArray.forEach(async (item, index) => {
+            if (item._id === data.account_id) {
+              wsArray.splice(index, 1)
+              await admin.accountState(data.account_id, 0)
+            }
+          })
+        }
+
       }
 
     })

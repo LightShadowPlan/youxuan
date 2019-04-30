@@ -585,13 +585,12 @@ ul li {
         }
       }
       .home-swiper {
-        width: 100%;
         height: auto;
         margin: 20px;
+        min-width: 660px;
         padding: 20px;
         border-radius: 10px;
         box-sizing: border-box;
-        height: auto;
         background: #fff;
         .home-swiper-title {
           height: 60px;
@@ -654,7 +653,7 @@ ul li {
               justify-content: space-around;
               align-items: center;
               background: rgba(0, 0, 0, 0.5);
-              .swiper-id, .swiper-oldHomePhoto, .swiper-accountToken{
+              .swiper-id, .swiper-oldHomePhoto, .swiper-accountToken {
                 display: none;
               }
               p {
@@ -734,13 +733,13 @@ ul li {
               }
             }
           }
-          li.swiper-item.plus-one-box{
+          li.swiper-item.plus-one-box {
             background: url("../../static/images/plus.jpg") no-repeat center;
             background-size: auto 100%;
             background: #f4f4f4;
             border-radius: 10px;
           }
-          li.swiper-item.plus-one-box.hide{
+          li.swiper-item.plus-one-box.hide {
             display: none;
           }
         }
@@ -750,6 +749,7 @@ ul li {
         padding: 20px;
         border-radius: 10px;
         height: auto;
+        min-width: 620px;
         background: #fff;
         .home-news-title {
           height: 60px;
@@ -768,7 +768,7 @@ ul li {
           align-items: center;
           flex-wrap: wrap;
           overflow: hidden;
-          .news-item {
+          #messagePush{
             width: 90%;
             height: auto;
             border-radius: 5px;
@@ -776,6 +776,11 @@ ul li {
             overflow: hidden;
             background: #f7f7f7;
             padding: 10px;
+          }
+          .news-item {
+            .message-token, .message-_id{
+              display: none;
+            }
             p {
               min-height: 30px;
               padding: 20px;
@@ -792,17 +797,42 @@ ul li {
               input[type=text] {
                 width: 80%;
               }
-              input[type=checkbox] {
+              input[type=radio] {
                 width: 5%;
                 height: 20px;
                 margin-right: 20px;
+                cursor: pointer;
               }
               textarea {
                 width: 80%;
                 padding: 10px;
               }
             }
-
+            .submit-box {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              input {
+                border: none;
+                margin: 0 10%;
+                width: 120px;
+                height: 40px;
+                border-radius: 5px;
+                color: #fff;
+                background-color: #ff7c72;
+                transition: 0.3s;
+                &:hover {
+                  background-color: tomato;
+                  cursor: pointer;
+                }
+              }
+              input.messagePush {
+                background: #63d66f;
+                &:hover {
+                  background: #26d641;
+                }
+              }
+            }
           }
         }
       }

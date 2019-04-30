@@ -51,6 +51,7 @@ let UserModel = mongoose.model('users', new mongoose.Schema({
 let MessageModel = mongoose.model('messages', new mongoose.Schema({
   sender: String,
   receiver: String,
+  title: String,
   content: String,
   state: Number,
   addTime: Date,
@@ -223,6 +224,20 @@ const updateAccount = async (body) => {
       _id: body._id
     },
     body
+  ).then((res) => {
+    return res
+  }).catch(() => {
+    return false
+  })
+}
+//更新管理人员其他信息
+const updateAccountContent = async (body) => {
+  let {_id, content} = body
+  return AccountModel.updateOne(
+    {
+      _id: _id
+    },
+    content
   ).then((res) => {
     return res
   }).catch(() => {
@@ -625,6 +640,7 @@ module.exports = {
   selectUser,
   updateUser,
   updateUserContent,
+  updateAccountContent,
   removeUser,
   addMessage,
   updateMessage,

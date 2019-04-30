@@ -8,6 +8,7 @@
 import {bus, toast} from '../util'
 import lookPic from './lookPic'
 import position from '../models/position'
+import accountState from './webSocket'
 
 import home_template from '../views/home.html'
 import swiper_push_item from '../views/swiper-push-item.html'
@@ -43,6 +44,7 @@ const headEvent = async () => {
   showTime()
   setInterval(showTime, 60000)
   $('.exit').on('click', function () {
+    accountState(1)
     localStorage.accountToken = ''
     sessionStorage.account = ''
     bus.emit('go', '/login')
@@ -86,6 +88,9 @@ const homePush = async (req, res) => {
     data: home_data.data
   })
   res.render(home_html)
+
+  $('.message-token').val(accountToken)
+  $('.message-_id').val(account._id)
   //编辑
   $('.change-url').on('click', async function () {
     //获取当前表单编号
@@ -173,6 +178,14 @@ const homePush = async (req, res) => {
     console.log(_result.data);
 
 
+  })
+
+
+  //消息推送
+  $('#messagePush').on('submit', async function(e) {
+    e.preventDefault()
+    let _result = await position.messagePush()
+    console.log(_result.data);
   })
 }
 

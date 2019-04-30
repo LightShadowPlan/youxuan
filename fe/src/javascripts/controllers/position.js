@@ -26,8 +26,8 @@ import fzf_template from '../views/404.html'
 import powerRequire_template from '../views/powerRequire.html'
 
 import Echarts from './echarts'
-import position_model from '../models/position'
-import admin_model from '../models/admin'
+import accountState from './webSocket'
+
 
 //解析路径
 import qs from 'querystring'
@@ -42,6 +42,7 @@ const home = async (req, res, next) => {
   bodyEvent.little()
   bodyEvent.show_admin()
   await bodyEvent.homePush(req, res)
+  await accountState()
   toast('加载完成')
 }
 
@@ -49,12 +50,14 @@ const home = async (req, res, next) => {
 const goods = async (req, res, next) => {
   res.render(goods_template)
   bodyEvent.show_admin()
+  accountState()
 }
 
 // 交易管理视图的控制器
 const transactions = async (req, res, next) => {
   res.render(transactions_template)
   bodyEvent.show_admin()
+  accountState()
 }
 
 // 数据统计视图的控制器
@@ -62,6 +65,7 @@ const dataCount = async (req, res, next) => {
   res.render(dataCount_template)
   bodyEvent.show_admin()
   Echarts.showData()
+  accountState()
 }
 
 //权限管理视图的控制器
@@ -74,12 +78,14 @@ const superpowers = async (req, res, next) => {
 const powerApply = async (req, res, next) => {
   res.render(powerApply_template)
   bodyEvent.show_admin()
+  accountState()
 }
 
 //管理员账号管理视图的控制器
 const account = async (req, res, next) => {
   res.render(account_template)
   bodyEvent.show_admin()
+  accountState()
 }
 
 //个人中心
@@ -87,12 +93,14 @@ const person = async (req, res, next) => {
   res.render(person_template)
   bodyEvent.show_admin()
   adminEvent()
+  accountState()
 }
 
 // 用户账号管理视图的控制器
 const user = async (req, res, next) => {
   res.render(user_template)
   bodyEvent.show_admin()
+  accountState()
 }
 
 // 登录视图的控制器
@@ -115,33 +123,8 @@ const powerRequire = async (req, res, next) => {
 const fzf = async (req, res, next) => {
   res.render(fzf_template)
   bodyEvent.large()
+  accountState()
 }
-
-
-//
-// //图片预览
-// function lookPic(options){
-//     let File = function(){
-//         let file = {};
-//         file.previewImage = function(file){
-//             let div = file.parentNode.children[0];
-//             if (file.files && file.files[0])
-//             {
-//                 let img = div.children[0];
-//                 let reader = new FileReader();
-//                 reader.onload = function(evt){img.src = evt.target.result;}
-//                 reader.readAsDataURL(file.files[0]);
-//             }
-//         }
-//         return file;
-//     }();
-//     function initActions() {
-//         options.on('change', function() {
-//             File.previewImage(options[0]);
-//         });
-//     }
-//     initActions()
-// }
 
 
 export default {

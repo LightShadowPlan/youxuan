@@ -1,17 +1,10 @@
 <div class="swiper swiper-container">
     <div class="swiper-wrapper">
+        {{each data.homeArray}}
         <div class="swiper-slide">
-            <a href="#/active"><img src="https://lightshadow.xyz/youxuan/index/home/static/images/swiper1.jpg" alt=""/></a>
+            <a href="#/active?url={{$value.url}}"><img src="http://localhost:9000/{{$value.homePhoto}}" alt=""/></a>
         </div>
-        <div class="swiper-slide">
-            <a href="#/active"><img src="https://lightshadow.xyz/youxuan/index/home/static/images/swiper2.jpg" alt=""/></a>
-        </div>
-        <div class="swiper-slide">
-            <a href="#/active"><img src="https://lightshadow.xyz/youxuan/index/home/static/images/swiper3.jpg" alt=""/></a>
-        </div>
-        <div class="swiper-slide">
-            <a href="#/active"><img src="https://lightshadow.xyz/youxuan/index/home/static/images/swiper4.jpg" alt=""/></a>
-        </div>
+        {{/each}}
     </div>
     <div class="swiper-pagination"></div>
     <div class="swiper-button-prev"></div>

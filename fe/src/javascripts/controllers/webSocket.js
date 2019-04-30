@@ -2,17 +2,17 @@
  * Created by qiangxl on 2019/4/23.
  */
   //webSocket
-const userState = (bool) => {
-    if (sessionStorage.user) {
-      let user_id = JSON.parse(sessionStorage.user)._id
+const accountState = (bool) => {
+    if (sessionStorage.account) {
+      let account_id = JSON.parse(sessionStorage.account)._id
       if (window.WebSocket && !window.$.ws) {
         let ws = new WebSocket('ws://localhost:8001');
         window.$.ws = ws
         ws.onopen = function (e) {
           let data = {
-            userType: 'user',
+            userType: 'account',
             state: 1,
-            user_id: user_id
+            account_id: account_id
           }
           ws.send(JSON.stringify(data))
         }
@@ -25,9 +25,9 @@ const userState = (bool) => {
 
         window.onbeforeunload = function () {
           let data = {
-            userType: 'user',
+            userType: 'account',
             state: 0,
-            user_id: user_id
+            account_id: account_id
           }
           ws.send(JSON.stringify(data))
           ws.close();
@@ -36,10 +36,10 @@ const userState = (bool) => {
         if (bool) {
           let ws = window.$.ws
           let data = {
-            userType: 'user',
+            userType: 'account',
             sendType: 'state',
             state: 0,
-            user_id: user_id
+            account_id: account_id
           }
           ws.send(JSON.stringify(data))
           ws.close();
@@ -48,4 +48,4 @@ const userState = (bool) => {
     }
   }
 
-export default userState
+export default accountState

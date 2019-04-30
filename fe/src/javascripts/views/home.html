@@ -11,24 +11,27 @@
         </div>
         <ul class="swiper-box">
             {{ each data}}
-            <li class="swiper-item" _index="{{$index}} " >
-                <form _index="{{$index}}" id="swiper-form-{{$index}}"  action="">
-                    <input class="url-file" type="file"  aria-valuemax="1"  name="homePhoto" />
+            <li class="swiper-item" _index="{{$index}} ">
+                <form _index="{{$index}}" id="swiper-form-{{$index}}" enctype="multipart/form-data" action="">
+                    <input class="url-file" type="file" aria-valuemax="1" name="homePhoto"/>
                     <img class="swiper-item-img" src="../../../{{$value.homePhoto}}" alt=""/>
-                    <div class="url-content " >
+                    <div class="url-content ">
                         <p>
                             <span>描述： </span>
-                            <input class="" type="text" name="content"   required placeholder="请输入活动描述" value="{{$value.content}}" autocomplete="off"/>
+                            <input class="" type="text" name="content" required placeholder="请输入活动描述"
+                                   value="{{$value.content}}" autocomplete="off"/>
                             <input _index="{{$index}}" class="change-url " type="button" value="编辑"/>
                         </p>
                         <p>
                             <span>链接： </span>
-                            <input class="" type="text"  name="url"   required placeholder="请输入活动链接" value="{{$value.url}}"  autocomplete="off"/>
+                            <input class="" type="text" name="url" required placeholder="请输入活动链接" value="{{$value.url}}"
+                                   autocomplete="off"/>
                             <input _index="{{$index}}" class="submit-url input" disabled type="submit" value="保存"/>
                         </p>
                         <input class="swiper-id" type="text" name="_id" value="{{$value._id}}"/>
-                        <input class="swiper-oldHomePhoto" type="text" name="oldHomePhoto" value="{{$value.homePhoto}}"/>
-                        <input class="swiper-accountToken" type="text" name="accountToken" />
+                        <input class="swiper-oldHomePhoto" type="text" name="oldHomePhoto"
+                               value="{{$value.homePhoto}}"/>
+                        <input class="swiper-accountToken" type="text" name="accountToken"/>
                     </div>
                     <p class="times fa fa-times " _id={{$value._id}}></p>
                 </form>
@@ -36,11 +39,11 @@
             {{/each}}
             {{if data.length >= 6}}
             <li class="swiper-item plus-one-box hide">
-                <img  class="plus-one-photo" src="../../../static/images/plus.jpg" alt=""/>
+                <img class="plus-one-photo" src="../../../static/images/plus.jpg" alt=""/>
             </li>
             {{else}}
             <li class="swiper-item plus-one-box">
-                <img  class="plus-one-photo" src="../../../static/images/plus.jpg" alt=""/>
+                <img class="plus-one-photo" src="../../../static/images/plus.jpg" alt=""/>
             </li>
             {{/if}}
         </ul>
@@ -51,11 +54,19 @@
             <p>通知推送</p>
         </div>
         <div class="news-box">
-            <div class="news-item">
-                <p>通知标题： <input type="text" placeholder="请输入描述"/></p>
-                <p>通知范围： 管理员<input type="checkbox" checked/>用户<input type="checkbox" checked/></p>
-                <p>通知内容：<textarea name="" id="" cols="30" rows="10"></textarea></p>
-            </div>
+            <form action=""  id="messagePush" >
+                <div class="news-item">
+                    <input name="accountToken" type="text" class="message-token"/>
+                    <input name="_id" type="text" class="message-_id"/>
+                    <p>通知标题： <input name="title" required type="text" placeholder="请输入描述"/></p>
+                    <p>通知范围： 管理员<input name="receiver" value="account" type="radio" checked/>用户<input value="user" name="receiver" type="radio" /></p>
+                    <p>通知内容：<textarea name="content" required id="" cols="30" rows="10"></textarea></p>
+                    <p class="submit-box">
+                        <input type="reset" value="重置"/>
+                        <input type="submit" class="messagePush" value="发送"/>
+                    </p>
+                </div>
+            </form>
         </div>
 
     </div>

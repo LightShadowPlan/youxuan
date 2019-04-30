@@ -48,12 +48,25 @@ const removeHomePush = (data) => {
     }
   })
 }
+//首页消息推送
+const messagePush = () => {
+  return new Promise((resolve) => {
+    $('#messagePush').ajaxSubmit({
+      url: 'http://localhost:3000/api/position/messagePush',
+      type: 'post',
+      success: (results) => {
+        resolve(results)
+      }
+    })
+  })
+}
 
 export default {
   addHomePush,
   updateHomePush,
   selectHomePush,
-  removeHomePush
+  removeHomePush,
+  messagePush
 }
 
 

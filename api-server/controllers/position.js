@@ -292,11 +292,12 @@ const updateHomePush = async (req, res) => {
       homePhoto: req.body.homePhoto
     }
   }
-  if ( !req.body.homePhoto || req.body.homePhoto === ('' || null)) {
+  if (!req.body.homePhoto || req.body.homePhoto === ('' || null)) {
     console.log('ok');
     delete body.content.homePhoto
   } else {
-    fs.unlink(Path.resolve(__dirname, '../../fe/' + oldHomePhoto), (err) => {})
+    fs.unlink(Path.resolve(__dirname, '../../fe/' + oldHomePhoto), (err) => {
+    })
   }
   let _data = await position.updateHomePush(body)
   console.log(_data);
@@ -313,12 +314,62 @@ const selectHomePush = async (req, res) => {
 }
 //系统首页删除轮播
 const removeHomePush = async (req, res) => {
-  console.log('req.body:', req.body);
   let accountToken = req.body.accountToken
   delete accountToken
   let _data = await position.removeHomePush({_id: req.body._id})
-  fs.unlink(Path.resolve(__dirname, '../../fe/' + req.body.oldHomePhoto), (err) => {})
+  fs.unlink(Path.resolve(__dirname, '../../fe/' + req.body.oldHomePhoto), (err) => {
+  })
   handleData(_data, res, 'position')
+}
+const messagePush = async (req, res) => {
+
+  let accountToken = req.body.accountToken
+  //判断删除操作由用户还是管理员触发
+  let account_id = req.body._id
+  let authority = await admin.powerChecked(accountToken, account_id)
+  //判断权限
+  if (authority >= 2) {
+    let message_body = {
+      sender: '商城管理系统',
+      receiver: req.body.receiver,
+      content: req.body.content
+    }
+    let message_data = await position.addMessage(message_body)
+
+    let data
+    if (req.body.receiver === 'user') {
+      let user_data = await position.selectUser({})
+      let _idArray = []
+      user_data.forEach(item => {
+        _idArray.push(item._id)
+      })
+      let body1 = {
+        _id: {$in: _idArray},
+        content: {$addToSet: {message: message_data._id}}
+      }
+      data = await position.updateUserContent(body1)
+    } else {
+      let Account_data = await position.selectAccount({})
+      let _idArray = []
+      Account_data.forEach(item => {
+        _idArray.push(item._id)
+      })
+      console.log(_idArray);
+      let body2 = {
+        _id: {$in: _idArray},
+        content: {$addToSet: {message: message_data._id}}
+      }
+      data = await position.updateAccountContent(body2)
+    }
+    console.log(data);
+    handleData(data, res, 'position')
+  } else if (authority >= 0) {
+    //权限不够
+    handleData(206, res, 'position')
+  } else {
+    //token过期
+    handleData(205, res, 'position')
+  }
 }
 
 
@@ -336,4 +387,6 @@ module.exports = {
   updateHomePush,
   selectHomePush,
   removeHomePush,
+  messagePush,
+
 }

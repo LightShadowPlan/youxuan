@@ -23,5 +23,6 @@ router.post('/addHomePush',fileUploadHomePush, position_controller.addHomePush)
 router.post('/updateHomePush',fileUploadHomePush, position_controller.updateHomePush)
 router.post('/selectHomePush', position_controller.selectHomePush)
 router.post('/removeHomePush', position_controller.removeHomePush)
+router.post('/messagePush', position_controller.messagePush)
 
 module.exports = router; 
