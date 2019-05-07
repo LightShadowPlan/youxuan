@@ -123,6 +123,7 @@ const selectAccount = async (req, res, callback) => {
   }
 }
 
+
 /**
  * 更新管理人员
  */
@@ -158,6 +159,292 @@ const updateAccount = async (req, res) => {
     handleData(205, res, 'position')
   }
 }
+
+
+// 更新管理员账号
+const updateAccountContent = async (req, res) => {
+  let accountToken = req.body.accountToken
+  //判断删除操作由用户还是管理员触发
+  let _id = req.body._id
+  let account_id = req.body.account_id
+  let type = req.body.type
+  let content = JSON.parse(req.body.content)
+  let authority = await powerChecked(accountToken, account_id)
+  //判断权限
+  if (authority >= 2) {
+    let account_data = await position.selectAccount({_id: _id})
+    let sum = 0
+    switch (~~type) {
+      case 1:
+        sum = 1;
+        break;
+      case 0:
+        sum = 0;
+        break;
+      case -1:
+        sum = 0;
+        break;
+    }
+    console.log(sum);
+    console.log(content);
+    if (authority > account_data[0].authority + sum) {
+      let _data = await position.updateAccountContent({_id: _id, content: content})
+      console.log(_data);
+      handleData(_data, res, 'position')
+    } else {
+      handleData(206, res, 'position')
+    }
+  } else if (authority >= 1) {
+    handleData(206, res, 'position')
+  } else {
+    handleData(205, res, 'position')
+  }
+}
+
+/**
+ * 删除管理人员
+ */
+const removeAccount = async (req, res) => {
+  let accountToken = req.body.accountToken
+  //判断删除操作由用户还是管理员触发
+  let _id = req.body._id
+  let account_id = req.body.account_id
+  let authority = await powerChecked(accountToken, account_id)
+  //判断权限
+  if (authority >= 2) {
+    let account_data = await position.selectAccount({_id: _id})
+    if (authority > account_data[0].authority) {
+      let _data = await position.removeAccount({_id: _id})
+      console.log(_data);
+      handleData(_data, res, 'position')
+    } else {
+      handleData(206, res, 'position')
+    }
+  } else if (authority >= 1) {
+    handleData(206, res, 'position')
+  } else {
+    handleData(205, res, 'position')
+  }
+}
+
+//查询消息
+const getMessage = async (req, res) => {
+  let _id = req.body._id
+  let messageArray = JSON.parse(req.body.messageArray)
+  let _token
+  if (req.body.userToken) {
+    let user_data = await position.selectUser({_id: _id})
+    let state = user_data ? user_data[0].state : false
+    _token = await token.checkToken(req.body.userToken, state)
+    delete req.body.userToken
+  } else {
+    let user_data = await position.selectAccount({_id: _id})
+    let state = user_data ? user_data[0].state : false
+    _token = await token.checkToken(req.body.accountToken, state)
+    delete req.body.accountToken
+  }
+
+  if (_token) {
+    let body = {
+      query: {_id: {$in: messageArray}},
+      content: {}
+    }
+    let message_data = await position.selectMessage(body)
+    handleData(message_data, res, 'position')
+  } else {
+    handleData(205, res, 'position')
+  }
+}
+
+//更新消息状态
+
+const updateMessage = async (req, res) => {
+  let messageArray = JSON.parse(req.body.messageArray)
+  let allMessageArray = JSON.parse(req.body.allMessageArray)
+  let body = {
+    _id: {_id: {$in: messageArray}},
+    content: {state: 1}
+  }
+  console.log(messageArray);
+  let new_data = await position.updateMessage(body)
+  console.log(new_data);
+  let message_data = await position.selectMessage({query: {_id: {$in: allMessageArray}}, content: {}})
+  handleData(message_data, res, 'position')
+}
+
+
+/**
+ * 更改管理人员密码
+ */
+
+const changeAccountPassword = async (req, res) => {
+  let _token = await token.checkToken(req.body.accountToken)
+  delete req.body.accountToken
+  if (_token) {
+    let _body = req.body
+    req.body = {}
+    req.body._id = _token.data._id
+    req.body.password = hash(_body.oldPassword, 'hex')
+    await selectAccount(req, res, async function (data) {
+      if (data.length > 0) {
+        req.body.password = hash(_body.newPassword, 'hex')
+        let _data = await position.updateAccount(req.body)
+        let newToken = token.createToken({
+          '_id': _token.data._id
+        }, 7200)
+        _data.token = newToken
+        handleData(_data, res, 'position')
+      } else {
+        console.log('204');
+        handleData(204, res, 'position')
+      }
+    })
+  } else {
+    handleData(205, res, 'position')
+  }
+}
+
+
+/**
+ * 管理人员登陆验证
+ */
+const loginAccount = async (req, res) => {
+  //将密码加密
+  req.body.password = hash(req.body.password, 'hex')
+  await selectAccount(req, res, async function (data) {
+    if (data.length > 0) {
+      let _data = JSON.parse(JSON.stringify(data[0]))
+      //生成token存入要发送的数据中
+      let _token = token.createToken({
+        '_id': _data._id
+      }, 7200)
+      _data.token = _token
+      handleData(_data, res, 'position')
+    } else {
+      handleData(204, res, 'position')
+    }
+  })
+}
+
+
+/**
+ * 添加用户
+ */
+const addUser = async (req, res) => {
+  //避免对原来的req造成改变
+  let _req = {'body': {'mailbox': req.body.mailbox}}
+  //再次查绚账号是否已注册
+  await selectUser(_req, res, async function (data) {
+    if (data.length > 0) {
+      //返回账号已注册
+      handleData(201, res, 'position')
+    } else {
+      let _req = {'body': {'mailbox': req.body.mailbox, 'verification': req.body.verification}}
+      //与注册数据库里的邮箱与验证码进行匹配
+      await selectSignUp(_req, res, async function (data) {
+        //邮箱与验证码相同
+        if (data.length <= 0) {
+          //返回验证码错误
+          handleData(202, res, 'position')
+        } else {
+          let newTime = new Date()
+          let Time = parseInt((newTime - data[0].addTime) / 60000);
+          if (Time < 720) {
+            //先加密密码，再将账号密码存入数据库
+            req.body.password = hash(req.body.password, 'hex')
+            let _data = await position.addUser(req.body)
+            //移除注册数据库里的记录
+            removeSignUp(_req, res)
+            //返回数据
+            handleData(_data, res, 'position')
+          } else {
+            //验证码失效
+            handleData(203, res, 'position')
+          }
+        }
+      })
+    }
+  })
+
+}
+
+
+/**
+ * 查询用户
+ */
+const selectUser = async (req, res, callback) => {
+  let _data = await position.selectUser(req.body)
+  if (callback.name !== 'next') {
+    callback(_data)
+  } else {
+    handleData(_data, res, 'position')
+  }
+}
+
+/**
+ * 通过状态查询用户
+ */
+const selectUserByState = async (req, res, callback) => {
+  req.body.query = JSON.parse(req.body.query)
+  req.body.content = JSON.parse(req.body.content)
+  let _data = await position.selectUserByState(req.body)
+  handleData(_data, res, 'position')
+}
+
+/**
+ * 查询用户总数
+ */
+const selectUserCount = async (req, res, callback) => {
+  req.body.query = JSON.parse(req.body.query)
+  let _data = await position.selectUserCount(req.body)
+  console.log(_data);
+  handleData(_data, res, 'position')
+}
+
+/**
+ * 更新用户个人信息
+ */
+const updateUser = async (req, res) => {
+  let user_id = req.body._id
+  let user_data = await position.selectUser({_id: user_id})
+  let state = user_data ? user_data[0].state : false
+  let _token = await token.checkToken(req.body.userToken, state)
+  delete req.body.userToken
+  if (_token) {
+    //联系方式
+    req.body.contactWay = {
+      qq: req.body.qq,
+      wechat: req.body.wechat,
+      phoneNumber: req.body.phoneNumber
+    }
+    delete req.body.qq
+    delete req.body.wechat
+    delete req.body.phoneNumber
+    //判断是否更新图片
+    if (req.body.headPortrait === '') {
+      delete req.body.headPortrait
+    } else {
+      if (req.body.old_headPortrait !== 'static/images/photo.png') {
+        fs.unlink(Path.resolve(__dirname, '../../yx/' + req.body.old_headPortrait), (err) => {
+        })
+      }
+
+    }
+    delete req.body.old_headPortrait
+    //查询最新数据，并返回
+    let _data = await position.updateUser(req.body)
+    if (_data.nModified > 0) {
+      returnData(req, res, 'user')
+    } else {
+      handleData(_data, res, 'position')
+    }
+  } else {
+    handleData(205, res, 'position')
+  }
+
+}
+
+
 //更新用户物品信息
 const updateUserGoods = async (req, res) => {
   let user_id = req.body._id
@@ -291,209 +578,12 @@ const transactionOver = async (req, res) => {
   }
 }
 
-//查询消息
-const getMessage = async (req, res) => {
-  let _id = req.body._id
-  let messageArray = JSON.parse(req.body.messageArray)
-  let user_data = await position.selectUser({_id: _id})
-  let state = user_data ? user_data[0].state : false
-  let _token = await token.checkToken(req.body.userToken, state)
-  delete req.body.userToken
-  if (_token) {
-    let body = {
-      query: {_id: {$in: messageArray}},
-      content: {}
-    }
-    let message_data = await position.selectMessage(body)
-    handleData(message_data, res, 'position')
-  } else {
-    handleData(205, res, 'position')
-  }
-}
-
-//更新消息状态
-
-const updateMessage = async (req, res) => {
-  let messageArray = JSON.parse(req.body.messageArray)
-  let allMessageArray = JSON.parse(req.body.allMessageArray)
-  let body = {
-    _id: {_id: {$in: messageArray}},
-    content: {state: 1}
-  }
-  console.log(messageArray);
-  let new_data = await position.updateMessage(body)
-  console.log(new_data);
-  let message_data = await position.selectMessage({query: {_id: {$in: allMessageArray}}, content: {}})
-  handleData(message_data, res, 'position')
-}
-
-
-/**
- * 删除管理人员
- */
-const removeAccount = async (req, res) => {
-  let _data = await position.removeAccount(req.body)
-  handleData(_data, res, 'position')
-}
-
-/**
- * 更改用户密码
- */
-
-const changeAccountPassword = async (req, res) => {
-  let _token = await token.checkToken(req.body.accountToken)
-  delete req.body.accountToken
-  if (_token) {
-    let _body = req.body
-    req.body = {}
-    req.body._id = _token.data._id
-    req.body.password = hash(_body.oldPassword, 'hex')
-    await selectAccount(req, res, async function (data) {
-      if (data.length > 0) {
-        req.body.password = hash(_body.newPassword, 'hex')
-        let _data = await position.updateAccount(req.body)
-        let newToken = token.createToken({
-          '_id': _token.data._id
-        }, 7200)
-        _data.token = newToken
-        handleData(_data, res, 'position')
-      } else {
-        console.log('204');
-        handleData(204, res, 'position')
-      }
-    })
-  } else {
-    handleData(205, res, 'position')
-  }
-}
-
-
-/**
- * 管理人员登陆验证
- */
-const loginAccount = async (req, res) => {
-  //将密码加密
-  req.body.password = hash(req.body.password, 'hex')
-  await selectAccount(req, res, async function (data) {
-    if (data.length > 0) {
-      let _data = JSON.parse(JSON.stringify(data[0]))
-      //生成token存入要发送的数据中
-      let _token = token.createToken({
-        '_id': _data._id
-      }, 7200)
-      _data.token = _token
-      handleData(_data, res, 'position')
-    } else {
-      handleData(204, res, 'position')
-    }
-  })
-}
-
-
-/**
- * 添加用户
- */
-const addUser = async (req, res) => {
-  //避免对原来的req造成改变
-  let _req = {'body': {'mailbox': req.body.mailbox}}
-  //再次查绚账号是否已注册
-  await selectUser(_req, res, async function (data) {
-    if (data.length > 0) {
-      //返回账号已注册
-      handleData(201, res, 'position')
-    } else {
-      let _req = {'body': {'mailbox': req.body.mailbox, 'verification': req.body.verification}}
-      //与注册数据库里的邮箱与验证码进行匹配
-      await selectSignUp(_req, res, async function (data) {
-        //邮箱与验证码相同
-        if (data.length <= 0) {
-          //返回验证码错误
-          handleData(202, res, 'position')
-        } else {
-          let newTime = new Date()
-          let Time = parseInt((newTime - data[0].addTime) / 60000);
-          if (Time < 720) {
-            //先加密密码，再将账号密码存入数据库
-            req.body.password = hash(req.body.password, 'hex')
-            let _data = await position.addUser(req.body)
-            //移除注册数据库里的记录
-            removeSignUp(_req, res)
-            //返回数据
-            handleData(_data, res, 'position')
-          } else {
-            //验证码失效
-            handleData(203, res, 'position')
-          }
-        }
-      })
-    }
-  })
-
-}
-
-
-/**
- * 查询用户
- */
-const selectUser = async (req, res, callback) => {
-  let _data = await position.selectUser(req.body)
-  if (callback.name !== 'next') {
-    callback(_data)
-  } else {
-    handleData(_data, res, 'position')
-  }
-}
-
-
-/**
- * 更新用户个人信息
- */
-const updateUser = async (req, res) => {
-  let user_id = req.body._id
-  let user_data = await position.selectUser({_id: user_id})
-  let state = user_data ? user_data[0].state : false
-  let _token = await token.checkToken(req.body.userToken, state)
-  delete req.body.userToken
-  if (_token) {
-    //联系方式
-    req.body.contactWay = {
-      qq: req.body.qq,
-      wechat: req.body.wechat,
-      phoneNumber: req.body.phoneNumber
-    }
-    delete req.body.qq
-    delete req.body.wechat
-    delete req.body.phoneNumber
-    //判断是否更新图片
-    if (req.body.headPortrait === '') {
-      delete req.body.headPortrait
-    } else {
-      if (req.body.old_headPortrait !== 'static/images/photo.png') {
-        fs.unlink(Path.resolve(__dirname, '../../yx/' + req.body.old_headPortrait), (err) => {
-        })
-      }
-
-    }
-    delete req.body.old_headPortrait
-    //查询最新数据，并返回
-    let _data = await position.updateUser(req.body)
-    if (_data.nModified > 0) {
-      returnData(req, res, 'user')
-    } else {
-      handleData(_data, res, 'position')
-    }
-  } else {
-    handleData(205, res, 'position')
-  }
-
-
-}
 
 /**
  * 删除用户
  */
 const removeUser = async (req, res) => {
-  if (req.body.accountToken && req.body._id && req.body.account_id) {
+  if (req.body.accountToken && req.body.user_id && req.body.account_id) {
     let user_id = req.body.user_id
     let account_id = req.body.account_id
     let authority = await powerChecked(req.body.accountToken, account_id)
@@ -594,6 +684,23 @@ const accountState = async (_id, state) => {
   console.log('state:', _data);
 }
 
+// 用户封禁,
+const updateUserState = async (req, res) => {
+  let account_id = req.body.account_id
+  let user_id = req.body.user_id
+  let authority = await powerChecked(req.body.accountToken, account_id)
+  //判断权限
+  if (authority <= 0) {
+    handleData(205, res, 'position')
+  } else if (authority === 1) {
+    handleData(206, res, 'position')
+  } else {
+    let state = req.body.state
+    let _data = await position.updateUserContent({_id: user_id, content: {state: state}})
+    handleData(_data, res, 'position')
+  }
+}
+
 //------------------------------------------------------------------------------
 
 // 验证token,获取信息，常用于页面加载后检测token，然后再加信息，避免重复登陆
@@ -641,7 +748,7 @@ const returnData = async (req, res, _type) => {
 }
 
 //权限检查，返回权限,token失效返回-1
-const powerChecked = async (Token,_id) => {
+const powerChecked = async (Token, _id) => {
   let account_data = await position.selectAccount({_id: _id})
   let state = account_data ? account_data[0].state : false
   let _token = await token.checkToken(Token, state)
@@ -662,6 +769,8 @@ module.exports = {
   changeAccountPassword,
   addUser,
   selectUser,
+  selectUserCount,
+  selectUserByState,
   updateUser,
   purchaseGoods,
   updateUserGoods,
@@ -673,7 +782,9 @@ module.exports = {
   getByToken,
   powerChecked,
   userState,
+  updateUserState,
   accountState,
   getMessage,
-  updateMessage
+  updateMessage,
+  updateAccountContent
 }

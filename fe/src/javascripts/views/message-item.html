@@ -1,0 +1,7 @@
+{{ each data}}
+<li>
+    <p class="message-time">{{$value.formatTime}}</p>
+    <p class="sender">{{$value.sender}}</p>
+    <p class="message-text-item">{{$value.content}}</p>
+</li>
+{{/each}}

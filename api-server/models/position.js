@@ -87,6 +87,7 @@ let TransactionsModel = mongoose.model('transactions', new mongoose.Schema({
   state: Number,
   goodsId: String,
   addTime: Date,
+  content: Object,
   formatTime: String
 }));
 
@@ -182,7 +183,7 @@ const removeSignUp = async (body) => {
  * 添加管理人员
  */
 const addAccount = async (body) => {
-  body.authority = 2
+  body.authority = 0
   let _timestamp = Date.now()
   let moment = Moment(_timestamp)
   return AccountModel({
@@ -273,6 +274,7 @@ const addUser = async (body) => {
       wechat: '无',
       phoneNumber: '无'
     },
+    state: 0,
     addTime: _timestamp,
     formatTime: moment.format("YYYY-MM-DD  hh:mm")
   }).save(
@@ -298,6 +300,38 @@ const selectUser = async (body) => {
     return false
   })
 }
+
+/**
+ * 查询用户
+ */
+const selectUserByState = async (body) => {
+  return UserModel.find(
+    body.query,
+     null,
+    body.content
+  ).then((res) => {
+    return res
+  }).catch(() => {
+    return false
+  })
+}
+
+/**
+ * 查询用户总数
+ */
+const selectUserCount = async (body) => {
+  return UserModel.find(
+    body.query,
+    null,
+    null
+  ).count()
+    .then((res) => {
+      return res
+    }).catch(() => {
+      return false
+    })
+}
+
 
 /**
  *更新用户基本信息
@@ -430,6 +464,22 @@ const selectGoods = async (body) => {
     return false
   })
 }
+
+/**
+ * 查询物品总数
+ */
+const selectGoodsCount = async (body) => {
+  return GoodsModel.find(
+    body.query,
+    null,
+    null
+  ).count()
+    .then((res) => {
+      return res
+    }).catch(() => {
+      return false
+    })
+}
 /**
  *更新物品
  */
@@ -479,12 +529,30 @@ const addTransactions = async (body) => {
  */
 const selectTransactions = async (body) => {
   return TransactionsModel.find(
-    body
+    body.query,
+    null,
+    body.content
   ).then((res) => {
     return res
   }).catch(() => {
     return false
   })
+}
+
+/**
+ * 查询物品总数
+ */
+const selectTransactionsCount = async (body) => {
+  return TransactionsModel.find(
+    body.query,
+    null,
+    null
+  ).count()
+    .then((res) => {
+      return res
+    }).catch(() => {
+      return false
+    })
 }
 /**
  *更新交易
@@ -638,6 +706,8 @@ module.exports = {
   removeAccount,
   addUser,
   selectUser,
+  selectUserCount,
+  selectUserByState,
   updateUser,
   updateUserContent,
   updateAccountContent,
@@ -648,10 +718,12 @@ module.exports = {
   removeMessage,
   addGoods,
   selectGoods,
+  selectGoodsCount,
   updateGoods,
   removeGoods,
   addTransactions,
   selectTransactions,
+  selectTransactionsCount,
   updateTransactions,
   removeTransactions,
   addDataStatistics,
@@ -661,6 +733,6 @@ module.exports = {
   addHomePush,
   selectHomePush,
   updateHomePush,
-  removeHomePush
+  removeHomePush,
 
 }

@@ -89,6 +89,15 @@ const selectGoods = async (req, res, callback) => {
 }
 
 /**
+ * 查询物品总数
+ */
+const selectGoodsCount = async (req, res, callback) => {
+  req.body.query = JSON.parse(req.body.query)
+  let _data = await position.selectGoodsCount(req.body)
+  handleData(_data, res, 'position')
+}
+
+/**
  * 更新物品
  */
 const updateGoods = async (req, res) => {
@@ -106,26 +115,58 @@ const updateGoods = async (req, res) => {
   handleData(goods_data, res, 'position')
 }
 
+//下架物品
+const deleteGoods = async (req, res) => {
+  let accountToken = req.body.accountToken
+  let goods_id = req.body.goods_id
+  let account_id = req.body.account_id
+  let content = JSON.parse(req.body.content)
+  let authority = await admin.powerChecked(accountToken, account_id)
+  //判断权限
+  if (authority >= 2) {
+    let body = {
+      _id: {_id: goods_id},
+      content: content
+    }
+    let _data = await position.updateGoods(body)
+    console.log(_data);
+    handleData(_data, res, 'position')
+  } else if (authority >= 1) {
+    handleData(206, res, 'position')
+  } else {
+    handleData(205, res, 'position')
+  }
+
+
+}
+
 /**
  * 删除物品
  */
 const removeGoods = async (req, res) => {
-  let goodsArray = JSON.parse(req.body.goodsArray)//要删的
-  let newSellGoods = JSON.parse(req.body.newSellGoods)//剩下的
-  let transactionArray = JSON.parse(req.body.transactionArray)
+
   //判断删除操作由用户还是管理员触发
   if (req.body.accountToken) {
-    let account_id = req.body._id
-    let authority = await admin.powerChecked(req.accountToken, account_id)
+    let account_id = req.body.account_id
+    let authority = await admin.powerChecked(req.body.accountToken, account_id)
     //判断权限
     if (authority <= 0) {
       handleData(205, res, 'position')
     } else if (authority === 1) {
       handleData(206, res, 'position')
     } else {
-
+      console.log('ok');
+      //删除图片
+      deletePhoto([req.body.goods_id])
+      //删除物品记录
+      let _data = await position.removeGoods({'goodsArray': [req.body.goods_id]})
+      //查询用户数据
+      handleData(_data, res, 'position')
     }
   } else {
+    let goodsArray = JSON.parse(req.body.goodsArray)//要删的
+    let newSellGoods = JSON.parse(req.body.newSellGoods)//剩下的
+    let transactionArray = JSON.parse(req.body.transactionArray)
     let user_id = req.body._id
     let user_data = await position.selectUser({_id: user_id})
     let state = user_data ? user_data[0].state : false
@@ -161,7 +202,7 @@ const removeGoods = async (req, res) => {
         await position.updateGoods(body)
 
         //更改交易记录
-        let transaction_data = await position.selectTransactions({_id: {$in: transactionArray}})
+        let transaction_data = await position.selectTransactions({query: {_id: {$in: transactionArray}}, content: {}})
         transaction_data.forEach(async item => {
           //删除购买者购买记录
           let user_data = await position.selectUser({_id: item.purchaser})
@@ -247,12 +288,38 @@ const addTransactions = async (req, res) => {
  * 查询交易
  */
 const selectTransactions = async (req, res, callback) => {
-  let _data = await position.selectUser(req.query)
-  if (callback.name !== 'next') {
-    callback(_data)
-  } else {
-    handleData(_data, res, 'position')
-  }
+  req.body.query = JSON.parse(req.body.query)
+  req.body.content = JSON.parse(req.body.content)
+  let _data = await position.selectTransactions(req.body)
+ let new_data = [], purchaser, seller, goodsId, content
+  _data.forEach(async (item, index) => {
+    purchaser = await position.selectUser({_id: item.purchaser})
+    seller = await position.selectUser({_id: item.seller})
+    goodsId = await position.selectGoods({query: {_id: item.goodsId},vernier: {}})
+    content = {
+      purchaser: purchaser[0],
+      seller: seller[0],
+      goodsId: goodsId[0]
+    }
+    item.content = content
+    new_data.push(item)
+    if(new_data.length === _data.length) {
+
+      handleData(new_data, res, 'position')
+    }
+  })
+
+
+}
+
+
+/**
+ * 查询交易总数
+ */
+const selectTransactionsCount = async (req, res, callback) => {
+  req.body.query = JSON.parse(req.body.query)
+  let _data = await position.selectTransactionsCount(req.body)
+  handleData(_data, res, 'position')
 }
 
 /**
@@ -359,7 +426,8 @@ const messagePush = async (req, res) => {
         _id: {$in: _idArray},
         content: {$addToSet: {message: message_data._id}}
       }
-      data = await position.updateAccountContent(body2)
+      await position.updateAccountContent(body2)
+      data = await position.selectAccount({_id: account_id})
     }
     console.log(data);
     handleData(data, res, 'position')
@@ -378,6 +446,7 @@ module.exports = {
   selectGoods,
   updateGoods,
   removeGoods,
+  deleteGoods,
   addTransactions,
   selectTransactions,
   updateTransactions,
@@ -388,5 +457,6 @@ module.exports = {
   selectHomePush,
   removeHomePush,
   messagePush,
-
+  selectGoodsCount,
+  selectTransactionsCount
 }

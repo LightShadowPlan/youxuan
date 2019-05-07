@@ -61,12 +61,91 @@ const messagePush = () => {
   })
 }
 
+// 搜索物品
+const selectGoods = (data) => {
+  return $.ajax({
+    url: 'http://localhost:3000/api/position/selectGoods',
+    type: 'post',
+    data,
+    success: (results) => {
+      return results
+    }
+  })
+}
+
+// 搜索物品
+const selectGoodsCount = (data) => {
+  return $.ajax({
+    url: 'http://localhost:3000/api/position/selectGoodsCount',
+    type: 'post',
+    data,
+    success: (results) => {
+      return results
+    }
+  })
+}
+
+
+// 删除物品
+const removeGoods = (data) => {
+  return $.ajax({
+    url: 'http://localhost:3000/api/position/removeGoods',
+    type: 'post',
+    data,
+    success: (results) => {
+      return results
+    }
+  })
+}
+
+//下架物品
+const deleteGoods = (data) => {
+  return $.ajax({
+    url: 'http://localhost:3000/api/position/deleteGoods',
+    type: 'post',
+    data,
+    success: (results) => {
+      return results
+    }
+  })
+}
+
+// 搜索交易
+const selectTransactions = (data) => {
+  return $.ajax({
+    url: 'http://localhost:3000/api/position/selectTransactions',
+    type: 'post',
+    data,
+    success: (results) => {
+      return results
+    }
+  })
+}
+
+// 搜索交易
+const selectTransactionsCount = (data) => {
+  return $.ajax({
+    url: 'http://localhost:3000/api/position/selectTransactionsCount',
+    type: 'post',
+    data,
+    success: (results) => {
+      return results
+    }
+  })
+}
+
 export default {
   addHomePush,
   updateHomePush,
   selectHomePush,
   removeHomePush,
-  messagePush
+  messagePush,
+  selectGoods,
+  removeGoods,
+  deleteGoods,
+  selectGoodsCount,
+  selectTransactions,
+selectTransactionsCount
 }
 
 

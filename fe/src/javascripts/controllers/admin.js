@@ -51,9 +51,11 @@ const adminEvent = async () => {
       if (_result.data._id) {
         console.log('res:', _result);
         sessionStorage.account = JSON.stringify(_result.data)
+        sessionStorage.message = ''
         localStorage.accountToken = _result.data.token
         show_account()
         bodyEvent.show_admin()
+
       }
       toast('保存成功')
     } else if (_result.status === 205) {

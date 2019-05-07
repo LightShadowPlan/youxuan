@@ -8,7 +8,7 @@ const handleData = (data, res, template, callbacks = {}) => {
     success: callbacks.success || none,
     fail: callbacks.fail || none
   }
-  if (!data) {
+  if (!data && data !== 0) {
     fail()
     response.call(res, {template, code: 500, data: '发生了不可预知的错误'})
 

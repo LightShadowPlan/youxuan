@@ -279,6 +279,7 @@ const loginEvent = async () => {
     $(".mine-show").addClass("show-box")
     //刷新数据
     show_user()
+    bodyEvent.showHeader()
 
   }
 

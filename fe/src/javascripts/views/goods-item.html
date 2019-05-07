@@ -1,0 +1,18 @@
+<li class="goods-item" >
+    <p>物品名字</p>
+    <p>物品图片</p>
+    <p>物品价格</p>
+    <p>物品上架时间</p>
+    <p>操作</p>
+</li>
+{{each data}}
+<li class="goods-item" _id="{{$value._id}}" user_id="{{$value._id}}">
+    <p><img src="http://localhost:9191/{{$value.goodsPhoto[0]}}" alt=""/></p>
+    <p>{{$value.goodsName}}</p>
+    <p>￥{{$value.goodsPrice}}</p>
+    <p>{{$value.formatTime}}</p>
+    <p class="look">查看详情</p>
+    <p class="state-delete">下架</p>
+    <p class="state-remove">删除</p>
+</li>
+{{/each}}

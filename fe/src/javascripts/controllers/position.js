@@ -1,21 +1,11 @@
 import {bus, toast} from '../util'
 import bodyEvent from './bodyEvent'
-// 首页视图
-import home_template from '../views/home.html'
+
 // 登录视图
 import login_template from '../views/login.html'
-// 物品管理视图
-import goods_template from '../views/goods.html'
-// 交易管理视图
-import transactions_template from '../views/transactions.html'
 // 数据统计视图
 import dataCount_template from '../views/dataCount.html'
-// 权限管理视图
-import superpowers_template from '../views/superpowers.html'
-// 权限申请管理视图
-import powerApply_template from '../views/powerApply.html'
-// 管理员账号管理视图
-import account_template from '../views/account.html'
+
 // 用户账号管理视图
 import user_template from '../views/user.html'
 // 个人中心管理视图
@@ -39,8 +29,8 @@ import adminEvent from './admin'
 
 // 首页视图的控制器
 const home = async (req, res, next) => {
+  await bodyEvent.show_admin()
   bodyEvent.little()
-  bodyEvent.show_admin()
   await bodyEvent.homePush(req, res)
   await accountState()
   toast('加载完成')
@@ -48,58 +38,65 @@ const home = async (req, res, next) => {
 
 // 物品视图的控制器
 const goods = async (req, res, next) => {
-  res.render(goods_template)
-  bodyEvent.show_admin()
+  await bodyEvent.show_admin()
+  await bodyEvent.goodsManage(req, res)
+  accountState()
+}
+
+// 物品详情视图的控制器
+const goodsContent = async (req, res, next) => {
+  await bodyEvent.show_admin()
+  await bodyEvent.goodsContent(req, res)
+  accountState()
+}
+
+// 物品详情视图的控制器
+const userContent = async (req, res, next) => {
+  await bodyEvent.show_admin()
+  await bodyEvent.userContent(req, res)
   accountState()
 }
 
 // 交易管理视图的控制器
 const transactions = async (req, res, next) => {
-  res.render(transactions_template)
-  bodyEvent.show_admin()
+  await bodyEvent.show_admin()
+  await bodyEvent.transactions(req, res)
   accountState()
 }
 
 // 数据统计视图的控制器
 const dataCount = async (req, res, next) => {
+  await bodyEvent.show_admin()
   res.render(dataCount_template)
-  bodyEvent.show_admin()
   Echarts.showData()
   accountState()
 }
 
 //权限管理视图的控制器
 const superpowers = async (req, res, next) => {
-  res.render(superpowers_template)
-  bodyEvent.show_admin()
+  await bodyEvent.show_admin()
+  bodyEvent.superpowers(req, res)
 }
 
 //权限申请管理视图的控制器
 const powerApply = async (req, res, next) => {
-  res.render(powerApply_template)
-  bodyEvent.show_admin()
+  await bodyEvent.show_admin()
   accountState()
-}
-
-//管理员账号管理视图的控制器
-const account = async (req, res, next) => {
-  res.render(account_template)
-  bodyEvent.show_admin()
-  accountState()
+  bodyEvent.powerApply(req, res)
 }
 
 //个人中心
 const person = async (req, res, next) => {
-  res.render(person_template)
-  bodyEvent.show_admin()
-  adminEvent()
+  await bodyEvent.show_admin()
   accountState()
+  res.render(person_template)
+  adminEvent()
 }
 
 // 用户账号管理视图的控制器
 const user = async (req, res, next) => {
-  res.render(user_template)
-  bodyEvent.show_admin()
+  await bodyEvent.show_admin()
+  await bodyEvent.user(req, res)
   accountState()
 }
 
@@ -111,19 +108,27 @@ const login = async (req, res, next) => {
 
 //权限申请页面
 const powerRequire = async (req, res, next) => {
+  await bodyEvent.show_admin()
   res.render(powerRequire_template)
   bodyEvent.large()
-  $('.go-back-login').on('click', function() {
+  $('.go-back-login').on('click', function () {
     localStorage.accountToken = ''
     bus.emit('go', '/login')
   })
 }
 
+//消息页面
+const message = async (req, res, next) => {
+  await bodyEvent.show_admin()
+  bodyEvent.message(req, res)
+}
+
 // 404视图的控制器
 const fzf = async (req, res, next) => {
+  accountState()
   res.render(fzf_template)
   bodyEvent.large()
-  accountState()
+
 }
 
 
@@ -136,8 +141,10 @@ export default {
   dataCount,
   superpowers,
   powerApply,
-  account,
   user,
   person,
-  powerRequire
+  powerRequire,
+  message,
+  goodsContent,
+  userContent
 }

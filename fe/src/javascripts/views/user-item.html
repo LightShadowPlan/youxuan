@@ -1,0 +1,26 @@
+{{each data}}
+<li class="user-item">
+    <a class="user-item-img" href="#/userContent?_id={{$value._id}}">
+        <img src="http://localhost:9191/{{$value.headPortrait}}" alt=""/>
+    </a>
+    <div>
+        <p>{{$value._id}}</p>
+        <p>{{$value.mailbox}}</p>
+        <p>{{$value.nickname}}</p>
+        <p>{{$value.formatTime}}</p>
+    </div>
+    <div>
+        <p>qq: {{$value.contactWay.qq}}</p>
+        <p>微信：{{$value.contactWay.wechat}}</p>
+        <p>电话：{{$value.contactWay.phoneNumber}}</p>
+    </div>
+    <div>
+        <p>出售物品{{$value.sellGoods.length}}件</p>
+        <p>购买物品{{$value.purchaserGoods.length}}件</p>
+    </div>
+    <div class="user-change" _id="{{$value._id}}" headPortrait="{{$value.headPortrait}}">
+        <p class="state-delete">封禁</p>
+        <p class="state-remove">删除</p>
+    </div>
+</li>
+{{/each}}

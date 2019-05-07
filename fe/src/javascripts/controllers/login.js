@@ -104,8 +104,9 @@ const loginEvent = async () => {
 
   })
   //注册页
-  let signUPSubmitFlag = 0
+  let signUPSubmitFlag
   $('.login-box').on('submit', '#sign-up-form', async function (e) {
+    signUPSubmitFlag = 0
     //阻止浏览器默认事
     e.preventDefault() ? e.preventDefault() : e.returnValue = false
     //邮箱格式验证
@@ -159,7 +160,7 @@ const loginEvent = async () => {
             break;
           default:
             toast('注册成功', 'success');
-            $('#sign-up-form input').val('')
+            $('#sign-up-form .input').val('')
             go_login()
             break;
         }

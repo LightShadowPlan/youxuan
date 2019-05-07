@@ -1,0 +1,36 @@
+{{each data}}
+<li class="transactions-item">
+    <a class="goods-item-img" href="#/goodsContent?_id={{$value.content.goodsId._id}}">
+        <img src="http://localhost:9191/{{$value.content.goodsId.goodsPhoto[0]}}" alt=""/>
+    </a>
+    <div class="goods-about">
+        <p>交易物品： {{$value.content.goodsId.goodsName}}</p>
+        <p>交易价格： ￥{{$value.content.goodsId.goodsPrice}}</p>
+        <p>交易日期： {{$value.formatTime}}</p>
+        <p>交易编号： {{$value._id}}</p>
+    </div>
+    <div class="user-about">
+        <div class="user-item">
+            <a class="user-item-img" href="#/userContent?_id={{$value.content.seller._id}}">
+                <img src="http://localhost:9191/{{$value.content.seller.headPortrait}}" alt=""/>
+            </a>
+            <p>
+                <span>卖家</span>
+                <span>{{$value.content.purchaser.nickname}}</span>
+            </p>
+        </div>
+        <div class="user-item">
+            <a class="user-item-img" href="#/userContent?_id={{$value.content.purchaser._id}}">
+                <img src="http://localhost:9191/{{$value.content.purchaser.headPortrait}}" alt=""/>
+            </a>
+            <p>
+                <span>买家</span>
+                <span>{{$value.content.purchaser.nickname}}</span>
+            </p>
+        </div>
+    </div>
+    <div class="change-about">
+        <p class="state-remove">删除</p>
+    </div>
+</li>
+{{/each}}

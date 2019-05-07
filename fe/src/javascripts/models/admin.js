@@ -25,6 +25,28 @@ const addAccount = (data) => {
   })
 }
 
+const selectAccount = (data) => {
+  return $.ajax({
+    url: 'http://localhost:3000/api/admin/selectAccount',
+    type: 'post',
+    data,
+    success: (results) => {
+      return results
+    }
+  })
+}
+
+const updateAccountContent = (data) => {
+  return $.ajax({
+    url: 'http://localhost:3000/api/admin/updateAccountContent',
+    type: 'post',
+    data,
+    success: (results) => {
+      return results
+    }
+  })
+}
+
 //更新管理员账号信息
 const updateAccount = () => {
   return new Promise((resolve) => {
@@ -62,7 +84,7 @@ const getByToken = (data) => {
   })
 }
 
-//更改用户密码
+//更改管理员密码
 const changeAccountPassword = (data) => {
   return $.ajax({
     url: 'http://localhost:3000/api/admin/changeAccountPassword',
@@ -97,14 +119,92 @@ const removeAccount = (data) => {
   })
 }
 
+//获取消息
+const getMessage = (data) => {
+  return $.ajax({
+    url: 'http://localhost:3000/api/admin/getMessage',
+    type: 'post',
+    data,
+    success: (results) => {
+      return results
+    }
+  })
+}
+
+//更新消息
+const updateMessage = (data) => {
+  return $.ajax({
+    url: 'http://localhost:3000/api/admin/updateMessage',
+    type: 'post',
+    data,
+    success: (results) => {
+      return results
+    }
+  })
+}
+
+//查询用户账号
+const selectUser = (data) => {
+  return $.ajax({
+    url: 'http://localhost:3000/api/admin/selectUser',
+    type: 'post',
+    data,
+    success: (results) => {
+      return results
+    }
+  })
+}
+//管理员查询总用户账号
+const selectUserByState = (data) => {
+  return $.ajax({
+    url: 'http://localhost:3000/api/admin/selectUserByState',
+    type: 'post',
+    data,
+    success: (results) => {
+      return results
+    }
+  })
+}
+//查询用户账号总数
+const selectUserCount = (data) => {
+  return $.ajax({
+    url: 'http://localhost:3000/api/admin/selectUserCount',
+    type: 'post',
+    data,
+    success: (results) => {
+      return results
+    }
+  })
+}
+
+//更新用户状态
+const updateUserState = (data) => {
+  return $.ajax({
+    url: 'http://localhost:3000/api/admin/updateUserState',
+    type: 'post',
+    data,
+    success: (results) => {
+      return results
+    }
+  })
+}
+
 export default {
   addSignUp,
   addAccount,
   loginAccount,
   updateAccount,
+  selectAccount,
   removeAccount,
   getByToken,
   changeAccountPassword,
   removeUser,
+  getMessage,
+  updateAccountContent,
+  updateMessage,
+  selectUser,
+  selectUserByState,
+  selectUserCount,
+  updateUserState
 
 }

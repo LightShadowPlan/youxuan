@@ -22,21 +22,28 @@ const url = () => {
   $('.nva-box a').removeClass('active')
   active.addClass('active')
 }
-//隐藏头部，点击返回
-const defaultEvent = () => {
+const hideHeader = () => {
   $('#header').css({display: 'none'})
   $('.nav').css({display: 'none'})
+}
+const showHeader = () => {
+  $('#header').css({display: 'flex'})
+  $('.nav').css({display: 'block'})
+}
+
+//隐藏头部，点击返回
+const defaultEvent = () => {
+  hideHeader()
   $('.go-back').on('click', () => {
-    $('#header').css({display: 'flex'})
-    $('.nav').css({display: 'block'})
+    showHeader()
     bus.emit('back')
   })
 }
 
 
-
 //商品详情
 const goods = async (req, res) => {
+defaultEvent()
   let url = location.hash.slice(location.hash.indexOf('?') + 1)
   let _id = url.split('=')[1]
   let body = {
@@ -47,7 +54,7 @@ const goods = async (req, res) => {
   goodsHtml(_result.data[0])
 
   function goodsHtml(data) {
-    data.goodsComment.reverse()
+    data.goodsComment.length > 0 ? data.goodsComment.reverse() : ''
     let goods_html = template.render(goods_template, {
       data: data
     })
@@ -168,8 +175,8 @@ const user = async (req, res) => {
     _id: _id
   }
   let _result = await admin_model.selectUser(body)
-  if(_result.status = 200 && _result.data.length > 0) {
-    let _body ={
+  if (_result.status = 200 && _result.data.length > 0) {
+    let _body = {
       query: JSON.stringify({_id: {$in: _result.data[0].sellGoods}}),
       vernier: JSON.stringify({sort: {addTime: 1}})
     }
@@ -201,10 +208,11 @@ const user = async (req, res) => {
       data: data
     })
     res.render(user_html)
-    defaultEvent()
-  } else{
+
+  } else {
     res.render('<div class="user"><div class="user-box">用户不存在或已注销</div><p class="go-back">返回</p></div>')
   }
+  defaultEvent()
 }
 
 //商品轮播
@@ -233,6 +241,7 @@ const swiper = () => {
 
 //添加出售商品
 const addGoods = () => {
+  hideHeader()
   let userToken = localStorage.userToken
   let user = JSON.parse(sessionStorage.user)
   defaultEvent()
@@ -261,7 +270,7 @@ const addGoods = () => {
 }
 //首页
 const homeShow = async (res) => {
-
+  showHeader()
   let _result = await position_model.homeShow()
   console.log(_result.data);
   let home_html = template.render(home_template, {
@@ -279,6 +288,7 @@ const homeShow = async (res) => {
 
 //闲置馆
 const goodsAllSelect = async () => {
+  showHeader()
   let goodsClass = {$nin: ['nice']}, skip = 0, limit = 16, state = {$in: [0]}
   showGoods(goodsClass, skip, limit, state)
 
@@ -323,6 +333,7 @@ const showGoods = async (goodsClass, skip, limit, state) => {
 //收藏夹
 const showFavorite = async (req, res) => {
   url()
+  showHeader()
   if (sessionStorage.user) {
     newFavorite(req, res)
   }
@@ -491,7 +502,7 @@ const message = (req, res) => {
       data: data
     })
     res.render(message_html)
-    defaultEvent()
+
     //显示详细消息
     $('.message-item').on('click', async function () {
       let that = $(this)
@@ -523,10 +534,11 @@ const message = (req, res) => {
         }
       }
 
-
     })
+    defaultEvent()
   } else {
     res.render('<div class="message"><div class="message-title">消息</div><p class="go-back">返回</p></div>')
+    defaultEvent()
   }
 }
 
@@ -600,5 +612,7 @@ export default {
   messageHomeShow,
   showFavorite,
   message,
-  user
+  user,
+  hideHeader,
+  showHeader
 }

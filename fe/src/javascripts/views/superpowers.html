@@ -8,76 +8,50 @@
     <div class="superpowers-content">
         <p class="superpowers-title">高级权限</p>
         <ul class="superpowers-list high">
+            {{each data.superPower}}
             <li>
-                <img src="http://localhost:9000/static/image/account/login_bg2_1555336225251.jpg" alt=""/>
+                <p><img src="../../../{{$value.headPortrait}}" alt=""/></p>
                 <p>
-                    <span>高级管理员</span>
+                    <span>{{$value.nickname}}</span>
                     <span>管理权限</span>
                     <span>管理信息</span>
                     <span>查看信息</span>
                 </p>
+                <p></p>
             </li>
+            {{/each}}
         </ul>
         <p class="superpowers-title">中级权限</p>
         <ul class="superpowers-list middle">
+            {{each data.middlePower}}
             <li>
-                <img src="https://lightshadow.xyz/youxuan/admin/static/images/photo.png" alt=""/>
+                <p><img src="../../../{{$value.headPortrait}}" alt=""/></p>
                 <p>
-                    <span>中级管理员1</span>
+                    <span>{{$value.nickname}}</span>
                     <span>管理信息</span>
                     <span>查看信息</span>
                 </p>
                 <p>
-                    <span class="minus-power">降权</span>
+                    <span class="minus-power" _id="{{$value._id}}" _authority="{{$value.authority}}">降权</span>
                 </p>
             </li>
-            <li>
-                <img src="https://lightshadow.xyz/youxuan/admin/static/images/photo.png" alt=""/>
-                <p>
-                    <span>中级管理员2</span>
-                    <span>管理信息</span>
-                    <span>查看信息</span>
-                </p>
-                <p>
-                    <span class="minus-power">降权</span>
-                </p>
-            </li>
+            {{/each}}
         </ul>
         <p class="superpowers-title">低级权限</p>
         <ul class="superpowers-list low">
+            {{each data.lowPower}}
             <li>
-                <img src="https://lightshadow.xyz/youxuan/admin/static/images/photo.png" alt=""/>
+                <p><img src="../../../{{$value.headPortrait}}" alt=""/></p>
                 <p>
-                    <span>低级管理员1</span>
+                    <span>{{$value.nickname}}</span>
                     <span>查看信息</span>
                 </p>
                 <p>
-                    <span class="plus-power">提权</span>
-                    <span class="minus-power">降权</span>
+                    <span class="plus-power" _id="{{$value._id}}" _authority="{{$value.authority}}">提权</span>
+                    <span class="minus-power" _id="{{$value._id}}" _authority="{{$value.authority}}">降权</span>
                 </p>
             </li>
-            <li>
-                <img src="https://lightshadow.xyz/youxuan/admin/static/images/photo.png" alt=""/>
-                <p>
-                    <span>低级管理员2</span>
-                    <span>查看信息</span>
-                </p>
-                <p>
-                    <span class="plus-power">提权</span>
-                    <span class="minus-power">降权</span>
-                </p>
-            </li>
-            <li>
-                <img src="https://lightshadow.xyz/youxuan/admin/static/images/photo.png" alt=""/>
-                <p>
-                    <span>低级管理员3</span>
-                    <span>查看信息</span>
-                </p>
-                <p>
-                    <span class="plus-power">提权</span>
-                    <span class="minus-power">降权</span>
-                </p>
-            </li>
+            {{/each}}
         </ul>
     </div>
 </div>

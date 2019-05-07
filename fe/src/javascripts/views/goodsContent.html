@@ -1,0 +1,51 @@
+<div class="goods-container">
+    <div class="swiper swiper-container goods-img">
+        <div class="swiper-wrapper">
+            {{ each data.goodsPhoto}}
+            <div class="swiper-slide">
+                <img src="http://localhost:9191/{{ $value}}" alt=""/>
+            </div>
+            {{/each}}
+        </div>
+        <div class="swiper-pagination"></div>
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+    </div>
+    <div class="goods-details">
+        <div class="seller">
+            <a href="#/userContent?_id={{data.seller._id}}">
+                <img src="http://localhost:9191/{{data.seller.headPortrait}}" alt=""/>
+            </a>
+            <% if(data.seller.gender === 'male') { %>
+            <p class="seller-name male">{{data.seller.nickname}}</p>
+            <p class="seller-gender fa fa-venus"></p>
+            <% } else {%>
+            <p class="seller-name famale">{{data.seller.nickname}}</p>
+            <p class="seller-gender fa fa-mars"></p>
+            <% } %>
+        </div>
+        <div class="goods-about">
+            <p class="goods-name">{{data.goodsName}}</p>
+            <p class="goods-price">￥<span>{{data.goodsPrice}}</span></p>
+            <p class="goods-content">{{data.goodsContent}}</p>
+        </div>
+    </div>
+    <div class="goods-comment">
+        <p class="comment-title">评论</p>
+        <ul class="comment-box">
+            {{each data.goodsComment}}
+            <li class="comment-item">
+                <p>
+                    <a href="#/user?_id={{$value._id}}">
+                        <img src="http://localhost:9191/{{ $value.headPortrait}}" alt=""/>
+                    </a>
+                    <span>{{ $value.nickname }}</span>
+                    <span>{{ $value.addTime }}</span>
+                </p>
+                <p class="comment-content">{{ $value.comment }}</p>
+            </li>
+            {{/each}}
+        </ul>
+    </div>
+</div>
+

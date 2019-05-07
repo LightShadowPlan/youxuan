@@ -6,112 +6,59 @@
         </p>
     </div>
     <div class="user-content">
+        <div class="user-state">
+            <p class="state-one" _index="1">在线用户</p>
+            <p class="state-zero" _index="0">离线用户</p>
+            <p class="state-no" _index="-1">封禁用户</p>
+        </div>
         <ul class="user-list">
-            <li class="user-item">
-                <img src="https://lightshadow.xyz/youxuan/admin/static/images/photo.png" alt=""/>
-                <div>
-                    <p>5c8e465c447ea857ec7cd60d</p>
-                    <p>2103875834@qq.com</p>
-                    <p>秋风扫落叶</p>
-                    <p>2019年4月10日</p>
-                </div>
-                <div>
-                    <p>qq：2103875834</p>
-                    <p>微信：xxc12345678</p>
-                    <p>电话：1122335266</p>
-                </div>
-                <div>
-                    <p>出售物品1件</p>
-                    <p>购买物品2件</p>
-                </div>
-                <div class="change">
-                    <p class="look">查看</p>
-                    <p class="state-remove">封禁</p>
-                    <p class="state-delete">删除</p>
-                </div>
-            </li>
-            <li class="user-item">
-                <img src="https://lightshadow.xyz/youxuan/admin/static/images/photo.png" alt=""/>
-                <div>
-                    <p>5c8e465c447ea857ec7cd60d</p>
-                    <p>2103875834@qq.com</p>
-                    <p>秋风扫落叶</p>
-                    <p>2019年4月10日</p>
-                </div>
-                <div>
-                    <p>qq：2103875834</p>
-                    <p>微信：xxc12345678</p>
-                    <p>电话：1122335266</p>
-                </div>
-                <div>
-                    <p>出售物品1件</p>
-                    <p>购买物品2件</p>
-                </div>
-                <div  class="change">
-                    <p class="look">查看</p>
-                    <p class="state-remove">封禁</p>
-                    <p class="state-delete">删除</p>
-                </div>
-            </li>
-            <li class="user-item">
-                <img src="https://lightshadow.xyz/youxuan/admin/static/images/photo.png" alt=""/>
-                <div>
-                    <p>5c8e465c447ea857ec7cd60d</p>
-                    <p>2103875834@qq.com</p>
-                    <p>秋风扫落叶</p>
-                    <p>2019年4月10日</p>
-                </div>
-                <div>
-                    <p>qq：2103875834</p>
-                    <p>微信：xxc12345678</p>
-                    <p>电话：1122335266</p>
-                </div>
-                <div>
-                    <p>出售物品1件</p>
-                    <p>购买物品2件</p>
-                </div>
-                <div  class="change">
-                    <p class="look">查看</p>
-                    <p class="state-remove">封禁</p>
-                    <p class="state-delete">删除</p>
-                </div>
-            </li>
-            <li class="user-item">
-                <img src="https://lightshadow.xyz/youxuan/admin/static/images/photo.png" alt=""/>
-                <div>
-                    <p>5c8e465c447ea857ec7cd60d</p>
-                    <p>2103875834@qq.com</p>
-                    <p>秋风扫落叶</p>
-                    <p>2019年4月10日</p>
-                </div>
-                <div>
-                    <p>qq：2103875834</p>
-                    <p>微信：xxc12345678</p>
-                    <p>电话：1122335266</p>
-                </div>
-                <div>
-                    <p>出售物品1件</p>
-                    <p>购买物品2件</p>
-                </div>
-                <div  class="change">
-                    <p class="look">查看</p>
-                    <p class="state-remove">封禁</p>
-                    <p class="state-delete">删除</p>
-                </div>
-            </li>
+
         </ul>
         <div class="page-nav">
             <ul class="page-box">
-                <li class="page-item">&lt;</li>
-                <li class="page-item">1</li>
-                <li class="page-item">2</li>
-                <li class="page-item">3</li>
-                <li class="page-item">4</li>
-                <li class="page-item">5</li>
+                {{if data.allPage > 1}}
+                <li class="page-item previous">&lt;</li>
+                {{else}}
+                {{/if}}
+
+                {{if data.allPage <= 5}}
+                <% for(let i=1; i<=data.allPage;i++){%>
+                {{if data.page === i}}
+                <li class="page-item page active">{{i}}</li>
+                {{else}}
+                <li class="page-item page">{{i}}</li>
+                {{/if}}
+                <%}%>
+                {{else}}
+                {{if page <= 5 }}
+                <% for(let j=1; j<=5;j++){%>
+                {{if data.page === i}}
+                <li class="page-item page active">{{j}}</li>
+                {{else}}
+                <li class="page-item page">{{j}}</li>
+                {{/if}}
+                <%}%>
+                {{else}}
+                <% for(let k=data.page-4; k<=data.page;k++){%>
+                {{if data.page === i}}
+                <li class="page-item page active">{{k}}</li>
+                {{else}}
+                <li class="page-item page">{{k}}</li>
+                {{/if}}
+                <%}%>
+                {{/if}}
+                {{/if}}
+
+                {{if data.allPage > 5 && data.page !== data.allPage}}
                 <li class="page-item">...</li>
-                <li class="page-item">&gt;</li>
-                <li class="page-item"><input type="text"/></li>
-                <li class="page-item">go</li>
+                {{else}}
+                {{/if}}
+                {{if data.allPage > 1}}
+                <li class="page-item next">&gt;</li>
+                {{else}}
+                {{/if}}
+                <li class="page-item"><input class="page_index" type="number"/></li>
+                <li class="page-item go-page">go</li>
             </ul>
         </div>
     </div>

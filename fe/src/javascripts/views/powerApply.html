@@ -1,1 +1,29 @@
-powerApply
+<div class="powerApply-box">
+    <div class="powerApply-header">
+        <p class="powerApply-title">
+            <span class="fa fa-angle-right"></span>
+            <span>权限申请管理</span>
+        </p>
+    </div>
+    <div class="powerApply-content">
+        <ul class="powerApply-list">
+            <li class="powerApply-item">
+                <p>申请邮箱</p>
+                <p>申请时间</p>
+                <div class="change-about">
+                    <p class="">操作</p>
+                </div>
+            </li>
+            {{each data}}
+            <li class="powerApplys-item" >
+                <p>{{$value.mailbox}}</p>
+                <p>{{$value.formatTime}}</p>
+                <div class="powerApply-change-about">
+                    <p class="state-pass" _id="{{$value._id}}" _authority="{{$value.authority}}" >审核通过</p>
+                    <p class="state-delete" _id="{{$value._id}}" >删除申请</p>
+                </div>
+            </li>
+            {{/each}}
+        </ul>
+    </div>
+</div>

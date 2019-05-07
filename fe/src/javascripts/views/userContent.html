@@ -1,7 +1,7 @@
 <div class="user">
     <div class="user-box">
         <div class="user-headPortrait">
-            <img src="../../../{{data.user.headPortrait}}" alt=""/>
+            <img src="http://localhost:9191/{{ data.user.headPortrait}}" alt=""/>
         </div>
         <div class="user-about-box">
             <p><span>昵称： </span><span>{{data.user.nickname}}</span></p>
@@ -11,22 +11,10 @@
             <p><span>电话： </span><span>{{data.user.contactWay.phoneNumber}}</span></p>
         </div>
         <div class="user-sell-about">
-            <p><span>{{data.sellerArray.length}}</span><span>件物品出售中</span></p>
+            <p><span>{{data.seller}}</span><span>件物品出售中</span></p>
             <p><span>{{data.selling}}</span><span>件物品交易中</span></p>
             <p><span>{{data.selled}}</span><span>件物品已售出</span></p>
+            <p><span>{{data.deleted}}</span><span>件物品已下架</span></p>
         </div>
-        <ul class="user-seller-box">
-            {{ each data.sellerArray }}
-            <li>
-                <a href="#/goods?_id={{$value._id}}">
-                    <p><img src="../../../{{$value.goodsPhoto[0]}}" alt=""/></p>
-                    <span class="goods-title">{{$value.goodsName}}</span>
-                    <span class="goods-price">￥{{$value.goodsPrice}}</span>
-                    <span class="goods-content">{{$value.goodsContent}}</span>
-                </a>
-            </li>
-            {{ /each }}
-        </ul>
     </div>
-    <p class="go-back">返回</p>
 </div>
