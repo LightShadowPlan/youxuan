@@ -291,11 +291,11 @@ const selectTransactions = async (req, res, callback) => {
   req.body.query = JSON.parse(req.body.query)
   req.body.content = JSON.parse(req.body.content)
   let _data = await position.selectTransactions(req.body)
- let new_data = [], purchaser, seller, goodsId, content
+  let new_data = [], purchaser, seller, goodsId, content
   _data.forEach(async (item, index) => {
     purchaser = await position.selectUser({_id: item.purchaser})
     seller = await position.selectUser({_id: item.seller})
-    goodsId = await position.selectGoods({query: {_id: item.goodsId},vernier: {}})
+    goodsId = await position.selectGoods({query: {_id: item.goodsId}, vernier: {}})
     content = {
       purchaser: purchaser[0],
       seller: seller[0],
@@ -303,7 +303,7 @@ const selectTransactions = async (req, res, callback) => {
     }
     item.content = content
     new_data.push(item)
-    if(new_data.length === _data.length) {
+    if (new_data.length === _data.length) {
 
       handleData(new_data, res, 'position')
     }
@@ -334,8 +334,22 @@ const updateTransactions = async (req, res) => {
  * 删除交易
  */
 const removeTransactions = async (req, res) => {
-  let _data = await position.removeUser(req.body)
-  handleData(_data, res, 'position')
+  let account_id = req.body.account_id
+  let authority = await admin.powerChecked(req.body.accountToken, account_id)
+  //判断权限
+  if (authority <= 0) {
+    handleData(205, res, 'position')
+  } else if (authority === 1) {
+    handleData(206, res, 'position')
+  } else {
+    let body = {
+      _id: req.body.transactions_id
+    }
+    //删除物品记录
+    let _data = await position.removeTransactions(body)
+    handleData(_data, res, 'position')
+  }
+
 }
 
 //系统首页添加轮播

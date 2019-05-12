@@ -2,12 +2,13 @@
  * Created by qiangxl on 2019/3/16.
  */
 const url = require('url')
-const {handleData, sendMail, verificationMail, verificationCode} = require('../util')
+const {handleData, verificationMail, verificationCode} = require('../util')
 const position = require('../models/position')
 const {hash, token} = require('../util/token')
 const fs = require('fs')
 const Path = require('path')
 const Moment = require('moment')
+
 
 /**
  * 添加注册信息
@@ -39,6 +40,7 @@ const addSignUp = async (req, res) => {
       req.body.verification = Code
       let _data = await position.addSignUp(req.body)
       handleData(_data, res, 'position')
+      console.log(req.body.mailbox,Code);
       verificationMail(req.body.mailbox, Code)
     }
   }
@@ -92,8 +94,6 @@ const addAccount = async (req, res) => {
           if (Time < 720) {
             //先加密密码，再将账号密码存入数据库
             req.body.password = hash(req.body.password, 'hex')
-            req.body.headPortrait = 'https://lightshadow.xyz/CDN/file/images/photo.png'
-            req.body.nickname = '优选管理'
             let _data = await position.addAccount(req.body)
             //移除注册数据库里的记录
             removeSignUp(_req, res)

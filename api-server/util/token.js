@@ -16,7 +16,7 @@ const hash = (content, codeType) => {
   return ciphertext
 
 }
-//WT标准的Tokens由三部分组成  header payload signature 中间使用 " . " 分隔开，并且都会使用Base64编码方式编码,如下
+//JWT标准的Tokens由三部分组成  header payload signature 中间使用 " . " 分隔开，并且都会使用Base64编码方式编码,如下
 //eyJhbGc6IkpXVCJ9.eyJpc3MiOiJCIsImVzg5NTU0NDUiLCJuYW1lnVlfQ.SwyHTf8AqKYMAJc
 
 const token = {

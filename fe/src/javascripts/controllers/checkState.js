@@ -19,13 +19,13 @@ const checkState = async () => {
         return 200;
       case 205 :
         toast('Token失效，请重新登录', 'error');
-        return false;
+        return 205;
       case 206 :
         toast('权限过低，请申请权限', 'error');
         return 206;
       case 500 :
         toast('服务器错误', '请重试');
-        return false;
+        return 500;
 
     }
   } else {

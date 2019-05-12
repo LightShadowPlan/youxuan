@@ -60,7 +60,7 @@ ul li {
   position: fixed;
   top: 0;
   left: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.2);
   z-index: 9999;
   display: flex;
   justify-content: center;
@@ -252,7 +252,7 @@ ul li {
     height: 0.667rem;
   }
   p {
-    font-size: 1em;
+    font-size: 16px;
   }
   .message-header {
     display: flex;
@@ -292,7 +292,7 @@ ul li {
     justify-items: center;
     color: #666;
     input {
-      font-size: 1em;
+      font-size: 16px;
       width: 3rem;
       border: none;
       border-bottom: 1px solid #666;
@@ -341,6 +341,7 @@ ul li {
         display: block;
         padding: 0 0.133rem;
         transition: 0.5s;
+        font-size: 16px;
         border-bottom: 2px solid transparent;
       }
       a.active, a:hover {
@@ -366,15 +367,31 @@ ul li {
     //首页
     .swiper {
       width: 100%;
-      height: auto;
+      min-width: 700px;
+      max-width: 1200px;
+      height: 520px;
       .swiper-slide {
         width: 100%;
+        height: 100%;
         a {
           display: block;
           width: 100%;
+          height: 100%;
           text-align: center;
+          line-height: 100%;
+          position: relative;
+          overflow: hidden;
           img {
+            height: 100%;
+            margin: 0 -100%;
+          }
+          .active-title{
+            position: absolute;
+            top: 10%;
             width: 100%;
+            text-align: center;
+            font-size: 1.5em;
+            color: tomato;
           }
         }
       }
@@ -497,7 +514,7 @@ ul li {
           li {
             width: 12.5%;
             height: 4.8rem;
-            background: url("http://s14.sinaimg.cn/mw690/001oP23Kty6FncVXlMx8d&690") no-repeat center;
+            background: url("../../static/images/xianzhi1.jpg") no-repeat center;
             transition: 0.5s cubic-bezier(.72, .28, .31, .85);
             cursor: pointer;
             line-height: 360px;
@@ -510,31 +527,31 @@ ul li {
               color: #06dcfd;
             }
             &:nth-of-type(2) {
-              background: url("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1555502242365&di=5a65c4699661bb45ab4a501bccb4d709&imgtype=0&src=http%3A%2F%2Fimage.tupian114.com%2F20120402%2F08093780.jpg") no-repeat center;
+              background: url("../../static/images/xianzhi2.jpg") no-repeat center;
               background-size: auto 100%;
             }
             &:nth-of-type(3) {
-              background: url("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=518073267,2767816895&fm=26&gp=0.jpg") no-repeat center;
+              background: url("../../static/images/xianzhi3.jpg") no-repeat center;
               background-size: auto 100%;
             }
             &:nth-of-type(4) {
-              background: url("https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=1179026995,2455629316&fm=26&gp=0.jpg") no-repeat center;
+              background: url("../../static/images/xianzhi4.jpg") no-repeat center;
               background-size: auto 100%;
             }
             &:nth-of-type(5) {
-              background: url("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1555502853710&di=0202f5dd9377538ebbd527df0fb05442&imgtype=0&src=http%3A%2F%2Fpic25.photophoto.cn%2F20121028%2F0037037434464088_b.jpg") no-repeat center;
+              background: url("../../static/images/xianzhi5.jpg") no-repeat center;
               background-size: auto 100%;
             }
             &:nth-of-type(6) {
-              background: url("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1555502891570&di=b763cc44be086f61edabedc14cd7ab7f&imgtype=0&src=http%3A%2F%2Fpic115.nipic.com%2Ffile%2F20161116%2F7110673_184126002000_2.jpg") no-repeat center;
+              background: url("../../static/images/xianzhi6.jpg") no-repeat center;
               background-size: auto 100%;
             }
             &:nth-of-type(7) {
-              background: url("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1556097685&di=08d1fb77b3369ea28ee7094cd50b5a27&imgtype=jpg&er=1&src=http%3A%2F%2F5b0988e595225.cdn.sohucs.com%2Fimages%2F20180622%2F8ad61f02489c42e0afd7534fd23b3dac.jpeg") no-repeat center;
+              background: url("../../static/images/xianzhi7.jpg") no-repeat center;
               background-size: auto 100%;
             }
             &:nth-of-type(8) {
-              background: url("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1555503143881&di=a1866426028fd0f27efe3336abcc5fbe&imgtype=0&src=http%3A%2F%2Fimg.alicdn.com%2Fimgextra%2Fi4%2F706466226%2FTB26w6up1ySBuNjy1zdXXXPxFXa_%2521%2521706466226-0-beehive-scenes.jpg") no-repeat center;
+              background: url("../../static/images/xianzhi8.jpg") no-repeat center;
               background-size: auto 100%;
             }
 
@@ -750,6 +767,7 @@ ul li {
           border-right: 1px solid #eeee;
           border-radius: 0.4rem;
           transition: 0.5s;
+          font-size: 16px;
           &:last-child {
             border-right: none;
           }
@@ -1026,6 +1044,7 @@ ul li {
                 border: 1px solid #444;
                 transition: 0.5s;
                 cursor: pointer;
+                font-size: 16px;
                 background: linear-gradient(to right bottom, #f7f7f7, #f7f7f7);
                 &:hover {
                   background: rgba(0, 0, 0, 0.6);
@@ -1051,7 +1070,7 @@ ul li {
               text-align: center;
               padding: 0 0.667rem;
               line-height: 0.533rem;
-              font-size: 1.2em;
+              font-size: 20px;
               color: #444;
               border-bottom: 1px solid #444;
             }
@@ -1089,17 +1108,20 @@ ul li {
                     border: none;
                     outline: none;
                     border-bottom: 0.013rem solid #444;
-                    background: transparent;
+                    background: #f7f7f7;
                     letter-spacing: 0.027rem;
-                    font-size: 1em;
+                    font-size: 16px;
                     &::placeholder {
                       color: #888;
-                      font-size: 1em;
+                      font-size: 16px;
                     }
 
                   }
                   .verification {
                     width: 2.4rem;
+                  }
+                  #get-verification-code{
+                    font-size: 16px;
                   }
                   #get-verification-code {
                     width: 1.333rem;
@@ -1121,7 +1143,7 @@ ul li {
                     width: 0.3rem;
                     height: 0.3rem;
                     margin: 0 0.267rem;
-                    font-size: 1em;
+                    font-size: 16px;
                   }
                   p {
                     a {

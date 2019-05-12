@@ -2,7 +2,10 @@
     <div class="swiper-wrapper">
         {{each data.homeArray}}
         <div class="swiper-slide">
-            <a href="#/active?url={{$value.url}}"><img src="http://localhost:9000/{{$value.homePhoto}}" alt=""/></a>
+            <a href="{{$value.url}}" target="_blank">
+                <img src="http://localhost:9000/{{$value.homePhoto}}" alt=""/>
+                <p class="active-title">{{$value.content}}</p>
+            </a>
         </div>
         {{/each}}
     </div>

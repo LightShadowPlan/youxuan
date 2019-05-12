@@ -134,9 +134,9 @@ let DataStatisticsModel = mongoose.model('data_statistics', new mongoose.Schema(
   formatTime: String
 }));
 
-let defaultsNickname = '科院小院'
+let defaultsNickname = '还没有名字呢'
 let defaultGender = 'male'
-let defaultsPhoto = 'static/images/photo.png'
+let defaultsPhoto = 'static/images/photo.jpeg'
 
 /**
  * 添加注册信息

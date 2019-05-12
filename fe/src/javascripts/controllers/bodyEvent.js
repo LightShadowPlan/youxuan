@@ -473,16 +473,13 @@ const transactions = async (req, res) => {
     //删除
     $('.transactions-item .state-remove').on('click', async function () {
       let transactions_id = $(this).parent().attr('_id')
-      let user_id = $(this).parent().attr('user_id')
       let body = {
         accountToken: accountToken,
         account_id: account._id,
-        goods_id: transactions_id,
-        user_id: user_id,
+        transactions_id: transactions_id,
       }
-      let _result = await  position_model.removeGoods(body)
-      bus.emit('go', `/goods?page=0&state=-1`)
-      bus.emit('go', `/goods?page=${page}&state=${state}`)
+      let _result = await  position_model.removeTransactions(body)
+      await transactions(req, res)
     })
   } else{
     $('.transactions-list').html('无数据')

@@ -43,7 +43,6 @@ const defaultEvent = () => {
 
 //商品详情
 const goods = async (req, res) => {
-defaultEvent()
   let url = location.hash.slice(location.hash.indexOf('?') + 1)
   let _id = url.split('=')[1]
   let body = {
@@ -51,116 +50,115 @@ defaultEvent()
     vernier: JSON.stringify({})
   }
   let _result = await position_model.selectGoods(body)
-  goodsHtml(_result.data[0])
+  sessionStorage.goods = JSON.stringify(_result.data[0])
+  _result.data[0].goodsComment && _result.data[0].goodsComment.length ? _result.data[0].goodsComment.reverse() : ''
+  let goods_html = template.render(goods_template, {
+    data: _result.data[0]
+  })
+  res.render(goods_html)
+  defaultEvent()
+  swiper()
+  //购买，收藏，评论操作
+  let flag = 1
+  if (_result.data[0].state > 0) {
+    flag = 0
+    $('.goods-state').addClass('selled').find('.to-purchase').html('已售出')
+  }
 
-  function goodsHtml(data) {
-    data.goodsComment.length > 0 ? data.goodsComment.reverse() : ''
-    let goods_html = template.render(goods_template, {
-      data: data
-    })
-    res.render(goods_html)
-    defaultEvent()
-    swiper()
-    //购买，收藏，评论操作
-    let flag = 1
-    if (data.state > 0) {
-      flag = 0
-      $('.goods-state').addClass('selled').find('.to-purchase').html('已售出')
+  //评论
+  $('.addComment').on('click', async function () {
+    if (flag) {
+      if (sessionStorage.user) {
+        let user = JSON.parse(sessionStorage.user)
+        let d = new Date()
+        let year = d.getFullYear()
+        let month = d.getMonth() + 1
+        let day = d.getDate()
+        let hour = d.getHours()
+        let minutes = d.getMinutes()
+        d = year + '-' + month + '-' + day + " " + hour + ':' + minutes
+        let commentText = $('.addComment-textarea').val()
+        let comment = {
+          _id: user._id,
+          headPortrait: user.headPortrait,
+          nickname: user.nickname,
+          addTime: d,
+          comment: commentText
+        }
+        let body = {
+          '_id': _id,
+          'content': JSON.stringify({'$addToSet': {'goodsComment': comment}})
+        }
+        let _result = await position_model.updateGoods(body)
+        await goods(req, res)
+      } else {
+        toast('未登录用户不能评论', 'error')
+      }
+    } else {
+      toast('物品已售出', 'error')
     }
-
-    //评论
-    $('.addComment').on('click', async function () {
-      if (flag) {
-        if (sessionStorage.user) {
-          let user = JSON.parse(sessionStorage.user)
-          let d = new Date()
-          let year = d.getFullYear()
-          let month = d.getMonth() + 1
-          let day = d.getDate()
-          let hour = d.getHours()
-          let minutes = d.getMinutes()
-          d = year + '-' + month + '-' + day + " " + hour + ':' + minutes
-          let commentText = $('.addComment-textarea').val()
-          let comment = {
-            _id: user._id,
-            headPortrait: user.headPortrait,
-            nickname: user.nickname,
-            addTime: d,
-            comment: commentText
-          }
-          let body = {
-            '_id': _id,
-            'content': JSON.stringify({'$addToSet': {'goodsComment': comment}})
-          }
-          let _result = await position_model.updateGoods(body)
-          goodsHtml(_result.data[0])
-        } else {
-          toast('未登录用户不能评论', 'error')
-        }
-      } else {
-        toast('物品已售出', 'error')
-      }
-    })
-    //收藏
-    $('.to-favorite').on('click', async function () {
-      if (flag) {
-        if (sessionStorage.user) {
-          let user = JSON.parse(sessionStorage.user)
-          let userToken = localStorage.userToken
-          let body = {
-            _id: user._id,
-            userToken: userToken,
-            content: JSON.stringify({'$addToSet': {'favorite': _id}})
-          }
-          let _result = await admin_model.updateUserGoods(body)
-          sessionStorage.user = JSON.stringify(_result.data[0])
-          toast('收藏成功')
-        } else {
-          toast('未登录用户不能加入购物车', 'error')
-        }
-      } else {
-        toast('物品已售出', 'error')
-      }
-    })
-
-    //购买
-    $('.to-purchase').on('click', function () {
-      if (flag) {
-        window.$.notarize = purchase
-        //调出弹窗
-        $('.change-notarize-toast').addClass('active')
-        $('.toast-title-text').html('购买物品')
-        $('.toast-text').html('你确定要购买此物品？请完善个人联系方式，方便沟通！')
-      } else {
-        toast('物品已售出', 'error')
-      }
-    })
-    //弹窗关闭
-    $('.notarize-cancel').on('click', function () {
-      $('.change-notarize-toast').removeClass('active')
-    })
-    $('.notarize-submit').on('click', function () {
-      window.$.notarize()
-    })
-    const purchase = async () => {
+  })
+  //收藏
+  $('.to-favorite').on('click', async function () {
+    if (flag) {ikhymnuj
       if (sessionStorage.user) {
         let user = JSON.parse(sessionStorage.user)
         let userToken = localStorage.userToken
         let body = {
-          seller_id: data.seller._id,
-          purchaser_id: user._id,
+          _id: user._id,
           userToken: userToken,
-          content: JSON.stringify({'$addToSet': {'purchaserGoods': _id}})
+          content: JSON.stringify({'$addToSet': {'favorite': _id}})
         }
-        let _result = await admin_model.purchaseGoods(body)
-        goodsHtml(_result.data[0])
+        let _result = await admin_model.updateUserGoods(body)
         sessionStorage.user = JSON.stringify(_result.data[0])
-        toast('购买成功')
-        $('.change-notarize-toast').removeClass('active');
-
+        toast('收藏成功')
+        await goods(req, res)
       } else {
-        toast('未登录用户不能购买物品', 'error')
+        toast('未登录用户不能加入购物车', 'error')
       }
+    } else {
+      toast('物品已售出', 'error')
+    }
+  })
+
+  //购买
+  $('.to-purchase').on('click', function () {
+    if (flag) {
+      window.$.notarize = purchase
+      //调出弹窗
+      $('.change-notarize-toast').addClass('active')
+      $('.toast-title-text').html('购买物品')
+      $('.toast-text').html('你确定要购买此物品？请完善个人联系方式，方便沟通！')
+    } else {
+      toast('物品已售出', 'error')
+    }
+  })
+  //弹窗关闭
+  $('.notarize-cancel').on('click', function () {
+    $('.change-notarize-toast').removeClass('active')
+  })
+  $('.notarize-submit').on('click', async function () {
+    let goods = JSON.parse(sessionStorage.goods)
+    await window.$.notarize(goods)
+  })
+
+  const purchase = async (data) => {
+    if (sessionStorage.user) {
+      let user = JSON.parse(sessionStorage.user)
+      let userToken = localStorage.userToken
+      let body = {
+        seller_id: data.seller._id,
+        purchaser_id: user._id,
+        userToken: userToken,
+        content: JSON.stringify({'$addToSet': {'purchaserGoods': _id}})
+      }
+      let _result = await admin_model.purchaseGoods(body)
+      sessionStorage.user = JSON.stringify(_result.data[0])
+      toast('购买成功')
+      $('.change-notarize-toast').removeClass('active');
+      await goods(req, res)
+    } else {
+      toast('未登录用户不能购买物品', 'error')
     }
   }
 
@@ -272,17 +270,19 @@ const addGoods = () => {
 const homeShow = async (res) => {
   showHeader()
   let _result = await position_model.homeShow()
-  console.log(_result.data);
-  let home_html = template.render(home_template, {
-    data: _result.data
-  })
-  res.render(home_html)
-  swiper()
+  if (_result.status === 200 && _result.data) {
+    console.log(_result.data);
+    let home_html = template.render(home_template, {
+      data: _result.data
+    })
+    res.render(home_html)
+    swiper()
+  }
   //消息
   if (sessionStorage.user) {
     let user = JSON.parse(sessionStorage.user)
     let userToken = localStorage.userToken
-    messageHomeShow(user, userToken)
+    await messageHomeShow(user, userToken)
   }
 }
 
@@ -290,7 +290,7 @@ const homeShow = async (res) => {
 const goodsAllSelect = async () => {
   showHeader()
   let goodsClass = {$nin: ['nice']}, skip = 0, limit = 16, state = {$in: [0]}
-  showGoods(goodsClass, skip, limit, state)
+  await showGoods(goodsClass, skip, limit, state)
 
   //消息
 

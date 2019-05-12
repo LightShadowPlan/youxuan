@@ -134,6 +134,18 @@ const selectTransactionsCount = (data) => {
   })
 }
 
+// 搜索交易
+const removeTransactions = (data) => {
+  return $.ajax({
+    url: 'http://localhost:3000/api/position/removeTransactions',
+    type: 'post',
+    data,
+    success: (results) => {
+      return results
+    }
+  })
+}
+
 export default {
   addHomePush,
   updateHomePush,
@@ -145,7 +157,8 @@ export default {
   deleteGoods,
   selectGoodsCount,
   selectTransactions,
-selectTransactionsCount
+selectTransactionsCount,
+  removeTransactions
 }
 
 

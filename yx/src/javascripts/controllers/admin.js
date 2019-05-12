@@ -122,17 +122,10 @@ const loginEvent = async () => {
             delete _result.data.token
             sessionStorage.user = JSON.stringify(_result.data)
             $('.login-show .input').val("")
-            go_mine_show()
-            break;
-          case 500:
-            toast('操作失败，服务器出现问题', 'error');
-            break;
-          case 204:
-            toast('账号或密码错误', 'error', 1500);
-            break;
-          default:
-            toast('未知错误', 'error');
-            break;
+            go_mine_show();break;
+          case 500:toast('操作失败，服务器出现问题', 'error');break;
+          case 204:toast('账号或密码错误', 'error', 1500);break;
+          default:toast('未知错误', 'error');break;
         }
         break;
     }
@@ -194,21 +187,11 @@ const loginEvent = async () => {
             $('#sign-up-form input').val("")
             go_login()
             break;
-          case 500:
-            toast('操作失败，服务器出现问题', 'error');
-            break;
-          case 201:
-            toast('用户已存在', 'error');
-            break;
-          case 202:
-            toast('验证码错误', 'error');
-            break;
-          case 203:
-            toast('验证码过期', 'error');
-            break;
-          default:
-            toast('未知错误', 'error');
-            break;
+          case 500:toast('操作失败，服务器出现问题', 'error');break;
+          case 201:toast('用户已存在', 'error');break;
+          case 202:toast('验证码错误', 'error');break;
+          case 203:toast('验证码过期', 'error');break;
+          default:toast('未知错误', 'error');break;
         }
         break;
     }
@@ -338,6 +321,7 @@ const loginEvent = async () => {
 
   //更改密码
   $('.change-password').on('click', function (e) {
+    let userToken = localStorage.userToken
     $('#changePassword input').val('')
     e.preventDefault()
     $('.change-password-toast').addClass('active')
@@ -389,6 +373,8 @@ const loginEvent = async () => {
   })
 
   const removeUser = async () => {
+    let userToken = localStorage.userToken
+    let user = JSON.parse(sessionStorage.user)
     let body = {'_id': user._id, 'userToken': userToken, headPortrait: user.headPortrait}
     let _result = await admin_model.removeUser(body)
     if (_result.status === 200 && _result.data.deletedCount === 1) {
